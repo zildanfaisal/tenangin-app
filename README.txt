@@ -1,0 +1,1 @@
+# ini adalah initial readme oleh regi
