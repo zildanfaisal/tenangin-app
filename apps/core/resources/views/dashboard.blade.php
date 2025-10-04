@@ -1,17 +1,24 @@
-<x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            {{ __('Dashboard') }}
-        </h2>
-    </x-slot>
+@extends('layouts.dashboard')
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900 dark:text-gray-100">
-                    {{ __("You're logged in!") }}
-                </div>
-            </div>
-        </div>
+@section('title', 'Dashboard')
+
+@section('content')
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <!-- Card Chart -->
+    <div class="bg-white shadow rounded-lg p-4">
+        <h3 class="font-bold mb-2">Grafik Mood</h3>
+        <canvas id="chart1"></canvas>
     </div>
-</x-app-layout>
+    <div class="bg-white shadow rounded-lg p-4">
+        <h3 class="font-bold mb-2">Distribusi Emosi</h3>
+        <canvas id="chart2"></canvas>
+    </div>
+</div>
+
+<div class="mt-6 bg-white shadow rounded-lg p-6">
+    <h3 class="font-bold mb-2">Hasil Analisis</h3>
+    <p>
+        Hasil analisis bulan ini menunjukkan bahwa Anda mengalami gejala kecemasan...
+    </p>
+</div>
+@endsection
