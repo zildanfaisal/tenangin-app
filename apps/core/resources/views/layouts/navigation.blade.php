@@ -4,7 +4,7 @@
 
             <!-- Logo -->
             <div class="flex items-center space-x-2">
-                <img src="{{ asset('images/logo.png') }}" alt="Logo" class="h-8 w-8">
+                <img src="{{ asset('logo.png') }}" alt="Logo" class="h-8 w-8">
                 <span class="font-bold text-lg text-gray-800">Tenangin</span>
             </div>
 
