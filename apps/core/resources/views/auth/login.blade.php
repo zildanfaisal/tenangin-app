@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sign In - Tenangin</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
 </head>
 <body class="h-screen flex">
 
@@ -13,9 +14,7 @@
         <div class="max-w-md w-full space-y-6">
 
             <!-- Back (Responsif + Icon) -->
-            <a href="/"
-            class="flex items-center text-sm text-gray-500 hover:text-blue-600
-                    md:absolute md:top-6 md:left-8 md:inline-flex mt-4 md:mt-0">
+            <a href="/" class="flex items-center text-sm text-gray-500 hover:text-blue-600 md:absolute md:top-6 md:left-8">
                 <i class="fa-solid fa-angles-left mr-1"></i> Kembali
             </a>
 
