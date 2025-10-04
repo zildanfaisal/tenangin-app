@@ -17,13 +17,9 @@ def transcribe_bytes(audio_bytes: bytes, language: Optional[str] = None) -> Dict
             resp = client.audio.transcriptions.create(
                 model=settings.openai_stt_model,
                 file=f,
-                # Kamu boleh tambahkan: language="id", response_format="verbose_json"
-                # response_format "verbose_json" memberi segments bila didukung
                 response_format="verbose_json",
                 **({"language": language} if language else {})
             )
-    # SDK mengembalikan object dengan .text; untuk verbose_json, gunakan dict() jika tersedia
-    # Pustaka terbaru sudah map ke dict-like; fallback aman:
     data = resp if isinstance(resp, dict) else resp.__dict__.get("_data", {}) or resp.__dict__
     if not data:
         # Fallback minimal

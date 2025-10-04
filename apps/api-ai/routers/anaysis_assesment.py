@@ -4,8 +4,6 @@ from typing import List, Dict
 
 router = APIRouter(prefix="/assessment", tags=["assessment"])
 
-# Indeks item DASS-21 per subskala (1-based → jadikan 0-based)
-# (Sesuai template resmi; kalikan 2 setelah penjumlahan)  :contentReference[oaicite:5]{index=5}
 DEP_IDX = [2, 4, 8, 9, 12, 15, 19]
 ANX_IDX = [1, 3, 6, 7, 10, 13, 14]
 STR_IDX = [0, 5, 11, 16, 17, 18, 20]
@@ -17,7 +15,7 @@ LEVELS = {
 }
 
 class Dass21Request(BaseModel):
-    answers: List[int]  # 21 angka 0..3
+    answers: List[int]  
 
     @field_validator("answers")
     @classmethod
