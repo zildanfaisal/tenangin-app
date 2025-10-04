@@ -7,38 +7,30 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\User>
+ * @extends \Illuminate\Database\Eloquent\Factories.Factory<\App\Models\User>
  */
 class UserFactory extends Factory
 {
-    /**
-     * The current password being used by the factory.
-     */
     protected static ?string $password;
 
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
     public function definition(): array
     {
         return [
-            'name' => fake()->name(),
-            'email' => fake()->unique()->safeEmail(),
+            'name' => $this->faker->name(),
+            'email' => $this->faker->unique()->safeEmail(),
             'email_verified_at' => now(),
-            'password' => static::$password ??= Hash::make('password'),
-            'age' => fake()->numberBetween(18, 65),
-            'phone' => fake()->phoneNumber(),
-            'gender' => fake()->randomElement(['male', 'female']),
-            'coins' => fake()->numberBetween(0, 100),
+            'password' => static::$password ??= Hash::make('password123'),
+            'usia' => $this->faker->numberBetween(18, 65),
+            'no_hp' => $this->faker->phoneNumber(),
+            'jenis_kelamin' => $this->faker->randomElement(['laki-laki', 'perempuan']),
+            'kesibukan' => $this->faker->randomElement([
+                'mahasiswa', 'siswa', 'karyawan', 'fresh graduate', 'profesional', 'wiraswasta', 'wirausaha'
+            ]),
+            'koin' => $this->faker->numberBetween(0, 500),
             'remember_token' => Str::random(10),
         ];
     }
 
-    /**
-     * Indicate that the model's email address should be unverified.
-     */
     public function unverified(): static
     {
         return $this->state(fn (array $attributes) => [
