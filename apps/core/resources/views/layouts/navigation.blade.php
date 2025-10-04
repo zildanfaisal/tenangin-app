@@ -28,7 +28,6 @@
                     Sign Up
                 </a>
             </div>
-
         </div>
     </div>
 </nav>

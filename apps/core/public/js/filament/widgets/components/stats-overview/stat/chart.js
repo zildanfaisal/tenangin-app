@@ -4,7 +4,9 @@ function rt(){}var Hs=function(){let i=0;return function(){return i++}}();functi
 /*! Bundled license information:
 
 chart.js/dist/chunks/helpers.segment.mjs:
+
 chart.js/dist/chart.mjs:
+
   (*!
    * Chart.js v3.9.1
    * https://www.chartjs.org
@@ -19,4 +21,5 @@ chart.js/dist/chunks/helpers.segment.mjs:
    * (c) 2022 Jukka Kurkela
    * Released under the MIT License
    *)
+
 */

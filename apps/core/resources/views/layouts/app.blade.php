@@ -34,7 +34,6 @@
                 @else
                     @yield('content')
                 @endif
-
             </main>
         </div>
     </body>
