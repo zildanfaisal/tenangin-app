@@ -49,7 +49,7 @@ class UserSeeder extends Seeder
         foreach ($users as $user) {
             $role = $user['role'];
             unset($user['role']);
-            
+
             $user = User::create($user);
             $user->assignRole($role);
         }

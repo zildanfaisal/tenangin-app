@@ -30,21 +30,35 @@ class RegisteredUserController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'name'          => ['required', 'string', 'max:255'],
+            'no_hp'         => ['required', 'string', 'max:20'],
+            'usia'          => ['required', 'integer', 'min:10'],
+            'jenis_kelamin' => ['required', 'in:Laki-Laki,Perempuan'],
+            'kesibukan'     => ['required', 'in:mahasiswa,siswa,karyawan,fresh graduate,profesional,wiraswasta,wirausaha'],
+            'email'         => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
+            'password'      => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
         $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
+            'name'          => $request->name,
+            'no_hp'         => $request->no_hp,
+            'usia'          => $request->usia,
+            'jenis_kelamin' => $request->jenis_kelamin,
+            'kesibukan'     => $request->kesibukan,
+            'email'         => $request->email,
+            'password'      => Hash::make($request->password),
+            'koin'          => 0, 
         ]);
 
+        // Event Laravel
         event(new Registered($user));
 
+        // Assign Role Spatie
+        $user->assignRole('user');
+
+        // Auto login
         Auth::login($user);
 
-        return redirect(route('dashboard', absolute: false));
+        return redirect()->route('dashboard');
     }
 }
