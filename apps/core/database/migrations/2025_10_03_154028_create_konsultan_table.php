@@ -14,7 +14,10 @@ return new class extends Migration
         Schema::create('konsultan', function (Blueprint $table) {
             $table->id();
             $table->string('nama_konsultan');
+            $table->string('foto')->nullable();
+            $table->text('deskripsi')->nullable();
             $table->string('spesialisasi');
+            $table->integer('pengalaman')->default(0); // dalam tahun
             $table->string('jadwal_praktik');
             $table->double('harga');
             $table->double('rating')->default(0);
