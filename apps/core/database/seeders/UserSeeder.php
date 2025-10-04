@@ -12,39 +12,51 @@ class UserSeeder extends Seeder
     {
         $users = [
             [
-                'nama' => 'John Doe',
+                'name' => 'John Doe',
                 'email' => 'john@test.com',
                 'password' => Hash::make('password123'),
                 'usia' => 25,
                 'no_hp' => '081234567890',
                 'jenis_kelamin' => 'laki-laki',
+                'kesibukan' => 'mahasiswa',
                 'koin' => 100,
+                'role' => 'user',
             ],
             [
-                'nama' => 'Jane Smith',
+                'name' => 'Jane Smith',
                 'email' => 'jane@test.com',
                 'password' => Hash::make('password123'),
                 'usia' => 28,
                 'no_hp' => '081234567891',
                 'jenis_kelamin' => 'perempuan',
+                'kesibukan' => 'karyawan',
                 'koin' => 150,
+                'role' => 'user',
             ],
             [
-                'nama' => 'Admin User',
+                'name' => 'Admin User',
                 'email' => 'admin@test.com',
                 'password' => Hash::make('admin123'),
                 'usia' => 30,
                 'no_hp' => '081234567892',
                 'jenis_kelamin' => 'laki-laki',
-                'koin' => 500,
+                'kesibukan' => 'profesional',
+                'koin' => 0,
+                'role' => 'admin',
             ],
         ];
 
         foreach ($users as $user) {
-            User::create($user);
+            $role = $user['role'];
+            unset($user['role']);
+            
+            $user = User::create($user);
+            $user->assignRole($role);
         }
 
         // Generate additional dummy users (kalau factory-nya sudah disesuaikan dengan kolom yang sama)
-        User::factory(10)->create();
+        User::factory(10)->create()->each(function ($user) {
+            $user->assignRole('user');
+        });
     }
 }
