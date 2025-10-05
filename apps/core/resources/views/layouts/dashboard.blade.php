@@ -34,7 +34,7 @@
                 class="flex items-center space-x-3 px-3 py-2 rounded-lg transition-all
                 {{ request()->routeIs('dass21.*') ? 'bg-blue-100/50 text-blue-600 font-semibold' : 'hover:bg-blue-50 hover:text-blue-600' }}">
                     <i class="fa-solid fa-hand-holding-heart {{ request()->routeIs('dass21.*') ? 'text-blue-600' : 'text-gray-400' }}"></i>
-                    <span x-show="sidebarOpen">Dass 21</span>
+                    <span x-show="sidebarOpen">Layanan</span>
                 </a>
 
                 <a href="{{ route('konsultan.index') }}"
@@ -52,20 +52,6 @@
                     <span x-show="sidebarOpen">Penanganan</span>
                 </a>
                 @endcan
-
-                <a href="#"
-                   class="flex items-center space-x-3 px-3 py-2 rounded-lg transition-all
-                   {{ request()->routeIs('layanan.*') ? 'bg-blue-100/50 text-blue-600 font-semibold' : 'hover:bg-blue-50 hover:text-blue-600' }}">
-                    <i class="fa-solid fa-lightbulb {{ request()->routeIs('layanan.*') ? 'text-blue-600' : 'text-gray-400' }}"></i>
-                    <span x-show="sidebarOpen">Layanan</span>
-                </a>
-
-                <a href="#"
-                   class="flex items-center space-x-3 px-3 py-2 rounded-lg transition-all
-                   {{ request()->routeIs('konsultasi.*') ? 'bg-blue-100/50 text-blue-600 font-semibold' : 'hover:bg-blue-50 hover:text-blue-600' }}">
-                    <i class="fa-solid fa-circle-info {{ request()->routeIs('konsultasi.*') ? 'text-blue-600' : 'text-gray-400' }}"></i>
-                    <span x-show="sidebarOpen">Konsultasi</span>
-                </a>
 
                 <a href="#"
                    class="flex items-center space-x-3 px-3 py-2 rounded-lg transition-all
