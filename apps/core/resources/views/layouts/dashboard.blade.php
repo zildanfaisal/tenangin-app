@@ -36,6 +36,13 @@
                 <span x-show="sidebarOpen">Layanan</span>
             </a>
 
+            <a href="{{ route('dass21.index') }}"
+               class="flex items-center space-x-3 px-3 py-2 rounded transition
+               {{ request()->routeIs('dass21.*') ? 'bg-blue-700 text-white' : 'hover:bg-blue-800' }}">
+                <i class="fa-solid fa-hand-holding-heart"></i>
+                <span x-show="sidebarOpen">Dass 21</span>
+            </a>
+
             <a href="{{ route('konsultan.index') }}"
                class="flex items-center space-x-3 px-3 py-2 rounded transition
                {{ request()->routeIs('konsultan.index') ? 'bg-blue-700 text-white' : 'hover:bg-blue-800' }}">

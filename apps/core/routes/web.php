@@ -3,6 +3,7 @@
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\KonsultanController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\Dass21AssessmentController; // added
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -25,6 +26,15 @@ Route::middleware('auth')->group(function () {
     // Lihat detail konsultan
     Route::get('/konsultan/show/{id}', [KonsultanController::class, 'show'])
         ->name('konsultan.show');
+
+    // DASS-21 Routes
+    Route::prefix('dass21')->name('dass21.')->group(function () {
+        Route::get('/', [Dass21AssessmentController::class, 'index'])->name('index');
+        Route::post('/start', [Dass21AssessmentController::class, 'start'])->name('start');
+        Route::get('/session/{id}', [Dass21AssessmentController::class, 'form'])->name('form');
+        Route::post('/session/{id}', [Dass21AssessmentController::class, 'submit'])->name('submit');
+        Route::get('/session/{id}/result', [Dass21AssessmentController::class, 'result'])->name('result');
+    });
 });
 
 // =========================================================
