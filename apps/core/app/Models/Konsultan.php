@@ -13,7 +13,10 @@ class Konsultan extends Model
 
     protected $fillable = [
         'nama_konsultan',
+        'foto',
+        'deskripsi',
         'spesialisasi',
+        'pengalaman',
         'jadwal_praktik',
         'harga',
         'rating',

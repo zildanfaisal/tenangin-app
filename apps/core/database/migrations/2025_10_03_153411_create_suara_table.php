@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('suara', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-            $table->foreignId('dass21_user_id')->constrained('dass21_user')->onDelete('cascade')->nullable();
+            $table->foreignId('dass21_session_id')->constrained('dass21_sessions')->onDelete('cascade')->nullable();
             $table->text('file_audio');
             $table->text('transkripsi')->nullable();
             $table->timestamps();

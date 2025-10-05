@@ -30,7 +30,28 @@
                     <i class="fa-solid fa-house {{ request()->routeIs('dashboard') ? 'text-blue-600' : 'text-gray-400' }}"></i>
                     <span x-show="sidebarOpen">Dashboard</span>
                 </a>
+            <a href="{{ route('dass21.index') }}"
+               class="flex items-center space-x-3 px-3 py-2 rounded transition
+               {{ request()->routeIs('dass21.*') ? 'bg-blue-700 text-white' : 'hover:bg-blue-800' }}">
+                <i class="fa-solid fa-hand-holding-heart"></i>
+                <span x-show="sidebarOpen">Dass 21</span>
+            </a>
 
+            <a href="{{ route('konsultan.index') }}"
+               class="flex items-center space-x-3 px-3 py-2 rounded transition
+               {{ request()->routeIs('konsultan.index') ? 'bg-blue-700 text-white' : 'hover:bg-blue-800' }}">
+                <i class="fa-solid fa-comments"></i>
+                <span x-show="sidebarOpen">Konsultasi</span>
+            </a>
+
+            @can('manajemen-penanganan')
+            <a href="#"
+               class="flex items-center space-x-3 px-3 py-2 rounded transition
+               {{ request()->routeIs('penanganan.*') ? 'bg-blue-700 text-white' : 'hover:bg-blue-800' }}">
+                <i class="fa-solid fa-hand-holding-heart"></i>
+                <span x-show="sidebarOpen">Penanganan</span>
+            </a>
+            @endcan
                 <a href="#"
                    class="flex items-center space-x-3 px-3 py-2 rounded-lg transition-all
                    {{ request()->routeIs('layanan.*') ? 'bg-blue-100/50 text-blue-600 font-semibold' : 'hover:bg-blue-50 hover:text-blue-600' }}">
