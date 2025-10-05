@@ -4,6 +4,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\KonsultanController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Dass21AssessmentController; // added
+use App\Http\Controllers\Dass21ItemController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -68,6 +69,16 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::delete('/konsultan/destroy/{id}', [KonsultanController::class, 'destroy'])
         ->name('konsultan.destroy')
         ->middleware('permission:manajemen-konsultan');
+
+    // Manajemen DASS-21 Items (CMS)
+    Route::middleware('permission:manajemen-curhat')->prefix('admin/dass21/items')->name('admin.dass21-items.')->group(function () {
+        Route::get('/', [Dass21ItemController::class, 'index'])->name('index');
+        Route::get('/create', [Dass21ItemController::class, 'create'])->name('create');
+        Route::post('/', [Dass21ItemController::class, 'store'])->name('store');
+        Route::get('/{dass21_item}/edit', [Dass21ItemController::class, 'edit'])->name('edit');
+        Route::put('/{dass21_item}', [Dass21ItemController::class, 'update'])->name('update');
+        Route::delete('/{dass21_item}', [Dass21ItemController::class, 'destroy'])->name('destroy');
+    });
 });
 
 require __DIR__.'/auth.php';
