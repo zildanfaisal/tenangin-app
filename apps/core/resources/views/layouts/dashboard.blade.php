@@ -47,6 +47,15 @@
                 </a>
                 @endcan
 
+                @can('manajemen-curhat')
+                <a href="{{ route('admin.penanganan.index') }}"
+                    class="flex items-center space-x-3 px-3 py-2 rounded-lg transition-all
+                    {{ request()->routeIs('admin.penanganan.*') ? 'bg-blue-100/50 text-blue-600 font-semibold' : 'hover:bg-blue-50 hover:text-blue-600' }}">
+                    <i class="fa-solid fa-hand-holding-heart {{ request()->routeIs('admin.penanganan.*') ? 'text-blue-600' : 'text-gray-400' }}"></i>
+                    <span x-show="sidebarOpen">CMS Penanganan</span>
+                </a>
+                @endcan
+
                 <a href="{{ route('konsultan.index') }}"
                     class="flex items-center space-x-3 px-3 py-2 rounded-lg transition-all
                     {{ request()->routeIs('konsultan.index') ? 'bg-blue-100/50 text-blue-600 font-semibold' : 'hover:bg-blue-50 hover:text-blue-600' }}">
@@ -155,5 +164,7 @@
         </div>
     </footer>
 
+@stack('scripts')
+<script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </body>
 </html>
