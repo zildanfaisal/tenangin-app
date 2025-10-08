@@ -30,7 +30,9 @@ Route::middleware('auth')->group(function () {
     // DASS-21 Routes
     Route::prefix('dass21')->name('dass21.')->group(function () {
         Route::get('/', [Dass21AssessmentController::class, 'index'])->name('index');
+        Route::get('/dass21/intro', [Dass21AssessmentController::class, 'intro'])->name('intro');
         Route::post('/start', [Dass21AssessmentController::class, 'start'])->name('start');
+        Route::post('/session/{id}/next', [Dass21AssessmentController::class, 'next'])->name('next');
         Route::get('/session/{id}', [Dass21AssessmentController::class, 'form'])->name('form');
         Route::post('/session/{id}', [Dass21AssessmentController::class, 'submit'])->name('submit');
         Route::get('/session/{id}/result', [Dass21AssessmentController::class, 'result'])->name('result');
@@ -41,7 +43,7 @@ Route::middleware('auth')->group(function () {
 // 🔐 ROUTE UNTUK USER BIASA (role: user)
 // =========================================================
 Route::middleware(['auth', 'role:user'])->group(function () {
-    
+
 });
 
 // =========================================================
