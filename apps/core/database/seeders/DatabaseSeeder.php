@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
             RolePermissionSeeder::class,
             UserSeeder::class,
             Dass21ItemSeeder::class,
+            PenangananSeeder::class,
         ]);
     }
 }

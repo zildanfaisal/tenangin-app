@@ -8,6 +8,7 @@ use App\Models\Dass21Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Services\Dass21ScoringService;
+use App\Services\PenangananRecommendationService;
 
 class Dass21AssessmentController extends Controller
 {
@@ -116,12 +117,13 @@ class Dass21AssessmentController extends Controller
         return back()->with('error', 'Jawaban belum lengkap');
     }
 
-    public function result($id)
+    public function result($id, PenangananRecommendationService $recommender)
     {
         $session = Dass21Session::with(['responses.item'])->where('id', $id)->where('user_id', Auth::id())->firstOrFail();
         if (!$session->completed_at) {
             return redirect()->route('dass21.form', $session->id);
         }
-        return view('dass21.result', compact('session'));
+        $penanganan = $recommender->forSession($session);
+        return view('dass21.result', compact('session','penanganan'));
     }
 }

@@ -30,24 +30,43 @@
                     <i class="fa-solid fa-house {{ request()->routeIs('dashboard') ? 'text-blue-600' : 'text-gray-400' }}"></i>
                     <span x-show="sidebarOpen">Dashboard</span>
                 </a>
+                
                 <a href="{{ route('dass21.index') }}"
-                class="flex items-center space-x-3 px-3 py-2 rounded-lg transition-all
-                {{ request()->routeIs('dass21.*') ? 'bg-blue-100/50 text-blue-600 font-semibold' : 'hover:bg-blue-50 hover:text-blue-600' }}">
+                    class="flex items-center space-x-3 px-3 py-2 rounded-lg transition-all
+                    {{ request()->routeIs('dass21.*') ? 'bg-blue-100/50 text-blue-600 font-semibold' : 'hover:bg-blue-50 hover:text-blue-600' }}">
                     <i class="fa-solid fa-hand-holding-heart {{ request()->routeIs('dass21.*') ? 'text-blue-600' : 'text-gray-400' }}"></i>
                     <span x-show="sidebarOpen">Layanan</span>
                 </a>
 
+                @can('manajemen-curhat')
+                <a href="{{ route('admin.dass21-items.index') }}"
+                    class="flex items-center space-x-3 px-3 py-2 rounded-lg transition-all
+                    {{ request()->routeIs('admin.dass21-items.*') ? 'bg-blue-100/50 text-blue-600 font-semibold' : 'hover:bg-blue-50 hover:text-blue-600' }}">
+                    <i class="fa-solid fa-hand-holding-heart {{ request()->routeIs('admin.dass21-items.*') ? 'text-blue-600' : 'text-gray-400' }}"></i>
+                    <span x-show="sidebarOpen">CMS Dass21</span>
+                </a>
+                @endcan
+
+                @can('manajemen-curhat')
+                <a href="{{ route('admin.penanganan.index') }}"
+                    class="flex items-center space-x-3 px-3 py-2 rounded-lg transition-all
+                    {{ request()->routeIs('admin.penanganan.*') ? 'bg-blue-100/50 text-blue-600 font-semibold' : 'hover:bg-blue-50 hover:text-blue-600' }}">
+                    <i class="fa-solid fa-hand-holding-heart {{ request()->routeIs('admin.penanganan.*') ? 'text-blue-600' : 'text-gray-400' }}"></i>
+                    <span x-show="sidebarOpen">CMS Penanganan</span>
+                </a>
+                @endcan
+
                 <a href="{{ route('konsultan.index') }}"
-                class="flex items-center space-x-3 px-3 py-2 rounded-lg transition-all
-                {{ request()->routeIs('konsultan.index') ? 'bg-blue-100/50 text-blue-600 font-semibold' : 'hover:bg-blue-50 hover:text-blue-600' }}">
+                    class="flex items-center space-x-3 px-3 py-2 rounded-lg transition-all
+                    {{ request()->routeIs('konsultan.index') ? 'bg-blue-100/50 text-blue-600 font-semibold' : 'hover:bg-blue-50 hover:text-blue-600' }}">
                     <i class="fa-solid fa-comments {{ request()->routeIs('konsultan.index') ? 'text-blue-600' : 'text-gray-400' }}"></i>
                     <span x-show="sidebarOpen">Konsultasi</span>
                 </a>
 
                 @can('manajemen-penanganan')
                 <a href="#"
-                class="flex items-center space-x-3 px-3 py-2 rounded-lg transition-all
-                {{ request()->routeIs('penanganan.*') ? 'bg-blue-100/50 text-blue-600 font-semibold' : 'hover:bg-blue-50 hover:text-blue-600' }}">
+                    class="flex items-center space-x-3 px-3 py-2 rounded-lg transition-all
+                    {{ request()->routeIs('penanganan.*') ? 'bg-blue-100/50 text-blue-600 font-semibold' : 'hover:bg-blue-50 hover:text-blue-600' }}">
                     <i class="fa-solid fa-hand-holding-heart {{ request()->routeIs('penanganan.*') ? 'text-blue-600' : 'text-gray-400' }}"></i>
                     <span x-show="sidebarOpen">Penanganan</span>
                 </a>
@@ -145,5 +164,7 @@
         </div>
     </footer>
 
+@stack('scripts')
+<script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </body>
 </html>
