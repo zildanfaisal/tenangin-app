@@ -29,6 +29,25 @@
 </div>
 <h2 class="font-semibold mb-2">Ringkasan</h2>
 <p class="mb-6">{{ $session->hasil_kelas }}</p>
+@if(isset($penanganan) && $penanganan->count())
+<h2 class="font-semibold mb-2">Rekomendasi Penanganan Awal</h2>
+<div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+    @foreach($penanganan as $p)
+        <a href="{{ route('penanganan.show',$p->slug) }}" class="bg-white rounded shadow p-4 flex flex-col hover:ring-2 ring-indigo-200 transition">
+            @if($p->cover_path)
+                <img src="{{ asset('storage/'.$p->cover_path) }}" class="h-32 w-full object-cover rounded mb-3" alt="{{ $p->nama_penanganan }}">
+            @endif
+            <h3 class="font-semibold text-lg mb-1">{{ $p->nama_penanganan }}</h3>
+            <p class="text-xs mb-2 text-gray-500">Kesulitan: {{ ucfirst($p->tingkat_kesulitan) }}</p>
+            <p class="text-sm line-clamp-3 mb-3">{{ Str::limit($p->deskripsi_penanganan,120) }}</p>
+            @if($p->durasi_detik)
+                <p class="text-xs text-gray-600 mb-2">Durasi ± {{ ceil($p->durasi_detik/60) }} menit</p>
+            @endif
+            <span class="mt-auto inline-flex items-center justify-center bg-indigo-600 text-white text-sm px-3 py-2 rounded">Lihat Detail</span>
+        </a>
+    @endforeach
+</div>
+@endif
 <h2 class="font-semibold mb-2">Jawaban</h2>
 <div class="space-y-2 mb-8">
     @foreach($session->responses->sortBy(fn($r)=>$r->item->urutan) as $r)
