@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\KonsultanController;
+use App\Http\Controllers\PremiumController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Dass21AssessmentController; // added
 use App\Http\Controllers\Dass21ItemController;
@@ -38,8 +39,14 @@ Route::middleware('auth')->group(function () {
         Route::post('/session/{id}/next', [Dass21AssessmentController::class, 'next'])->name('next');
         Route::get('/session/{id}', [Dass21AssessmentController::class, 'form'])->name('form');
         Route::post('/session/{id}', [Dass21AssessmentController::class, 'submit'])->name('submit');
+        Route::get('/session/{id}/curhat-intro', [Dass21AssessmentController::class, 'curhatIntro'])->name('curhatIntro');
+        Route::get('/session/{id}/curhat', [Dass21AssessmentController::class, 'curhat'])->name('curhat');
+        Route::get('/session/{id}/curhat-done', [Dass21AssessmentController::class, 'curhatDone'])->name('curhat.done');
+
         Route::get('/session/{id}/result', [Dass21AssessmentController::class, 'result'])->name('result');
     });
+
+    Route::get('/premium', [PremiumController::class, 'index'])->name('premium.index');
 
     // Public (authenticated) penanganan detail
     Route::get('/penanganan/{slug}', [PenangananController::class,'showPublic'])->name('penanganan.show');
