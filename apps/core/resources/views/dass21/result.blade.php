@@ -38,11 +38,10 @@
                 <img src="{{ asset('storage/'.$p->cover_path) }}" class="h-32 w-full object-cover rounded mb-3" alt="{{ $p->nama_penanganan }}">
             @endif
             <h3 class="font-semibold text-lg mb-1">{{ $p->nama_penanganan }}</h3>
-            <p class="text-xs mb-2 text-gray-500">Kesulitan: {{ ucfirst($p->tingkat_kesulitan) }}</p>
-            <p class="text-sm line-clamp-3 mb-3">{{ Str::limit($p->deskripsi_penanganan,120) }}</p>
-            @if($p->durasi_detik)
-                <p class="text-xs text-gray-600 mb-2">Durasi ± {{ ceil($p->durasi_detik/60) }} menit</p>
+            @if(!empty($p->kelompok))
+                <p class="text-xs mb-2 text-gray-500">Kelompok: {{ ucfirst($p->kelompok) }}</p>
             @endif
+            <p class="text-sm line-clamp-3 mb-3">{{ Str::limit($p->deskripsi_penanganan,120) }}</p>
             <span class="mt-auto inline-flex items-center justify-center bg-indigo-600 text-white text-sm px-3 py-2 rounded">Lihat Detail</span>
         </a>
     @endforeach

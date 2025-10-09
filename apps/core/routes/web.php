@@ -6,6 +6,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Dass21AssessmentController; // added
 use App\Http\Controllers\Dass21ItemController;
 use App\Http\Controllers\PenangananController;
+use App\Http\Controllers\CurhatController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -42,6 +43,9 @@ Route::middleware('auth')->group(function () {
 
     // Public (authenticated) penanganan detail
     Route::get('/penanganan/{slug}', [PenangananController::class,'showPublic'])->name('penanganan.show');
+
+    // Curhat recording page
+    Route::get('/curhat/rekam', [CurhatController::class,'record'])->name('curhat.record');
 });
 
 // =========================================================

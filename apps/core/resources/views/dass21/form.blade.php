@@ -43,10 +43,10 @@
 
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             @foreach([
-              0 => 'Tidak Pernah',
-              1 => 'Kadang',
-              2 => 'Sering',
-              3 => 'Sangat Sering'
+              0 => 'Tidak sesuai dengan saya sama sekali',
+              1 => 'Sesuai dengan saya sampai taraf tertentu, atau kadang-kadang',
+              2 => 'Cukup sesuai dengan saya, atau sering kali',
+              3 => 'Sangat sesuai dengan saya, atau hampir sepanjang waktu'
             ] as $val => $label)
             <label class="flex items-center justify-center border border-gray-200 rounded-xl py-4 px-6 cursor-pointer bg-gray-50 hover:bg-blue-50 transition text-center">
               <input type="radio"

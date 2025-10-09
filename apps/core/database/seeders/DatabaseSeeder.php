@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
             Dass21ItemSeeder::class,
             PenangananSeeder::class,
+            KonsultanSeeder::class,
         ]);
     }
 }

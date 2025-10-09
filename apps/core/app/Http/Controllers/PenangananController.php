@@ -33,9 +33,6 @@ class PenangananController extends Controller
         if ($request->hasFile('cover')) {
             $data['cover_path'] = $request->file('cover')->store('penanganan','public');
         }
-        if ($request->hasFile('video_penanganan')) {
-            $data['video_penanganan'] = $request->file('video_penanganan')->store('penanganan/videos','public');
-        }
         Penanganan::create($data);
         return redirect()->route('admin.penanganan.index')->with('success','Penanganan dibuat.');
     }
@@ -51,10 +48,6 @@ class PenangananController extends Controller
         if ($request->hasFile('cover')) {
             if ($penanganan->cover_path) Storage::disk('public')->delete($penanganan->cover_path);
             $data['cover_path'] = $request->file('cover')->store('penanganan','public');
-        }
-        if ($request->hasFile('video_penanganan')) {
-            if ($penanganan->video_penanganan) Storage::disk('public')->delete($penanganan->video_penanganan);
-            $data['video_penanganan'] = $request->file('video_penanganan')->store('penanganan/videos','public');
         }
         $penanganan->update($data);
         return redirect()->route('admin.penanganan.index')->with('success','Penanganan diperbarui.');
@@ -76,13 +69,7 @@ class PenangananController extends Controller
         $penanganan = Penanganan::published()->where('slug',$slug)->firstOrFail();
         $steps = $penanganan->steps()->published()->get();
         $totalSteps = $steps->count();
-        $totalDuration = $totalSteps > 0
-            ? $steps->sum('durasi_detik')
-            : (int)($penanganan->durasi_detik ?? 0);
-        $tahapan = [];
-        if ($totalSteps === 0 && $penanganan->tahapan_penanganan) {
-            $tahapan = preg_split("/\r?\n/", $penanganan->tahapan_penanganan);
-        }
-        return view('penanganan.show', compact('penanganan','steps','totalSteps','totalDuration','tahapan'));
+        $totalDuration = $steps->sum('durasi_detik');
+        return view('penanganan.show', compact('penanganan','steps','totalSteps','totalDuration'));
     }
 }
