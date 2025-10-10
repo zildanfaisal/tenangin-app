@@ -9,7 +9,7 @@
 
     {{-- Gambar background --}}
     <img src="{{ asset('bg2.png') }}" alt="Curhat Background"
-         class="w-full h-[420px] md:h-[460px] object-cover">
+         class="w-full h-[400px] md:h-[400px] object-cover">
 
     {{-- Overlay teks dan tombol --}}
     <div class="absolute inset-0 flex flex-col justify-between px-10 md:px-16 py-10 text-white">
