@@ -44,6 +44,15 @@
         </div>
     </div>
 
+    @can('manajemen-konsultan')
+    <div class="mb-8">
+        <a href="{{ route('konsultan.create') }}"
+           class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium shadow-sm transition">
+           + Tambah Konsultan
+        </a>
+    </div>
+    @endcan
+
     {{-- 🔍 Search Bar + Button --}}
     <div class="flex flex-col md:flex-row items-center justify-between gap-4 mb-8">
         <div class="flex-1 flex items-center bg-white rounded-xl shadow-sm px-3 py-2 w-full">
@@ -143,6 +152,23 @@
                     class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg font-medium shadow-sm transition">
                     Hubungi Sekarang
                     </a>
+
+                    @can('manajemen-konsultan')
+                    <a href="{{ route('konsultan.edit', $konsultan->id) }}"
+                    class="ml-2 bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded-lg font-medium shadow-sm transition">
+                    Edit
+                    </a>
+
+                    <form action="{{ route('konsultan.destroy', $konsultan->id) }}" method="POST" class="inline">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit"
+                                class="ml-2 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-medium shadow-sm transition"
+                                onclick="return confirm('Yakin ingin menghapus konsultan ini?');">
+                            Hapus
+                        </button>
+                    </form>
+                    @endcan
                 </div>
             </div>
             @endforeach

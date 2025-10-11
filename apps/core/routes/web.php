@@ -4,11 +4,10 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\KonsultanController;
 use App\Http\Controllers\PremiumController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\Dass21AssessmentController; // added
+use App\Http\Controllers\Dass21AssessmentController;
 use App\Http\Controllers\Dass21ItemController;
 use App\Http\Controllers\PenangananController;
 use App\Http\Controllers\Admin\PenangananStepController;
-use App\Http\Controllers\CurhatController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -31,13 +30,16 @@ Route::middleware('auth')->group(function () {
     Route::get('/pemesanan-konsultasi', [KonsultanController::class, 'pemesanan'])
         ->name('konsultan.pemesanan');
     Route::get('/konsultan/{id}', [KonsultanController::class, 'detail'])
+        ->whereNumber('id')
         ->name('konsultan.detail');
 
     Route::post('/konsultan/{id}/pembayaran', [KonsultanController::class, 'pembayaran'])
+        ->whereNumber('id')
         ->name('konsultan.pembayaran');
 
     // Lihat detail konsultan
     Route::get('/konsultan/show/{id}', [KonsultanController::class, 'show'])
+        ->whereNumber('id')
         ->name('konsultan.show');
 
     // DASS-21 Routes
@@ -61,9 +63,6 @@ Route::middleware('auth')->group(function () {
 
     // Public (authenticated) penanganan detail
     Route::get('/penanganan/{slug}', [PenangananController::class,'showPublic'])->name('penanganan.show');
-
-    // Curhat recording page
-    Route::get('/curhat/rekam', [CurhatController::class,'record'])->name('curhat.record');
 });
 
 // =========================================================
@@ -87,14 +86,17 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
         ->middleware('permission:manajemen-konsultan');
 
     Route::get('/konsultan/edit/{id}', [KonsultanController::class, 'edit'])
+        ->whereNumber('id')
         ->name('konsultan.edit')
         ->middleware('permission:manajemen-konsultan');
 
     Route::put('/konsultan/update/{id}', [KonsultanController::class, 'update'])
+        ->whereNumber('id')
         ->name('konsultan.update')
         ->middleware('permission:manajemen-konsultan');
 
     Route::delete('/konsultan/destroy/{id}', [KonsultanController::class, 'destroy'])
+        ->whereNumber('id')
         ->name('konsultan.destroy')
         ->middleware('permission:manajemen-konsultan');
 

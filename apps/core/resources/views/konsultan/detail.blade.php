@@ -37,6 +37,8 @@
                     {{ $konsultan->deskripsi ?? 'Belum ada deskripsi tersedia untuk konsultan ini.' }}
                 </p>
 
+                <p class="text-gray-700 whitespace-pre-line">{{ $konsultan->jadwal_praktik }}</p>
+
                 {{-- 🔹 Form Jadwal Dinamis --}}
                 <form action="{{ route('konsultan.pembayaran', $konsultan->id) }}" method="POST" class="space-y-4">
                     @csrf

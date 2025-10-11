@@ -43,7 +43,18 @@ class PenangananRecommendationService
             default => null
         };
 
-        $query = Penanganan::published();
+        $query = Penanganan::published()
+            // Eager aggregate for published steps count and total duration
+            ->withCount([
+                'steps as steps_published_count' => function ($q) {
+                    $q->where('status', 'published');
+                }
+            ])
+            ->withSum([
+                'steps as durasi_published_sum' => function ($q) {
+                    $q->where('status', 'published');
+                }
+            ], 'durasi_detik');
         if ($kelompok) {
             $query->where('kelompok', $kelompok);
         }
