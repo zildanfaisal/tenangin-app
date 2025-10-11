@@ -93,62 +93,69 @@
     </p>
   </div>
 
-  {{-- 🔹 Rekomendasi Tindakan --}}
+  {{-- 🔹 Rekomendasi Tindakan (Dinamis dari Penanganan) --}}
   <div class="max-w-6xl mx-auto">
     <h3 class="text-lg md:text-xl font-bold text-gray-800 text-center mb-2">Rekomendasi Tindakan</h3>
     <p class="text-sm text-gray-600 text-center mb-8">
-      Untuk mengurangi stres dan kecemasan, cobalah aktivitas berikut ini.
+      Kami menyesuaikan rekomendasi berdasarkan hasil DASS-21 kamu. Coba salah satu program berikut ini.
     </p>
 
-    <div class="grid md:grid-cols-2 gap-6 md:gap-8">
-      {{-- Card 1 --}}
-      <div class="bg-white rounded-2xl shadow-md hover:shadow-xl transition-all p-5 md:p-6 flex flex-col">
-        <img src="{{ asset('activity1.png') }}" alt="DeepCalm" class="rounded-2xl mb-4 object-cover h-44 md:h-48 w-full">
-        <h4 class="font-bold text-base md:text-lg mb-1">DeepCalm Breath</h4>
-        <p class="text-xs md:text-sm text-gray-500 mb-2">Penanganan Stres — 4 Tahapan</p>
-        <p class="text-sm text-gray-700 flex-1">
-          Teknik pernapasan dalam yang membantu mengurangi ketegangan fisik dan mental dengan mengatur aliran oksigen ke tubuh.
-        </p>
-        <a href="#" class="mt-4 self-start bg-blue-700 hover:bg-blue-800 text-white text-xs md:text-sm px-4 py-2 rounded-full transition">
-          Lihat Aktivitas
-        </a>
-      </div>
+    @php
+      $cards = $penanganan ?? collect();
+    @endphp
 
-      {{-- Card 2 --}}
-      <div class="bg-white rounded-2xl shadow-md hover:shadow-xl transition-all p-5 md:p-6 flex flex-col">
-        <img src="{{ asset('activity2.png') }}" alt="AudioSoothe" class="rounded-2xl mb-4 object-cover h-44 md:h-48 w-full">
-        <h4 class="font-bold text-base md:text-lg mb-1">AudioSoothe</h4>
-        <p class="text-xs md:text-sm text-gray-500 mb-2">Penanganan Kecemasan — 2 Tahapan</p>
-        <p class="text-sm text-gray-700 flex-1">
-          Mendengarkan suara alam atau musik binaural yang membantu menenangkan pikiran dan mengurangi stres.
-        </p>
-        <a href="#" class="mt-4 self-start bg-blue-700 hover:bg-blue-800 text-white text-xs md:text-sm px-4 py-2 rounded-full transition">
-          Lihat Aktivitas
-        </a>
+    @if($cards->isEmpty())
+      <div class="bg-yellow-50 border border-yellow-200 text-yellow-800 rounded-xl p-4 max-w-3xl mx-auto text-sm">
+        Belum ada rekomendasi penanganan yang tersedia saat ini. Silakan kembali nanti.
       </div>
-    </div>
+    @else
+      <div class="grid md:grid-cols-2 gap-6 md:gap-8">
+        @foreach($cards as $item)
+          <div class="bg-white rounded-2xl shadow-md hover:shadow-xl transition-all p-5 md:p-6 flex flex-col">
+            <img src="{{ $item->cover_path ? asset('storage/'.$item->cover_path) : asset('activity1.png') }}" alt="{{ $item->nama_penanganan }}" class="rounded-2xl mb-4 object-cover h-44 md:h-48 w-full">
+            <h4 class="font-bold text-base md:text-lg mb-1">{{ $item->nama_penanganan }}</h4>
+            <p class="text-xs md:text-sm text-gray-500 mb-2">
+              Kelompok: <span class="capitalize">{{ $item->kelompok ?? '-' }}</span>
+              — {{ $item->steps_published_count ?? $item->steps()->published()->count() }} Tahapan
+              @php $dur = ($item->durasi_published_sum ?? $item->steps()->published()->sum('durasi_detik')) ?: 0; @endphp
+              — Durasi ± {{ ceil($dur/60) }} menit
+            </p>
+            <p class="text-sm text-gray-700 flex-1 line-clamp-3">
+              {{ str($item->deskripsi_penanganan)->limit(160) }}
+            </p>
+            <a href="{{ route('penanganan.show', $item->slug) }}" class="mt-4 self-start bg-blue-700 hover:bg-blue-800 text-white text-xs md:text-sm px-4 py-2 rounded-full transition">
+              Lihat Aktivitas
+            </a>
+          </div>
+        @endforeach
+      </div>
+    @endif
   </div>
 
-  {{-- 🔹 Rekomendasi Konsultan --}}
+  {{-- 🔹 Rekomendasi Konsultan Dinamis --}}
   <div class="max-w-4xl mx-auto mt-16 text-center">
     <h3 class="text-lg md:text-xl font-bold text-gray-800 mb-2">Rekomendasi Konsultan</h3>
     <p class="text-sm text-gray-600 mb-8">Jika merasa kondisimu belum membaik, cobalah untuk berkonsultasi dengan ahli.</p>
 
-    <div class="bg-white rounded-2xl shadow-md p-6 flex flex-col md:flex-row items-center justify-between gap-6 max-w-3xl mx-auto">
-      <div class="flex items-center gap-4 md:gap-5">
-        <img src="{{ asset('consul1.png') }}" alt="Konsultan" class="w-20 h-20 md:w-24 md:h-24 rounded-xl object-cover">
-        <div class="text-left">
-          <h5 class="text-base md:text-lg font-bold text-gray-800">Anggia Kirana Candra</h5>
-          <p class="text-sm text-gray-600">Terapis di Universitas Negeri Surabaya</p>
-          <span class="inline-block mt-2 px-3 py-1 bg-gray-100 text-gray-700 text-[11px] md:text-xs rounded-full">10 Tahun Pengalaman</span>
+    <div class="grid md:grid-cols-2 gap-6 md:gap-8 max-w-3xl mx-auto">
+      @forelse($konsultans as $konsultan)
+      <div class="bg-white rounded-2xl shadow-md p-6 flex flex-col md:flex-row items-center gap-6">
+        <img src="{{ $konsultan->foto ? asset($konsultan->foto) : asset('consul1.png') }}" alt="{{ $konsultan->nama_konsultan }}" class="w-20 h-20 md:w-24 md:h-24 rounded-xl object-cover">
+        <div class="text-left flex-1">
+          <h5 class="text-base md:text-lg font-bold text-gray-800">{{ $konsultan->nama_konsultan }}</h5>
+          <p class="text-sm text-gray-600">{{ $konsultan->spesialisasi }}</p>
+          <span class="inline-block mt-2 px-3 py-1 bg-gray-100 text-gray-700 text-[11px] md:text-xs rounded-full">{{ $konsultan->pengalaman }} Tahun Pengalaman</span>
           <div class="flex items-center gap-2 mt-2 text-xs md:text-sm text-gray-600">
-            Rp. 35.000 / 2 Sesi <span class="text-yellow-500">⭐</span> 5.0
+            Rp. {{ number_format($konsultan->harga,0,',','.') }} / 2 Sesi <span class="text-yellow-500">⭐</span> {{ number_format($konsultan->rating,1) }}
           </div>
         </div>
+        <a href="{{ route('konsultan.detail', $konsultan->id) }}" class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg text-xs md:text-sm font-semibold transition">
+          Hubungi Sekarang
+        </a>
       </div>
-      <a href="{{ route('konsultan.index') }}" class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg text-xs md:text-sm font-semibold transition">
-        Hubungi Sekarang
-      </a>
+      @empty
+      <div class="col-span-2 text-center text-gray-500 py-8">Belum ada konsultan tersedia.</div>
+      @endforelse
     </div>
 
     <div class="mt-10 flex justify-center gap-4">

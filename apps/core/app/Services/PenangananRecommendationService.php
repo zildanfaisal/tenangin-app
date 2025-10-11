@@ -35,17 +35,35 @@ class PenangananRecommendationService
 
         $severityRank = $highestKey['rank'] ?? 0;
 
-        $query = Penanganan::published();
+        // Map highest subscale to kelompok if available
+        $kelompok = match ($highestKey['k'] ?? null) {
+            'depresi' => 'depresi',
+            'anxiety' => 'anxiety',
+            'stres' => 'stres',
+            default => null
+        };
 
-        // Filter based on severity to keep initial interventions simple & safe
-        if ($severityRank >= 3) { // Severe / Extremely Severe -> easy calming only
-            $query->where('tingkat_kesulitan','mudah');
+        $query = Penanganan::published()
+            // Eager aggregate for published steps count and total duration
+            ->withCount([
+                'steps as steps_published_count' => function ($q) {
+                    $q->where('status', 'published');
+                }
+            ])
+            ->withSum([
+                'steps as durasi_published_sum' => function ($q) {
+                    $q->where('status', 'published');
+                }
+            ], 'durasi_detik');
+        if ($kelompok) {
+            $query->where('kelompok', $kelompok);
+        }
+
+        // Adjust the number of suggestions based on severity
+        if ($severityRank >= 3) { // Severe / Extremely Severe
             $limit = min($limit, 2);
         } elseif ($severityRank === 2) { // Moderate
-            $query->whereIn('tingkat_kesulitan',['mudah','sedang']);
             $limit = min($limit, 3);
-        } else { // Mild / Normal
-            // keep all difficulties, prioritize ordering
         }
 
         return $query->orderBy('ordering')->orderBy('id')->limit($limit)->get();

@@ -98,26 +98,22 @@
     @endforeach
   </div>
 
-  {{-- Grid card aktivitas --}}
-  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-    @foreach([
-      ['DeepCalm Breath','Penanganan Stres','5 Tahapan','Teknik pernapasan dalam yang membantu mengurangi ketegangan fisik dan mental dengan mengatur aliran oksigen ke tubuh.'],
-      ['MuscleEase Relax','Penanganan Stres','5 Tahapan','Relaksasi otot progresif yang melibatkan pengencangan dan pelepasan kelompok otot untuk melepaskan stres yang terakumulasi.'],
-      ['MindfulPause','Penanganan Anxiety','3 Tahapan','Meditasi kesadaran yang fokus pada napas dan sensasi saat ini untuk mengurangi pikiran cemas yang berputar-putar.'],
-      ['GroundSense Anchor','Penanganan Anxiety','5 Tahapan','Teknik grounding 5-4-3-2-1 yang mengarahkan indera untuk membawa pikiran kembali ke realitas dan meredakan serangan kecemasan.'],
-      ['GratitudeWalk','Penanganan Depresi','4 Tahapan','Jalan kaki disertai dengan pencatatan hal-hal yang disyukuri untuk meningkatkan mood dan mengurangi perasaan hampa.'],
-      ['AudioSoothe','Penanganan Kecemasan','3 Tahapan','Mendengarkan suara alam atau musik binaural yang dirancang untuk menurunkan detak jantung dan meredakan pikiran yang gelisah.']
-    ] as $k)
-    <div class="bg-white border border-gray-100 rounded-2xl shadow-sm hover:shadow-md transition p-4 flex flex-col">
-      <img src="{{ asset('dass.png') }}" class="rounded-lg mb-3 aspect-video object-cover">
-      <h4 class="font-semibold text-gray-800 mb-1">{{ $k[0] }}</h4>
-      <p class="text-xs text-gray-500 mb-1">{{ $k[1] }} • {{ $k[2] }}</p>
-      <p class="text-sm text-gray-600 flex-grow leading-relaxed">{{ $k[3] }}</p>
-      <button class="mt-4 px-4 py-2 bg-gray-100 hover:bg-indigo-100 text-indigo-600 text-sm font-medium rounded-lg transition">
-        Lihat Aktivitas
-      </button>
+  {{-- Grid card aktivitas dinamis dari Penanganan --}}
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      @foreach(($penanganan ?? collect()) as $p)
+      <div class="bg-white border border-gray-100 rounded-2xl shadow-sm hover:shadow-md transition p-4 flex flex-col">
+        <img src="{{ $p->cover_path ? asset('storage/'.$p->cover_path) : asset('dass.png') }}" class="rounded-lg mb-3 aspect-video object-cover">
+        <h4 class="font-semibold text-gray-800 mb-1">{{ $p->nama_penanganan }}</h4>
+        <p class="text-xs text-gray-500 mb-1">Penanganan {{ ucfirst($p->kelompok) }} • {{ $p->steps()->published()->count() }} Tahapan</p>
+        <p class="text-sm text-gray-600 flex-grow leading-relaxed">{{ str($p->deskripsi_penanganan)->limit(120) }}</p>
+        <a href="{{ route('penanganan.show', $p->slug) }}" class="mt-4 px-4 py-2 bg-gray-100 hover:bg-indigo-100 text-indigo-600 text-sm font-medium rounded-lg transition">
+          Lihat Aktivitas
+        </a>
+      </div>
+      @endforeach
+      @if(($penanganan ?? collect())->isEmpty())
+        <div class="col-span-3 text-center text-gray-500 py-8">Belum ada penanganan tersedia.</div>
+      @endif
     </div>
-    @endforeach
-  </div>
 </div>
 @endsection

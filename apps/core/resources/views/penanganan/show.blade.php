@@ -12,10 +12,12 @@
             'video' => $s->video_path ? asset('storage/'.$s->video_path) : null,
         ];
     }) : collect();
+    $totalSeconds = (isset($steps) && $steps->count()) ? $steps->sum('durasi_detik') : 0;
+    $totalSteps = (isset($steps) && $steps->count()) ? $steps->count() : 0;
 @endphp
 <div class="max-w-3xl mx-auto"
      x-data='penangananPlayer({
-        initial: {{ (int)($penanganan->durasi_detik ?? 0) }},
+        initial: 0,
         steps: @json($stepsPayload)
      })'>
     <nav class="mb-6 text-xs text-gray-500 flex items-center gap-1">
@@ -32,14 +34,17 @@
         <div class="flex-1">
             <h1 class="text-2xl font-bold mb-2 flex items-center gap-4">
                 {{ $penanganan->nama_penanganan }}
-                <template x-if="secondsTotal > 0">
-                    <span class="text-sm font-normal bg-indigo-50 text-indigo-700 px-2 py-1 rounded" x-text="display"></span>
+                <template x-if="multiStep && totalSeconds > 0">
+                    <span class="text-sm font-normal bg-indigo-50 text-indigo-700 px-2 py-1 rounded" x-text="overallDisplay"></span>
                 </template>
             </h1>
             <div class="flex flex-wrap gap-2 mb-4 text-xs">
-                <span class="px-2 py-1 bg-indigo-100 text-indigo-700 rounded">{{ ucfirst($penanganan->tingkat_kesulitan) }}</span>
-                @if($penanganan->durasi_detik)
-                    <span class="px-2 py-1 bg-gray-100 text-gray-700 rounded">Durasi ± {{ ceil($penanganan->durasi_detik/60) }} menit</span>
+                @if(!empty($penanganan->kelompok))
+                    <span class="px-2 py-1 bg-indigo-100 text-indigo-700 rounded">{{ ucfirst($penanganan->kelompok) }}</span>
+                @endif
+                @if($totalSteps > 0)
+                    <span class="px-2 py-1 bg-gray-100 text-gray-700 rounded">{{ $totalSteps }} langkah</span>
+                    <span class="px-2 py-1 bg-gray-100 text-gray-700 rounded">Total ± {{ ceil($totalSeconds/60) }} menit</span>
                 @endif
             </div>
             <p class="text-gray-700 leading-relaxed mb-4">{{ $penanganan->deskripsi_penanganan }}</p>
@@ -100,31 +105,6 @@
                 </div>
             </template>
         </div>
-    @else
-        {{-- SINGLE MODE (fallback) --}}
-        @if($penanganan->video_penanganan)
-            <div class="mt-8 flex flex-col items-center">
-                <h2 class="font-semibold mb-4 self-start">Video Panduan</h2>
-                <div class="w-72 md:w-96">
-                <video controls playsinline class="w-full rounded shadow"
-                       x-ref="vid"
-                       @ended="onVideoEnded()"
-                       @canplay="autoplayIfStarted()">
-                    <source src="{{ asset('storage/'.$penanganan->video_penanganan) }}" type="video/mp4">
-                    Browser kamu tidak mendukung video.
-                </video>
-                </div>
-                <div class="mt-4 flex justify-center" x-show="!started">
-                    <button @click="start()" class="px-6 py-2.5 bg-indigo-600 text-white rounded shadow hover:bg-indigo-700 focus:outline-none text-sm">Mulai Sekarang</button>
-                </div>
-                <div class="mt-4 flex items-center justify-center gap-4" x-show="started">
-                    <button @click="toggle()" x-text="paused ? 'Lanjutkan' : 'Jeda'" class="px-4 py-2 bg-amber-500 text-white rounded text-sm"></button>
-                    <button @click="reset()" class="px-4 py-2 bg-gray-500 text-white rounded text-sm">Reset</button>
-                    <span class="text-xs text-gray-600" x-show="completed">Selesai ✅</span>
-                </div>
-                <p class="text-xs text-gray-500 mt-2" x-show="started && !completed">Video akan otomatis mengulang sampai waktu habis.</p>
-            </div>
-        @endif
     @endif
 
     @if(isset($steps) && $steps->count() > 0)
@@ -149,35 +129,10 @@
                 @endforeach
             </ol>
         </div>
-    @else
-        <div class="mt-10">
-            <h2 class="font-semibold mb-3">Tahapan</h2>
-            <ol class="list-decimal list-inside space-y-2 text-sm">
-                @foreach($tahapan as $step)
-                    @if(strlen(trim($step)))
-                        <li>{{ $step }}</li>
-                    @endif
-                @endforeach
-            </ol>
-        </div>
-    @endif
-
-    @if($penanganan->tutorial_penanganan)
-        <div class="mt-10">
-            <h2 class="font-semibold mb-2">Tips / Tutorial Tambahan</h2>
-            <div class="p-4 bg-amber-50 border border-amber-200 rounded text-sm leading-relaxed">{!! nl2br(e($penanganan->tutorial_penanganan)) !!}</div>
-        </div>
     @endif
 
     <div class="mt-10 flex gap-3">
         <a href="{{ route('dass21.index') }}" class="px-4 py-2 bg-gray-600 text-white rounded">Kembali ke DASS-21</a>
-        <template x-if="!multiStep">
-            <button x-show="started" @click="ack()" :disabled="!completed"
-                :class="completed ? 'bg-green-600 hover:bg-green-700' : 'bg-green-300 cursor-not-allowed'"
-                class="px-4 py-2 text-white rounded transition">
-                Selesai
-            </button>
-        </template>
         <template x-if="multiStep">
             <button x-show="started" @click="finishAll()" :disabled="!completed" :class="completed ? 'bg-green-600 hover:bg-green-700' : 'bg-green-300 cursor-not-allowed'" class="px-4 py-2 text-white rounded transition">Selesai Semua</button>
         </template>

@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Dass21Session;
 use App\Models\Dass21Item;
 use App\Models\Dass21Response;
+use App\Models\Penanganan;
+use App\Models\Konsultan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Services\Dass21ScoringService;
@@ -15,7 +17,11 @@ class Dass21AssessmentController extends Controller
     public function index()
     {
         $sessions = Dass21Session::where('user_id', Auth::id())->latest()->paginate(10);
-        return view('dass21.index', compact('sessions'));
+        $penanganan = \App\Models\Penanganan::published()
+            ->orderBy('ordering')
+            ->orderByDesc('id')
+            ->get();
+        return view('dass21.index', compact('sessions', 'penanganan'));
     }
 
     public function intro()
@@ -96,8 +102,46 @@ class Dass21AssessmentController extends Controller
             return redirect()->route('dass21.form', $session->id);
         }
 
-        $penanganan = $recommender->forSession($session);
-        return view('dass21.result', compact('session', 'penanganan'));
+        // Determine highest-risk kelompok(s)
+        $rank = [
+            'Normal' => 0,
+            'Mild' => 1,
+            'Moderate' => 2,
+            'Severe' => 3,
+            'Extremely Severe' => 4,
+        ];
+        $subscales = [
+            'depresi' => $session->depresi_kelas,
+            'anxiety' => $session->anxiety_kelas,
+            'stres' => $session->stres_kelas,
+        ];
+        $severeKeys = collect($subscales)
+            ->filter(fn($kelas) => ($rank[$kelas] ?? 0) >= 3)
+            ->keys()->all();
+
+        if (count($severeKeys) === 1) {
+            // Only one severe/extreme: show only that kelompok
+            $penanganan = Penanganan::published()
+                ->where('kelompok', $severeKeys[0])
+                ->with('steps')
+                ->orderBy('ordering')
+                ->get();
+        } elseif (count($severeKeys) > 1) {
+            // Multiple severe/extreme: show all matching kelompok
+            $penanganan = Penanganan::published()
+                ->whereIn('kelompok', $severeKeys)
+                ->with('steps')
+                ->orderBy('ordering')
+                ->get();
+        } else {
+            // None severe/extreme: show all
+            $penanganan = Penanganan::published()
+                ->with('steps')
+                ->orderBy('ordering')
+                ->get();
+        }
+        $konsultans = Konsultan::orderByDesc('rating')->limit(3)->get();
+        return view('dass21.result', compact('session', 'penanganan', 'konsultans'));
     }
 
     // 🔹 Halaman Curhat Intro (tampilan biru seperti gambar)

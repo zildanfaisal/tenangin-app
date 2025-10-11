@@ -21,6 +21,7 @@ class DatabaseSeeder extends Seeder
             Dass21ItemSeeder::class,
             KonsultanSeeder::class,
             PenangananSeeder::class,
+            KonsultanSeeder::class,
         ]);
     }
 }

@@ -15,13 +15,9 @@ class Penanganan extends Model
         'nama_penanganan',
         'slug',
         'deskripsi_penanganan',
-        'tahapan_penanganan',
-        'tutorial_penanganan',
-        'video_penanganan',
+        'kelompok',
         'status',
-        'durasi_detik',
         'cover_path',
-        'tingkat_kesulitan',
         'ordering',
     ];
 
