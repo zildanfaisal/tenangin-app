@@ -44,4 +44,10 @@ return [
         'timeout' => env('PY_AI_TIMEOUT', 30),
     ],
 
+    'cekmutasi' => [
+        'key'     => env('CEKMUTASI_KEY'),
+        'account' => env('CEKMUTASI_ACCOUNT'),
+    ],
+
+
 ];

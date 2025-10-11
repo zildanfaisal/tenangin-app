@@ -32,7 +32,21 @@ Route::middleware('auth')->group(function () {
     Route::get('/konsultan/{id}', [KonsultanController::class, 'detail'])
         ->whereNumber('id')
         ->name('konsultan.detail');
+    // Halaman QR (tampilkan)
+    Route::get('/konsultan/{id}/bayar', [KonsultanController::class, 'qris'])
+        ->name('konsultan.bayar.qris');
 
+    // Endpoint polling status (diperlukan oleh pembayaran.blade.php)
+    Route::get('/konsultan/bayar/status', [KonsultanController::class, 'qrisStatus'])
+        ->name('konsultan.bayar.qris.status');
+
+    // Endpoint konfirmasi ketika QR di-scan (opsional, jika dipakai)
+    Route::get('/konsultan/confirm/{sid}', [KonsultanController::class, 'confirmByScan'])
+        ->name('konsultan.bayar.confirm');
+
+    // Halaman sukses
+    Route::get('/konsultan/bayar/sukses', [KonsultanController::class, 'qrisSukses'])
+        ->name('konsultan.bayar.sukses');
     Route::post('/konsultan/{id}/pembayaran', [KonsultanController::class, 'pembayaran'])
         ->whereNumber('id')
         ->name('konsultan.pembayaran');
