@@ -30,6 +30,15 @@
                     <span class="bg-green-50 text-green-700 border border-green-200 px-3 py-1 rounded-full text-sm font-medium">
                         Rp. {{ number_format($konsultan->harga, 0, ',', '.') }} / 2 Sesi
                     </span>
+                    @if($konsultan->kategori === 'konselor')
+                    <span class="bg-fuchsia-50 text-fuchsia-700 border border-fuchsia-200 px-3 py-1 rounded-full text-sm font-medium capitalize">
+                        {{ $konsultan->kategori }}
+                    </span>
+                    @else
+                    <span class="bg-rose-50 text-rose-700 border border-rose-200 px-3 py-1 rounded-full text-sm font-medium capitalize">
+                        {{ $konsultan->kategori }}
+                    </span>
+                    @endif
                 </div>
 
                 {{-- 🔹 Deskripsi --}}

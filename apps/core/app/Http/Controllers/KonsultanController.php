@@ -12,9 +12,35 @@ use Illuminate\Support\Str;
 
 class KonsultanController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $konsultans = Konsultan::latest()->paginate(10);
+        $query = Konsultan::query();
+
+        // Filter pencarian nama
+        if ($request->filled('search')) {
+            $query->where('nama_konsultan', 'like', '%' . $request->search . '%');
+        }
+        // Filter kategori
+        if ($request->filled('kategori')) {
+            $query->where('kategori', $request->kategori);
+        }
+        // Filter jenis kelamin
+        if ($request->filled('jenis_kelamin')) {
+            $query->where('jenis_kelamin', $request->jenis_kelamin);
+        }
+        // Filter harga
+        if ($request->filled('min_price')) {
+            $query->where('harga', '>=', $request->min_price);
+        }
+        if ($request->filled('max_price')) {
+            $query->where('harga', '<=', $request->max_price);
+        }
+        // Filter rating
+        if ($request->filled('min_rating')) {
+            $query->where('rating', '>=', $request->min_rating);
+        }
+
+        $konsultans = $query->latest()->paginate(10);
         return view('konsultan.index', compact('konsultans'));
     }
 
@@ -34,6 +60,8 @@ class KonsultanController extends Controller
             'jadwal_praktik' => 'nullable|string',
             'harga' => 'nullable|numeric|min:0',
             'rating' => 'nullable|numeric|min:0|max:5',
+            'jenis_kelamin' => 'nullable|in:L,P',
+            'kategori' => 'required|in:konselor,konsultan',
         ]);
 
         if ($request->hasFile('foto')) {
@@ -76,6 +104,8 @@ class KonsultanController extends Controller
             'jadwal_praktik' => 'nullable|string',
             'harga' => 'nullable|numeric|min:0',
             'rating' => 'nullable|numeric|min:0|max:5',
+            'jenis_kelamin' => 'nullable|in:L,P',
+            'kategori' => 'required|in:konselor,konsultan',
         ]);
 
         $konsultan = Konsultan::findOrFail($id);

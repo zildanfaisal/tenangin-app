@@ -8,18 +8,18 @@
             'urutan' => $s->urutan,
             'durasi_detik' => $s->durasi_detik,
             'judul' => $s->judul,
-            'instruksi' => $s->instruksi,
+            'deskripsi' => $s->deskripsi,
             'video' => $s->video_path ? asset('storage/'.$s->video_path) : null,
         ];
     }) : collect();
     $totalSeconds = (isset($steps) && $steps->count()) ? $steps->sum('durasi_detik') : 0;
     $totalSteps = (isset($steps) && $steps->count()) ? $steps->count() : 0;
 @endphp
-<div class="max-w-3xl mx-auto"
-     x-data='penangananPlayer({
-        initial: 0,
-        steps: @json($stepsPayload)
-     })'>
+<div class="max-w-7xl mx-auto"
+      x-data='penangananPlayer({
+          initial: 0,
+          steps: @json($stepsPayload)
+      })'>
     <nav class="mb-6 text-xs text-gray-500 flex items-center gap-1">
         <a href="/dashboard" class="hover:text-indigo-600">Dashboard</a>
         <span>/</span>
@@ -27,115 +27,124 @@
         <span>/</span>
         <span class="text-gray-700 font-medium">{{ $penanganan->nama_penanganan }}</span>
     </nav>
-    <div class="flex flex-col md:flex-row gap-6">
-        @if($penanganan->cover_path)
-            <img src="{{ asset('storage/'.$penanganan->cover_path) }}" alt="Cover" class="w-full md:w-56 h-56 object-cover rounded shadow">
-        @endif
-        <div class="flex-1">
-            <h1 class="text-2xl font-bold mb-2 flex items-center gap-4">
-                {{ $penanganan->nama_penanganan }}
-                <template x-if="multiStep && totalSeconds > 0">
-                    <span class="text-sm font-normal bg-indigo-50 text-indigo-700 px-2 py-1 rounded" x-text="overallDisplay"></span>
-                </template>
-            </h1>
-            <div class="flex flex-wrap gap-2 mb-4 text-xs">
-                @if(!empty($penanganan->kelompok))
-                    <span class="px-2 py-1 bg-indigo-100 text-indigo-700 rounded">{{ ucfirst($penanganan->kelompok) }}</span>
-                @endif
-                @if($totalSteps > 0)
-                    <span class="px-2 py-1 bg-gray-100 text-gray-700 rounded">{{ $totalSteps }} langkah</span>
-                    <span class="px-2 py-1 bg-gray-100 text-gray-700 rounded">Total ± {{ ceil($totalSeconds/60) }} menit</span>
-                @endif
-            </div>
-            <p class="text-gray-700 leading-relaxed mb-4">{{ $penanganan->deskripsi_penanganan }}</p>
+
+    <!-- Intro Screen -->
+    <div x-show="!started" 
+        class="flex flex-col md:flex-row items-center md:items-start justify-center max-w-6xl mx-auto p-6 gap-10">
+
+        <!-- Kolom Kiri: Gambar -->
+        <div class="w-full md:w-1/2 flex justify-center">
+            <img src="{{ asset('img/cover-penanganan.png') }}" 
+                alt="Cover" 
+                class="w-96 h-96 md:w-96 md:h-96 object-contain">
+        </div>
+
+        <!-- Kolom Kanan: Informasi -->
+        <div class="w-full md:w-1/2 flex flex-col justify-center items-center md:items-start">
+            <h1 class="text-3xl font-bold mb-3 text-gray-800">{{ $penanganan->nama_penanganan }}</h1>
+            <p class="text-sm text-gray-500 mb-2">Penanganan {{ $penanganan->kelompok ?? 'Umum' }} - {{ $totalSteps }} Tahapan</p>
+
+            <p class="text-gray-700 leading-relaxed mb-5">
+                {{ $penanganan->deskripsi_penanganan }}
+            </p>
+
+            <button @click="start()" 
+                    class="px-6 py-3 bg-indigo-600 text-white font-semibold rounded-md shadow hover:bg-indigo-700 transition">
+                Ayo Mulai
+            </button>
+
+            <p class="mt-4 text-xs italic text-gray-400">
+                Reference: The Science of a Single Breath: How Breathing Calms Your Brain (And How to Practice It)
+            </p>
         </div>
     </div>
 
-    {{-- MULTI-STEP MODE --}}
-    @if(isset($steps) && $steps->count() > 0)
-        <div class="mt-10">
-            <div class="mb-6">
-                <h2 class="font-semibold mb-2 flex items-center gap-3">Tahapan (Multi-step)
-                    <span class="text-xs font-normal text-gray-500" x-show="multiStep" x-text="`Step ${currentIndex+1} / ${steps.length}`"></span>
-                </h2>
-                <div class="w-full h-2 bg-gray-200 rounded overflow-hidden">
-                    <div class="h-full bg-indigo-500 transition-all" :style="`width: ${progressPercent}%`"></div>
-                </div>
-                <div class="mt-2 text-xs text-gray-600" x-show="multiStep">
-                    <span x-text="overallDisplay"></span>
-                    <span class="mx-2">•</span>
-                    <span>Remaining step: <span x-text="stepDisplay"></span></span>
-                </div>
-            </div>
-
-            <template x-if="multiStep">
-                <div class="space-y-6">
-                    <div class="p-4 border rounded bg-white shadow-sm">
-                        <h3 class="font-medium text-sm text-indigo-600 mb-1" x-text="currentStep.judul ? currentStep.judul : `Langkah ${currentIndex+1}`"></h3>
-                        <p class="text-gray-700 text-sm whitespace-pre-line" x-text="currentStep.instruksi"></p>
-                    </div>
-
+    <!-- Multi-step Mode (Simple, No Timer) -->
+    <template x-if="started && multiStep && !finished">
+        <div class="mt-10 flex flex-col items-center justify-center">
+            <div class="flex flex-col md:flex-row items-center justify-center gap-10">
+                <!-- Kolom Kiri: Gambar/Video -->
+                <div class="w-full md:w-1/2 flex justify-center">
                     <template x-if="currentStep.video">
-                        <div class="flex flex-col items-center">
-                            <div class="w-72 md:w-96">
-                                <video playsinline class="w-full rounded shadow"
-                                       :key="currentStep.id"
-                                       x-ref="vid"
-                                       @ended="onVideoEnded()"
-                                       @canplay="autoplayIfStarted()">
+                        <div class="w-full flex flex-col items-center">
+                            <div class="w-96 h-96 md:w-96 md:h-96 flex items-center justify-center">
+                                <video 
+                                    playsinline 
+                                    class="w-full h-full"
+                                    :key="currentStep.id"
+                                    x-ref="vid"
+                                    autoplay
+                                    muted
+                                    loop
+                                    x-effect="vidLoad(currentStep.video)">
                                     <source :src="currentStep.video" type="video/mp4">
                                     Browser kamu tidak mendukung video.
                                 </video>
                             </div>
-                            <div class="mt-4 flex flex-wrap gap-3 justify-center">
-                                <button x-show="!started" @click="start()" class="px-6 py-2.5 bg-indigo-600 text-white rounded shadow hover:bg-indigo-700 focus:outline-none text-sm">Mulai</button>
-                                <template x-if="started">
-                                    <div class="flex flex-wrap gap-3 items-center justify-center">
-                                        <button @click="prevStep()" :disabled="currentIndex===0" :class="currentIndex===0 ? 'bg-gray-300 cursor-not-allowed' : 'bg-gray-600 hover:bg-gray-700'" class="px-3 py-2 text-white rounded text-xs">Prev</button>
-                                        <button @click="toggle()" x-text="paused ? 'Lanjutkan' : 'Jeda'" class="px-4 py-2 bg-amber-500 text-white rounded text-xs"></button>
-                                        <button @click="nextStep()" :disabled="!stepFinished || isLastStep" :class="(!stepFinished || isLastStep) ? 'bg-gray-300 cursor-not-allowed' : 'bg-indigo-600 hover:bg-indigo-700'" class="px-3 py-2 text-white rounded text-xs">Next</button>
-                                        <button @click="reset()" class="px-3 py-2 bg-gray-500 text-white rounded text-xs">Reset</button>
-                                        <button x-show="isLastStep" @click="finishAll()" :disabled="!completed" :class="completed ? 'bg-green-600 hover:bg-green-700' : 'bg-green-300 cursor-not-allowed'" class="px-3 py-2 text-white rounded text-xs">Selesai</button>
-                                    </div>
-                                </template>
-                            </div>
-                            <p class="text-xs text-gray-500 mt-3" x-show="started && !completed">Video akan mengulang otomatis sampai durasi langkah habis.</p>
                         </div>
                     </template>
                 </div>
-            </template>
-        </div>
-    @endif
 
-    @if(isset($steps) && $steps->count() > 0)
-        <div class="mt-10" x-show="multiStep">
-            <h2 class="font-semibold mb-3">Daftar Langkah</h2>
-            <ol class="list-decimal list-inside space-y-1 text-sm">
-                @foreach($steps as $s)
-                    <li class="flex items-start gap-2 cursor-pointer group"
-                        @click="goTo({{ $loop->index }})"
-                        :class="currentIndex === {{ $loop->index }} ? 'font-semibold text-indigo-700' : 'hover:text-indigo-600'">
-                        <span>
-                            @if(!empty($s->judul))
-                                {{ $s->judul }}
-                            @elseif(trim($s->instruksi) !== '')
-                                {{ \Illuminate\Support\Str::limit($s->instruksi,60) }}
-                            @else
-                                {{ 'Langkah '.$loop->iteration }}
-                            @endif
-                        </span>
-                        <span class="text-[10px] text-gray-500 group-hover:text-indigo-500">(~{{ ceil($s->durasi_detik/60) }}m)</span>
-                    </li>
-                @endforeach
-            </ol>
-        </div>
-    @endif
+                <!-- Kolom Kanan: Info Tahapan -->
+                <div class="w-full md:w-1/2 text-center md:text-left flex flex-col justify-center">
+                    <h1 class="text-2xl font-bold mb-2 text-gray-800" 
+                        x-text="currentStep.judul ? currentStep.judul : penangananName"></h1>
 
-    <div class="mt-10 flex gap-3">
-        <a href="{{ route('dass21.index') }}" class="px-4 py-2 bg-gray-600 text-white rounded">Kembali ke DASS-21</a>
-        <template x-if="multiStep">
-            <button x-show="started" @click="finishAll()" :disabled="!completed" :class="completed ? 'bg-green-600 hover:bg-green-700' : 'bg-green-300 cursor-not-allowed'" class="px-4 py-2 text-white rounded transition">Selesai Semua</button>
-        </template>
+                    <!-- Progress bar hanya muncul di step mode -->
+                    <p class="text-sm text-gray-500 mb-2">
+                        <span x-text="`${currentIndex+1}/${steps.length} Tahapan`"></span>
+                    </p>
+                    <template x-if="started && multiStep">
+                        <div class="w-full bg-gray-200 rounded-full h-2.5 mb-2">
+                            <div class="bg-blue-500 h-2.5 rounded-full transition-all duration-300"
+                                :style="`width: ${(currentIndex+1)/steps.length*100}%`"></div>
+                        </div>
+                    </template>
+
+                    <p class="text-gray-700 leading-relaxed mb-5" x-text="currentStep.deskripsi"></p>
+
+                    <!-- Tombol dibuat 2 kolom -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 w-full">
+                        <button 
+                            @click="nextStep()" 
+                            :disabled="false"
+                            :class="[
+                                'px-6 py-3 text-white font-semibold rounded-md shadow transition disabled:opacity-50 disabled:cursor-not-allowed',
+                                isLastStep ? 'bg-green-600 hover:bg-green-700' : 'bg-indigo-600 hover:bg-indigo-700'
+                            ]"
+                        >
+                            <span x-show="!isLastStep">Lanjutkan</span>
+                            <span x-show="isLastStep">Selesai</span>
+                        </button>
+
+                        <button 
+                            @click="prevStep()" 
+                            :disabled="currentIndex===0" 
+                            class="px-6 py-3 bg-gray-200 text-gray-700 font-semibold rounded-md shadow hover:bg-gray-300 transition disabled:opacity-50 disabled:cursor-not-allowed">
+                            Kembali
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <!-- Finish Screen -->
+    <div x-show="finished" class="flex flex-col md:flex-row items-center justify-center max-w-6xl mx-auto p-6 gap-10">
+        <!-- Gambar maskot -->
+        <div class="w-full md:w-1/2 flex justify-center">
+            <img src="{{ asset('img/cover-finish-penanganan.png') }}" alt="Mascot" class="w-96 h-96 md:w-96 md:h-96 object-contain">
+        </div>
+        <!-- Konten kanan -->
+        <div class="w-full md:w-1/2 flex flex-col justify-center items-center md:items-start">
+            <h2 class="text-3xl font-bold text-gray-800 mb-3">Hebat!</h2>
+            <p class="text-gray-700 mb-4">Kamu sudah berhasil menyelesaikan <span class="font-semibold">{{ $penanganan->nama_penanganan }}</span>.<br>
+            Setiap napas tenang yang kamu ambil adalah langkah kecil menuju keseimbangan dan ketenangan batin. Terus pertahankan rutinitas ini untuk mendukung kesejahteraan mentalmu.</p>
+            <div class="flex gap-4">
+                <a href="{{ route('dass21.index') }}" class="px-6 py-3 bg-blue-600 text-white font-semibold rounded-md shadow hover:bg-blue-700 transition">Rekomendasi Lainnya</a>
+                <a href="/dashboard" class="px-6 py-3 bg-gray-100 text-gray-700 font-semibold rounded-md shadow hover:bg-gray-200 transition">Menu Utama</a>
+            </div>
+        </div>
     </div>
 </div>
 @endsection
@@ -144,177 +153,35 @@
 <script>
     document.addEventListener('alpine:init', () => {
         window.penangananPlayer = ({initial, steps}) => ({
-            // Mode flags
             multiStep: Array.isArray(steps) && steps.length > 0,
-            // Single mode state
-            secondsTotal: initial || 0,
-            remaining: initial || 0,
-            // Multi-step collections
             steps: steps || [],
             currentIndex: 0,
-            stepRemaining: 0,
-            totalSeconds: 0,
-            overallRemaining: 0,
-            stepFinished: false,
-            // Common state
-            interval: null,
             started: false,
-            paused: false,
-            completed: false,
-            // Computed (single)
-            get display(){
-                if(this.multiStep) return this.overallDisplay; // fallback
-                const m = Math.floor(this.remaining / 60).toString().padStart(2,'0');
-                const s = (this.remaining % 60).toString().padStart(2,'0');
-                return `${m}:${s}`;
-            },
-            // Computed (multi-step)
+            finished: false,
             get currentStep(){ return this.steps[this.currentIndex] || {}; },
             get isLastStep(){ return this.currentIndex === this.steps.length - 1; },
-            get progressPercent(){
-                if(!this.multiStep || !this.totalSeconds) return 0;
-                const elapsed = this.totalSeconds - this.overallRemaining;
-                return ((elapsed / this.totalSeconds) * 100).toFixed(1);
-            },
-            get stepDisplay(){
-                const m = Math.floor(this.stepRemaining / 60).toString().padStart(2,'0');
-                const s = (this.stepRemaining % 60).toString().padStart(2,'0');
-                return `${m}:${s}`;
-            },
-            get overallDisplay(){
-                const m = Math.floor(this.overallRemaining / 60).toString().padStart(2,'0');
-                const s = (this.overallRemaining % 60).toString().padStart(2,'0');
-                return `${m}:${s}`;
-            },
-            // Init
-            init(){
-                if(this.multiStep){
-                    this.totalSeconds = this.steps.reduce((t,s)=>t + (s.durasi_detik||0),0);
-                    this.overallRemaining = this.totalSeconds;
-                    this.stepRemaining = this.steps[0]?.durasi_detik || 0;
-                }
-            },
-            // Start
-            start(){
-                if(this.multiStep){
-                    if(!this.totalSeconds){ this.totalSeconds = 300; this.overallRemaining = 300; }
+            get penangananName(){ return this.steps.length ? this.steps[0].judul || '' : '' },
+            start(){ this.started = true; this.finished = false; this.playVideo(); },
+            nextStep(){
+                if(!this.isLastStep) {
+                    this.currentIndex++;
+                    this.playVideo();
                 } else {
-                    if(!this.secondsTotal){ this.secondsTotal = 300; this.remaining = 300; }
-                }
-                this.started = true; this.paused = false; this.completed = false; this.stepFinished=false;
-                this.tick();
-                this.playVideo();
-            },
-            // Timer loop
-            tick(){
-                if(this.interval) clearInterval(this.interval);
-                this.interval = setInterval(()=>{
-                    if(this.paused) return;
-                    if(this.multiStep){
-                        if(this.stepRemaining > 0){
-                            this.stepRemaining--; this.overallRemaining--; 
-                            if(this.stepRemaining === 0){
-                                this.stepFinished = true;
-                                if(this.isLastStep){
-                                    this.completed = true; clearInterval(this.interval); this.stopVideo(); this.notify();
-                                } else {
-                                    // auto advance after 1s pause
-                                    setTimeout(()=>{ this.nextStep(true); }, 800);
-                                }
-                            }
-                        }
-                    } else {
-                        if(this.remaining > 0){
-                            this.remaining--;
-                        } else {
-                            this.completed = true; clearInterval(this.interval); this.stopVideo(); this.notify();
-                        }
-                    }
-                },1000);
-            },
-            // Navigation (multi-step)
-            nextStep(auto=false){
-                if(!this.multiStep) return;
-                if(!this.stepFinished && !auto) return;
-                if(this.isLastStep) return;
-                this.currentIndex++; this.loadStep();
-            },
-            prevStep(){
-                if(!this.multiStep) return;
-                if(this.currentIndex === 0) return;
-                this.currentIndex--; this.loadStep();
-            },
-            loadStep(){
-                this.stepFinished = false;
-                this.stepRemaining = this.currentStep.durasi_detik || 0;
-                this.playVideo();
-            },
-            goTo(i){
-                if(!this.multiStep) return;
-                if(i < 0 || i >= this.steps.length) return;
-                // Prevent jumping forward before finishing current step
-                if(i > this.currentIndex && !this.stepFinished) return;
-                this.currentIndex = i;
-                this.loadStep();
-            },
-            finishAll(){
-                if(!this.multiStep){ return this.ack(); }
-                if(!this.completed) return;
-                this.ack();
-            },
-            // Controls
-            toggle(){
-                this.paused = !this.paused;
-                if(this.paused){ this.pauseVideo(); } else { this.playVideo(true); }
-            },
-            reset(){
-                clearInterval(this.interval);
-                if(this.multiStep){
-                    this.currentIndex = 0;
-                    this.overallRemaining = this.totalSeconds;
-                    this.stepRemaining = this.steps[0]?.durasi_detik || 0;
-                } else {
-                    this.remaining = this.secondsTotal;
-                }
-                this.paused=false; this.completed=false; this.started=false; this.stepFinished=false;
-                this.stopVideo(true);
-            },
-            // Single-mode acknowledgment
-            ack(){
-                if(!this.completed) return;
-                this.toast('Latihan ditandai selesai. Bagus!');
-            },
-            // Video helpers
-            playVideo(resume=false){
-                const v = this.$refs.vid; if(!v) return;
-                if(!resume){ v.currentTime = 0; try{ v.load(); }catch(e){} }
-                const p = v.play(); if(p && p.catch){ p.catch(()=>{}); }
-            },
-            pauseVideo(){ const v = this.$refs.vid; if(v) v.pause(); },
-            stopVideo(reset=false){ const v = this.$refs.vid; if(v){ v.pause(); if(reset) v.currentTime = 0; } },
-            onVideoEnded(){
-                if(!this.completed && !this.paused){ this.playVideo(); }
-            },
-            autoplayIfStarted(){ if(this.started && !this.paused && !this.completed) this.playVideo(true); },
-            // Notifications
-            notify(){
-                if('Notification' in window){
-                    if(Notification.permission === 'granted'){
-                        new Notification('Latihan selesai',{ body: 'Bagus! Kamu telah menyelesaikan sesi.' });
-                    } else if(Notification.permission !== 'denied'){
-                        Notification.requestPermission();
-                    }
+                    this.finished = true;
                 }
             },
-            // Toast util
-            toast(msg){
-                let el = document.createElement('div');
-                el.textContent = msg;
-                el.className = 'fixed bottom-5 right-5 bg-green-600 text-white text-sm px-4 py-2 rounded shadow';
-                document.body.appendChild(el);
-                setTimeout(()=>{ el.classList.add('opacity-0','transition'); },2500);
-                setTimeout(()=>{ el.remove(); },3200);
-            }
+            prevStep(){ if(this.currentIndex > 0) { this.currentIndex--; this.playVideo(); } },
+            finishAll(){ this.started = false; this.currentIndex = 0; this.finished = false; },
+            playVideo(){
+                this.$nextTick(() => {
+                    const v = this.$refs.vid; if(v) { v.currentTime = 0; v.load(); v.play(); }
+                });
+            },
+            vidLoad(src){
+                this.$nextTick(() => {
+                    const v = this.$refs.vid; if(v) { v.load(); v.play(); }
+                });
+            },
         })
     })
 </script>

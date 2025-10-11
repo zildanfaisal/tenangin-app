@@ -16,8 +16,11 @@ class Dass21AssessmentController extends Controller
 {
     public function index()
     {
-        $sessions = Dass21Session::where('user_id', Auth::id())->latest()->paginate(10);
-        $penanganan = \App\Models\Penanganan::published()
+        $sessions = Dass21Session::where('user_id', Auth::id())
+            ->whereNotNull('completed_at')
+            ->latest()
+            ->paginate(10);
+        $penanganan = Penanganan::published()
             ->orderBy('ordering')
             ->orderByDesc('id')
             ->get();
@@ -115,26 +118,20 @@ class Dass21AssessmentController extends Controller
             'anxiety' => $session->anxiety_kelas,
             'stres' => $session->stres_kelas,
         ];
+        // Ambil semua kelompok dengan nilai Severe atau Extremely Severe (>= 3)
         $severeKeys = collect($subscales)
             ->filter(fn($kelas) => ($rank[$kelas] ?? 0) >= 3)
             ->keys()->all();
 
-        if (count($severeKeys) === 1) {
-            // Only one severe/extreme: show only that kelompok
-            $penanganan = Penanganan::published()
-                ->where('kelompok', $severeKeys[0])
-                ->with('steps')
-                ->orderBy('ordering')
-                ->get();
-        } elseif (count($severeKeys) > 1) {
-            // Multiple severe/extreme: show all matching kelompok
+        if (count($severeKeys) > 0) {
+            // Jika ada Severe/Extremely Severe, tampilkan semua yang memenuhi
             $penanganan = Penanganan::published()
                 ->whereIn('kelompok', $severeKeys)
                 ->with('steps')
                 ->orderBy('ordering')
                 ->get();
         } else {
-            // None severe/extreme: show all
+            // Jika tidak ada Severe/Extremely Severe, tampilkan semua
             $penanganan = Penanganan::published()
                 ->with('steps')
                 ->orderBy('ordering')

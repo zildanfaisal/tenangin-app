@@ -51,13 +51,12 @@
         </div>
 
         <div class="border border-gray-200 rounded-xl p-4 flex flex-col items-center justify-center h-32">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-            stroke-width="2" stroke="currentColor" class="w-7 h-7 text-indigo-600 mb-1">
-            <path stroke-linecap="round" stroke-linejoin="round"
-                d="M12 18.75a6.75 6.75 0 100-13.5 6.75 6.75 0 000 13.5zM12 18.75v3.75M12 1.5v3.75" />
+          <p class="text-sm text-gray-600">5 Menit</p>
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" 
+                stroke-width="2" stroke="currentColor" class="w-7 h-7 text-indigo-600 mb-1 mt-1">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
-            <p class="text-sm text-gray-600">Sesi Curhat</p>
-
+          <p class="text-sm text-gray-600">Sesi Curhat</p>
         </div>
         </div>
 

@@ -51,6 +51,19 @@
                             @enderror
                         </div>
 
+                        <!-- Jenis Kelamin -->
+                        <div>
+                            <label for="jenis_kelamin" class="block text-sm font-medium text-gray-700">Jenis Kelamin</label>
+                            <select name="jenis_kelamin" id="jenis_kelamin" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                <option value="">Pilih Jenis Kelamin</option>
+                                <option value="L" {{ old('jenis_kelamin', $konsultan->jenis_kelamin) == 'L' ? 'selected' : '' }}>Laki-laki</option>
+                                <option value="P" {{ old('jenis_kelamin', $konsultan->jenis_kelamin) == 'P' ? 'selected' : '' }}>Perempuan</option>
+                            </select>
+                            @error('jenis_kelamin')
+                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
+                        </div>
+
                         <!-- Deskripsi -->
                         <div>
                             <label for="deskripsi" class="block text-sm font-medium text-gray-700">Deskripsi</label>
@@ -68,6 +81,19 @@
                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                                    value="{{ old('spesialisasi', $konsultan->spesialisasi) }}" required>
                             @error('spesialisasi')
+                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <!-- Kategori -->
+                        <div>
+                            <label for="kategori" class="block text-sm font-medium text-gray-700">Kategori</label>
+                            <select name="kategori" id="kategori" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
+                                <option value="">Pilih Kategori</option>
+                                <option value="konselor" {{ old('kategori', $konsultan->kategori) == 'konselor' ? 'selected' : '' }}>Konselor</option>
+                                <option value="konsultan" {{ old('kategori', $konsultan->kategori) == 'konsultan' ? 'selected' : '' }}>Konsultan</option>
+                            </select>
+                            @error('kategori')
                                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                             @enderror
                         </div>

@@ -23,7 +23,7 @@ class UpdatePenangananRequest extends FormRequest
             'deskripsi_penanganan' => 'required|string',
             'kelompok' => 'required|in:depresi,stres,anxiety',
             'status' => 'required|in:draft,published',
-            'cover' => 'nullable|image|max:2048',
+            'cover' => 'nullable|image|max:5000',
             'ordering' => 'nullable|integer|min:0',
         ];
     }

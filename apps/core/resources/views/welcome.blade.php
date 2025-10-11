@@ -117,14 +117,6 @@
 </section>
 
 {{-- ================= PRICING ================= --}}
-<section id="pricing" class="bg-white py-16 md:py-24">
-    <div class="container mx-auto px-6 md:px-12">
-        <div class="text-center mb-12">
-            <h2 class="text-4xl md:text-5xl font-bold text-gray-800">Cerita Sepuasnya?</h2>
-            <p class="mt-4 text-lg text-gray-500 max-w-3xl mx-auto">
-                Temukan tingkat dukungan yang tepat untuk Anda. Apakah Anda butuh ruang untuk sekadar memulai, konsistensi untuk terus bertumbuh, atau solusi menyeluruh untuk sebuah tim? Pilihan ada di tangan Anda.
-            </p>
-        </div>
 
 <section id="pricing" class="bg-white py-16 md:py-24">
     <div class="container mx-auto px-6 md:px-12">
@@ -170,7 +162,7 @@
                         </li>
                     </ul>
                 </div>
-                <a href="#" class="mt-8 w-full text-center bg-[#0B0A5A] hover:bg-indigo-800 text-white font-semibold py-3 px-6 rounded-lg transition-colors">Dapatkan Sekarang</a>
+                <a href="{{ route('login') }}" class="mt-8 w-full text-center bg-[#0B0A5A] hover:bg-indigo-800 text-white font-semibold py-3 px-6 rounded-lg transition-colors">Dapatkan Sekarang</a>
             </div>
 
             {{-- Pro Plan --}}
@@ -206,7 +198,7 @@
                         </li>
                     </ul>
                 </div>
-                <a href="#" class="mt-8 w-full text-center bg-[#0B0A5A] hover:bg-indigo-800 text-white font-semibold py-3 px-6 rounded-lg transition-colors">Dapatkan Sekarang</a>
+                <a href="{{ route('login') }}" class="mt-8 w-full text-center bg-[#0B0A5A] hover:bg-indigo-800 text-white font-semibold py-3 px-6 rounded-lg transition-colors">Dapatkan Sekarang</a>
             </div>
 
             {{-- Business Plan --}}
@@ -242,13 +234,10 @@
                         </li>
                     </ul>
                 </div>
-                <a href="#" class="mt-8 w-full text-center bg-[#0B0A5A] hover:bg-indigo-800 text-white font-semibold py-3 px-6 rounded-lg transition-colors">Hubungi Kontak</a>
+                <a href="http://wa.me/+62895379669588" class="mt-8 w-full text-center bg-[#0B0A5A] hover:bg-indigo-800 text-white font-semibold py-3 px-6 rounded-lg transition-colors">Hubungi Kontak</a>
             </div>
 
         </div>
-    </div>
-</section>
-
     </div>
 </section>
 
@@ -328,7 +317,7 @@
             Tenangin dapat beradaptasi dengan berbagai situasi kesehatan mental. Mari diskusikan kebutuhan spesifik Anda dengan tim ahli kami.
         </p>
         <div class="mt-8">
-            <a href="#" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-8 rounded-lg transition-colors text-lg">Konsultasi Sekarang</a>
+            <a href="https://docs.google.com/forms/d/e/1FAIpQLSc7kIDLkh9vQwNfMCXv5ibHGaZYSLgo70n7IS7I91b_JRdOGg/viewform" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-8 rounded-lg transition-colors text-lg">Konsultasi Sekarang</a>
         </div>
     </div>
 </section>

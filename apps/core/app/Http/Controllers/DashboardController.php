@@ -15,7 +15,9 @@ class DashboardController extends Controller
     $user = Auth::user();
 
         // Statistik DASS-21
-        $assesmentCount = Dass21Session::where('user_id', $user->id)->count();
+        $assesmentCount = Dass21Session::where('user_id', $user->id)
+            ->whereNotNull('completed_at')
+            ->count();
         $lastSession = Dass21Session::where('user_id', $user->id)
             ->whereNotNull('completed_at')
             ->latest('completed_at')
