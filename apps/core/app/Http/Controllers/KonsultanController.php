@@ -5,8 +5,10 @@ namespace App\Http\Controllers;
 use App\Models\Konsultan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Str;
 
 class KonsultanController extends Controller
 {
@@ -35,7 +37,6 @@ class KonsultanController extends Controller
         ]);
 
         if ($request->hasFile('foto')) {
-            // Buat folder jika belum ada
             if (!File::exists(public_path('uploads/konsultan'))) {
                 File::makeDirectory(public_path('uploads/konsultan'), 0755, true);
             }
@@ -80,12 +81,10 @@ class KonsultanController extends Controller
         $konsultan = Konsultan::findOrFail($id);
 
         if ($request->hasFile('foto')) {
-            // Hapus foto lama jika ada
             if ($konsultan->foto && File::exists(public_path($konsultan->foto))) {
                 File::delete(public_path($konsultan->foto));
             }
 
-            // Buat folder jika belum ada
             if (!File::exists(public_path('uploads/konsultan'))) {
                 File::makeDirectory(public_path('uploads/konsultan'), 0755, true);
             }
@@ -106,7 +105,6 @@ class KonsultanController extends Controller
     {
         $konsultan = Konsultan::findOrFail($id);
 
-        // Hapus foto jika ada
         if ($konsultan->foto && File::exists(public_path($konsultan->foto))) {
             File::delete(public_path($konsultan->foto));
         }
@@ -117,7 +115,7 @@ class KonsultanController extends Controller
             ->with('success', 'Konsultan berhasil dihapus.');
     }
 
-        public function riwayat()
+    public function riwayat()
     {
         $riwayat = [
             [
@@ -142,13 +140,11 @@ class KonsultanController extends Controller
             ],
         ];
 
-        // Kirim data dummy ke view
         return view('konsultan.riwayat', compact('riwayat'));
     }
 
     public function pemesanan()
     {
-        // 🔹 Data statis sementara
         $pemesanan = [
             [
                 'nama' => 'Anggia Kirana Candra',
@@ -179,7 +175,6 @@ class KonsultanController extends Controller
 
     public function detail($id)
     {
-        // Ambil data konsultan dari database
         $konsultan = Konsultan::findOrFail($id);
 
         $ulasan = [
@@ -202,15 +197,87 @@ class KonsultanController extends Controller
     {
         $konsultan = Konsultan::findOrFail($id);
 
-        // Data dikirim via POST dari form Ajukan Jadwal
         $tanggal = $request->input('tanggal');
         $jam = $request->input('jam');
 
-        $user = Auth::user();
-
-        return view('konsultan.pembayaran', compact('konsultan', 'tanggal', 'jam', 'user'));
+        return redirect()->route('konsultan.bayar.qris', [
+            'id' => $konsultan->id,
+            'tanggal' => $tanggal,
+            'jam' => $jam,
+        ]);
     }
 
+    public function qris($id, Request $r)
+    {
+        $konsultan = Konsultan::findOrFail($id);
 
+        $tanggal = $r->query('tanggal');
+        $jam     = $r->query('jam');
+        $user    = Auth::user();
 
+        $sid = (string) Str::uuid();
+        $token = Str::random(48);
+
+        $suffixRupiah = random_int(111, 999);
+        $totalBayar = (int) $konsultan->harga + $suffixRupiah;
+
+        Cache::put("pay:$sid", [
+            'konsultan_id' => $konsultan->id,
+            'total' => $totalBayar,
+            'token' => $token,
+            'created_at' => now()->toISOString(),
+            'paid' => false,
+            'user_id' => $user?->id,
+        ], now()->addMinutes(30));
+
+        $confirmUrl = route('konsultan.bayar.confirm', ['sid' => $sid]) . '?token=' . $token;
+        $qrImage = 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=' . urlencode($confirmUrl);
+
+        return view('konsultan.pembayaran', compact(
+            'konsultan','tanggal','jam','sid','totalBayar','qrImage','user'
+        ));
+    }
+
+    public function qrisStatus(Request $r)
+    {
+        $sid = $r->query('sid');
+        if (!$sid) {
+            return response()->json(['paid' => false, 'error' => 'missing_sid']);
+        }
+
+        $session = Cache::get("pay:$sid");
+        if (!$session) {
+            return response()->json(['paid' => false, 'error' => 'session_not_found']);
+        }
+
+        $paidFlag = Cache::get("pay:$sid:paid", false);
+        $paid = (bool) ($paidFlag || ($session['paid'] ?? false));
+
+        return response()->json(['paid' => $paid]);
+    }
+
+    public function confirmByScan($sid, Request $request)
+    {
+        $token = $request->query('token');
+
+        $session = Cache::get("pay:$sid");
+        if (!$session) {
+            return redirect()->route('konsultan.bayar.sukses')->with('error', 'Session pembayaran tidak ditemukan atau sudah kedaluwarsa.');
+        }
+
+        if (!isset($session['token']) || !hash_equals($session['token'], (string)$token)) {
+            return redirect()->route('konsultan.bayar.sukses')->with('error', 'Token konfirmasi tidak valid.');
+        }
+
+        $session['paid'] = true;
+        Cache::put("pay:$sid", $session, now()->addHours(1));
+        Cache::put("pay:$sid:paid", true, now()->addHours(1));
+
+        return redirect()->route('konsultan.bayar.sukses')->with('success', 'Pembayaran berhasil dikonfirmasi melalui QR scan.');
+    }
+
+    public function qrisSukses()
+    {
+        return view('konsultan.pembayaran_sukses');
+    }
 }
