@@ -3,70 +3,76 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use App\Models\Konsultan;
+use Illuminate\Support\Facades\DB;
 
 class KonsultanSeeder extends Seeder
 {
+    /**
+     * Jalankan seeder untuk tabel konsultan.
+     */
     public function run(): void
     {
-        $items = [
+        DB::table('konsultan')->insert([
             [
-                'nama_konsultan' => 'Dr. Andi Pratama, M.Psi., Psikolog',
-                'foto' => null,
-                'deskripsi' => 'Psikolog klinis dengan fokus pada terapi kognitif perilaku (CBT) untuk kecemasan dan depresi.',
+                'nama_konsultan' => 'Anggia Kirana Candra',
+                'foto' => 'images/konsultan/anggia.jpg',
+                'deskripsi' => 'Terapis di Universitas Negeri Surabaya, berpengalaman menangani kecemasan dan burnout.',
                 'spesialisasi' => 'Psikolog Klinis',
-                'pengalaman' => 8,
-                'jadwal_praktik' => 'Senin-Jumat 09:00-17:00 WIB',
-                'harga' => 200000,
-                'rating' => 4.8,
-            ],
-            [
-                'nama_konsultan' => 'Nadia Kusuma, S.Psi., M.Psi',
-                'foto' => null,
-                'deskripsi' => 'Berpengalaman menangani stres kerja dan burnout, menggunakan pendekatan mindfulness & ACT.',
-                'spesialisasi' => 'Kesehatan Mental Kerja',
-                'pengalaman' => 6,
-                'jadwal_praktik' => 'Selasa-Kamis 13:00-20:00 WIB',
-                'harga' => 180000,
-                'rating' => 4.7,
-            ],
-            [
-                'nama_konsultan' => 'Budi Santoso, M.Psi., Psikolog',
-                'foto' => null,
-                'deskripsi' => 'Fokus pada intervensi kecemasan sosial dan peningkatan keterampilan komunikasi.',
-                'spesialisasi' => 'Kecemasan Sosial',
-                'pengalaman' => 5,
-                'jadwal_praktik' => 'Rabu-Sabtu 10:00-18:00 WIB',
-                'harga' => 150000,
-                'rating' => 4.6,
-            ],
-            [
-                'nama_konsultan' => 'dr. Rina Astuti, Sp.KJ',
-                'foto' => null,
-                'deskripsi' => 'Spesialis kejiwaan, kolaborasi terapi dan farmakoterapi sesuai kebutuhan pasien.',
-                'spesialisasi' => 'Psikiatri',
                 'pengalaman' => 10,
-                'jadwal_praktik' => 'Senin, Rabu, Jumat 16:00-21:00 WIB',
-                'harga' => 300000,
-                'rating' => 4.9,
+                'jadwal_praktik' => 'Senin - Jumat, 09:00 - 17:00 WIB',
+                'harga' => 35000,
+                'rating' => 5.0,
+                'created_at' => now(),
+                'updated_at' => now(),
             ],
             [
-                'nama_konsultan' => 'Sari Dewi, S.Psi',
-                'foto' => null,
-                'deskripsi' => 'Konselor dengan pendekatan solution-focused brief therapy untuk masalah hubungan.',
-                'spesialisasi' => 'Konseling Relasi',
-                'pengalaman' => 4,
-                'jadwal_praktik' => 'Kamis-Minggu 12:00-20:00 WIB',
-                'harga' => 120000,
-                'rating' => 4.5,
+                'nama_konsultan' => 'Citra Rahmadani',
+                'foto' => 'images/konsultan/citra.jpg',
+                'deskripsi' => 'Konselor profesional dengan pengalaman di bidang pengembangan diri dan trauma healing.',
+                'spesialisasi' => 'Konselor Psikologi',
+                'pengalaman' => 8,
+                'jadwal_praktik' => 'Selasa - Sabtu, 10:00 - 18:00 WIB',
+                'harga' => 45000,
+                'rating' => 4.8,
+                'created_at' => now(),
+                'updated_at' => now(),
             ],
-        ];
-
-        foreach ($items as $it) {
-            Konsultan::updateOrCreate(
-                ['nama_konsultan' => $it['nama_konsultan']],
-                $it
-            );
-        }
+            [
+                'nama_konsultan' => 'Rizky Ardiansyah',
+                'foto' => 'images/konsultan/rizky.jpg',
+                'deskripsi' => 'Psikolog industri dan organisasi yang fokus pada keseimbangan kerja dan kesehatan mental.',
+                'spesialisasi' => 'Psikolog Industri',
+                'pengalaman' => 7,
+                'jadwal_praktik' => 'Senin - Kamis, 13:00 - 20:00 WIB',
+                'harga' => 50000,
+                'rating' => 4.9,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'nama_konsultan' => 'Dewi Maharani',
+                'foto' => 'images/konsultan/dewi.jpg',
+                'deskripsi' => 'Ahli terapi perilaku kognitif untuk mengatasi stres, kecemasan, dan depresi ringan.',
+                'spesialisasi' => 'Psikoterapis',
+                'pengalaman' => 9,
+                'jadwal_praktik' => 'Rabu - Minggu, 08:00 - 16:00 WIB',
+                'harga' => 40000,
+                'rating' => 4.7,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'nama_konsultan' => 'Andra Yuliana',
+                'foto' => 'images/konsultan/andra.jpg',
+                'deskripsi' => 'Konselor keluarga dan hubungan interpersonal dengan pendekatan empatik.',
+                'spesialisasi' => 'Konselor Keluarga',
+                'pengalaman' => 6,
+                'jadwal_praktik' => 'Senin - Jumat, 10:00 - 18:00 WIB',
+                'harga' => 38000,
+                'rating' => 4.5,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+        ]);
     }
 }

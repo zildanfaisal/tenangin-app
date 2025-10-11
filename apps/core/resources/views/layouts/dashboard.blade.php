@@ -25,59 +25,83 @@
 
             <!-- Menu -->
             <nav class="flex-1 mt-3 space-y-2 px-2 overflow-y-auto">
+
+                {{-- Dashboard --}}
                 <a href="{{ route('dashboard') }}"
-                   class="flex items-center space-x-3 px-3 py-2 rounded-lg font-semibold transition-all
-                   {{ request()->routeIs('dashboard') ? 'bg-blue-100/50 text-blue-600' : 'hover:bg-blue-50 hover:text-blue-600' }}">
+                class="flex items-center space-x-3 px-3 py-2 rounded-lg font-medium transition-all
+                {{ request()->routeIs('dashboard')
+                        ? 'bg-blue-100 text-blue-600 shadow-sm font-semibold'
+                        : 'text-gray-700 hover:bg-blue-50 hover:text-blue-600' }}">
                     <i class="fa-solid fa-house {{ request()->routeIs('dashboard') ? 'text-blue-600' : 'text-gray-400' }}"></i>
                     <span x-show="sidebarOpen" x-transition>Dashboard</span>
                 </a>
 
+                {{-- Layanan / Dass21 --}}
                 <a href="{{ route('dass21.index') }}"
-                   class="flex items-center space-x-3 px-3 py-2 rounded-lg transition-all
-                   {{ request()->routeIs('dass21.*') ? 'bg-blue-100/50 text-blue-600 font-semibold' : 'hover:bg-blue-50 hover:text-blue-600' }}">
+                class="flex items-center space-x-3 px-3 py-2 rounded-lg font-medium transition-all
+                {{ request()->routeIs('dass21.*')
+                        ? 'bg-blue-100 text-blue-600 shadow-sm font-semibold'
+                        : 'text-gray-700 hover:bg-blue-50 hover:text-blue-600' }}">
                     <i class="fa-solid fa-heart-pulse {{ request()->routeIs('dass21.*') ? 'text-blue-600' : 'text-gray-400' }}"></i>
                     <span x-show="sidebarOpen" x-transition>Layanan</span>
                 </a>
 
+                {{-- CMS Dass21 --}}
                 @can('manajemen-curhat')
                 <a href="{{ route('admin.dass21-items.index') }}"
-                   class="flex items-center space-x-3 px-3 py-2 rounded-lg transition-all
-                   {{ request()->routeIs('admin.dass21-items.*') ? 'bg-blue-100/50 text-blue-600 font-semibold' : 'hover:bg-blue-50 hover:text-blue-600' }}">
+                class="flex items-center space-x-3 px-3 py-2 rounded-lg font-medium transition-all
+                {{ request()->routeIs('admin.dass21-items.*')
+                        ? 'bg-blue-100 text-blue-600 shadow-sm font-semibold'
+                        : 'text-gray-700 hover:bg-blue-50 hover:text-blue-600' }}">
                     <i class="fa-solid fa-database {{ request()->routeIs('admin.dass21-items.*') ? 'text-blue-600' : 'text-gray-400' }}"></i>
                     <span x-show="sidebarOpen" x-transition>CMS Dass21</span>
                 </a>
 
+                {{-- CMS Penanganan --}}
                 <a href="{{ route('admin.penanganan.index') }}"
-                   class="flex items-center space-x-3 px-3 py-2 rounded-lg transition-all
-                   {{ request()->routeIs('admin.penanganan.*') ? 'bg-blue-100/50 text-blue-600 font-semibold' : 'hover:bg-blue-50 hover:text-blue-600' }}">
+                class="flex items-center space-x-3 px-3 py-2 rounded-lg font-medium transition-all
+                {{ request()->routeIs('admin.penanganan.*')
+                        ? 'bg-blue-100 text-blue-600 shadow-sm font-semibold'
+                        : 'text-gray-700 hover:bg-blue-50 hover:text-blue-600' }}">
                     <i class="fa-solid fa-gears {{ request()->routeIs('admin.penanganan.*') ? 'text-blue-600' : 'text-gray-400' }}"></i>
                     <span x-show="sidebarOpen" x-transition>CMS Penanganan</span>
                 </a>
                 @endcan
 
+                {{-- Konsultasi --}}
                 <a href="{{ route('konsultan.index') }}"
-                   class="flex items-center space-x-3 px-3 py-2 rounded-lg transition-all
-                   {{ request()->routeIs('konsultan.index') ? 'bg-blue-100/50 text-blue-600 font-semibold' : 'hover:bg-blue-50 hover:text-blue-600' }}">
-                    <i class="fa-solid fa-comments {{ request()->routeIs('konsultan.index') ? 'text-blue-600' : 'text-gray-400' }}"></i>
+                class="flex items-center space-x-3 px-3 py-2 rounded-lg font-medium transition-all
+                {{ request()->routeIs('konsultan.*')
+                        ? 'bg-blue-100 text-blue-600 shadow-sm font-semibold'
+                        : 'text-gray-700 hover:bg-blue-50 hover:text-blue-600' }}">
+                    <i class="fa-solid fa-comments {{ request()->routeIs('konsultan.*') ? 'text-blue-600' : 'text-gray-400' }}"></i>
                     <span x-show="sidebarOpen" x-transition>Konsultasi</span>
                 </a>
 
+                {{-- Penanganan --}}
                 @can('manajemen-penanganan')
                 <a href="#"
-                   class="flex items-center space-x-3 px-3 py-2 rounded-lg transition-all
-                   {{ request()->routeIs('penanganan.*') ? 'bg-blue-100/50 text-blue-600 font-semibold' : 'hover:bg-blue-50 hover:text-blue-600' }}">
+                class="flex items-center space-x-3 px-3 py-2 rounded-lg font-medium transition-all
+                {{ request()->routeIs('penanganan.*')
+                        ? 'bg-blue-100 text-blue-600 shadow-sm font-semibold'
+                        : 'text-gray-700 hover:bg-blue-50 hover:text-blue-600' }}">
                     <i class="fa-solid fa-hand-holding-heart {{ request()->routeIs('penanganan.*') ? 'text-blue-600' : 'text-gray-400' }}"></i>
                     <span x-show="sidebarOpen" x-transition>Penanganan</span>
                 </a>
                 @endcan
 
-                <a href="#"
-                   class="flex items-center space-x-3 px-3 py-2 rounded-lg transition-all
-                   {{ request()->routeIs('user.*') ? 'bg-blue-100/50 text-blue-600 font-semibold' : 'hover:bg-blue-50 hover:text-blue-600' }}">
+                {{-- User --}}
+                <a href="{{ route('user.index') }}"
+                class="flex items-center space-x-3 px-3 py-2 rounded-lg font-medium transition-all
+                {{ request()->routeIs('user.*')
+                        ? 'bg-blue-100 text-blue-600 shadow-sm font-semibold'
+                        : 'text-gray-700 hover:bg-blue-50 hover:text-blue-600' }}">
                     <i class="fa-solid fa-user {{ request()->routeIs('user.*') ? 'text-blue-600' : 'text-gray-400' }}"></i>
                     <span x-show="sidebarOpen" x-transition>User</span>
                 </a>
+
             </nav>
+
 
             <!-- 🔹 Upgrade Box -->
             <div class="p-4 mt-auto border-t border-gray-100">
@@ -128,9 +152,6 @@
                     </button>
                     <div x-show="open" @click.away="open = false"
                         class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
-                        <a href="{{ route('profile.edit') }}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">
-                            <i class="fa-solid fa-user"></i> Profile
-                        </a>
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
                             <button type="submit" class="w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100">

@@ -20,13 +20,21 @@ Route::middleware('auth')->group(function () {
         ->name('dashboard')
         ->middleware('permission:view-dashboard');
 
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::get('/user/edit', [ProfileController::class, 'edit'])->name('user.edit');
+    Route::patch('/user/update', [ProfileController::class, 'update'])->name('user.update');
+    Route::delete('/user', [ProfileController::class, 'destroy'])->name('user.destroy');
 
     // Akses user ke daftar konsultan
     Route::get('/konsultan', [KonsultanController::class, 'index'])
         ->name('konsultan.index');
+    Route::get('/riwayat-konsultasi', [KonsultanController::class, 'riwayat'])->name('konsultan.riwayat');
+    Route::get('/pemesanan-konsultasi', [KonsultanController::class, 'pemesanan'])
+        ->name('konsultan.pemesanan');
+    Route::get('/konsultan/{id}', [KonsultanController::class, 'detail'])
+        ->name('konsultan.detail');
+
+    Route::post('/konsultan/{id}/pembayaran', [KonsultanController::class, 'pembayaran'])
+        ->name('konsultan.pembayaran');
 
     // Lihat detail konsultan
     Route::get('/konsultan/show/{id}', [KonsultanController::class, 'show'])
@@ -48,6 +56,8 @@ Route::middleware('auth')->group(function () {
     });
 
     Route::get('/premium', [PremiumController::class, 'index'])->name('premium.index');
+
+    Route::get('/user', [ProfileController::class, 'index'])->name('user.index');
 
     // Public (authenticated) penanganan detail
     Route::get('/penanganan/{slug}', [PenangananController::class,'showPublic'])->name('penanganan.show');
