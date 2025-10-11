@@ -15,13 +15,24 @@
 
       {{-- Header & progress --}}
       <div class="flex items-center justify-between mb-4">
-        <a href="{{ route('dass21.index') }}" class="text-gray-500 hover:text-indigo-600 flex items-center gap-1 text-sm font-medium">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-            stroke-width="2" stroke="currentColor" class="w-4 h-4">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
-          </svg>
-          Asesmen
-        </a>
+        @php
+          $prevItem = null;
+          if (($current ?? 1) > 1) {
+            $prevItem = $items[$current-2] ?? null;
+          }
+        @endphp
+        @if($prevItem)
+          <a href="{{ route('dass21.form', ['id' => $session->id, 'item' => $prevItem->id]) }}"
+             class="text-gray-500 hover:text-indigo-600 flex items-center gap-1 text-sm font-medium">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+              stroke-width="2" stroke="currentColor" class="w-4 h-4">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+            </svg>
+            Sebelumnya
+          </a>
+        @else
+          <span></span>
+        @endif
         <p class="text-sm text-gray-600"><span class="font-semibold">{{ $current ?? 1 }}</span>/21</p>
       </div>
 
@@ -49,7 +60,8 @@
                       value="{{ $val }}"
                       class="accent-blue-600 mr-3 hidden peer"
                       @checked(isset($existing[$item->id]) && (int)$existing[$item->id] === $val)
-                      required>
+                      required
+                      onchange="this.form.submit()">
                 <span class="text-sm md:text-base text-gray-700 peer-checked:text-blue-700 font-medium">
                   {{ $val }} - {{ $label }}
                 </span>
@@ -59,12 +71,14 @@
         </div>
 
         {{-- Tombol --}}
+        @if(($current ?? 1) == 21)
         <div class="flex justify-end mt-8">
           <button type="submit"
                   class="px-8 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition">
-            {{ ($current ?? 1) < 21 ? 'Selanjutnya' : 'Selesai' }}
+            Selesai
           </button>
         </div>
+        @endif
       </form>
     </div>
   </div>

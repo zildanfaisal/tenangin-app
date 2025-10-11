@@ -16,7 +16,7 @@
 
 <div class="overflow-x-auto bg-white shadow rounded">
 <table class="w-full text-sm">
-    <thead class="bg-gray-100">
+    <thead class="bg-gray-100 text-center">
         <tr>
             <th class="p-2">#</th>
             <th class="p-2 text-left">Nama</th>
@@ -26,11 +26,11 @@
             <th class="p-2">Aksi</th>
         </tr>
     </thead>
-    <tbody>
+    <tbody class="text-center">
     @forelse($items as $it)
         <tr class="border-t hover:bg-gray-50">
             <td class="p-2">{{ $it->id }}</td>
-            <td class="p-2">
+            <td class="p-2 text-left">
                 <span class="font-medium">{{ $it->nama_penanganan }}</span><br>
                 <span class="text-xs text-gray-500">{{ $it->slug }}</span>
             </td>

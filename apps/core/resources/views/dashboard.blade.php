@@ -13,7 +13,7 @@
             <p class="text-sm mt-1 max-w-md">
                 Hari ini adalah kesempatan baru untuk merawat diri. Mari lihat bagaimana kondisi mental Anda dan apa yang bisa kita lakukan bersama.
             </p>
-            <a href="{{ route('dass21.index') }}" class="mt-3 bg-white text-blue-700 font-semibold px-4 py-2 rounded-lg hover:bg-blue-100 transition w-fit">
+            <a href="{{ route('dass21.intro') }}" class="mt-3 bg-white text-blue-700 font-semibold px-4 py-2 rounded-lg hover:bg-blue-100 transition w-fit">
                 Lakukan Assessment
             </a>
         </div>
@@ -52,9 +52,9 @@
         <div class="bg-white shadow rounded-lg p-6">
             <div class="flex justify-between items-center mb-2">
                 <h3 class="font-semibold text-gray-800">Hasil Analisis Terakhir</h3>
-                <button class="flex items-center text-sm text-blue-600 hover:underline">
+                <a href="{{ route('dass21.index') }}#riwayat-asesmen" class="flex items-center text-sm text-blue-600 hover:underline">
                     <i class="fa-solid fa-clock-rotate-left mr-1"></i> History
-                </button>
+                </a>
             </div>
             <p class="text-xs text-gray-500 mb-3">
                 @if($lastSession)
@@ -65,13 +65,7 @@
             </p>
             <div class="text-sm text-gray-700 space-y-2 leading-relaxed">
                 <p>
-                    Hasil analisis bulan menunjukkan kalau kamu mengalami kecemasan ringan. Gejala seperti merasa khawatir, susah tidur, atau mudah tegang masih bisa dikendalikan dengan kebiasaan positif.
-                </p>
-                <p>
-                    Biasanya, kecemasan muncul akibat pikiran negatif yang berulang, tekanan pekerjaan, kurang istirahat, atau faktor lingkungan. Penting untuk mengenali pemicu agar lebih mudah menanganinya.
-                </p>
-                <p>
-                    Coba latihan relaksasi napas, olahraga ringan, atau journaling untuk menenangkan pikiran. Jika diperlukan, sesi konseling dengan psikolog juga bisa membantu menemukan solusi yang tepat.
+                    Belum ada analisis assessment
                 </p>
             </div>
         </div>

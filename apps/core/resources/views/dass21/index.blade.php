@@ -24,7 +24,7 @@
     <div class="mt-4 text-xs text-white/80 flex items-center gap-1">
         <span>Kesempatan: <strong>2</strong></span>
         <span class="mx-2">|</span>
-        <a href="#" class="text-white font-semibold hover:underline">Upgrade Kesempatan</a>
+        <a href="{{ route('premium.index') }}" class="text-white font-semibold hover:underline">Upgrade Kesempatan</a>
     </div>
     </div>
 
@@ -43,7 +43,7 @@
 </div>
 
 {{-- ================= RIWAYAT ASESMEN ================= --}}
-<div class="mb-12">
+<div id="riwayat-asesmen" class="mb-12">
   <div class="flex items-center justify-between mb-3">
     <h3 class="text-lg font-semibold text-gray-800">Riwayat Asesmen</h3>
     <a href="#" class="text-sm text-indigo-600 hover:underline">Selengkapnya</a>
@@ -84,36 +84,62 @@
 </div>
 
 {{-- ================= KONTEN PENANGANAN AWAL ================= --}}
-<div>
-  <h3 class="text-lg font-semibold text-gray-800 mb-6">Konten Penanganan Awal</h3>
+<div x-data="{ activeTab: 'All' }" x-cloak>
+  @php
+      $kategoriList = $penanganan->pluck('kelompok')->unique();
+  @endphp
 
-  {{-- Tabs kategori --}}
-  <div class="flex gap-3 mb-8 border-b border-gray-200">
-    @foreach(['Stress','Anxiety','Depresi','Kecemasan','Burnout','PTSD'] as $kategori)
+  {{-- Tabs --}}
+  <div class="flex flex-wrap gap-3 mb-8 border-b border-gray-200">
+    {{-- Tab All --}}
+    <button
+      @click="activeTab = 'All'"
+      :class="activeTab === 'All' 
+        ? 'bg-white border border-b-0 border-gray-200 text-indigo-600 shadow-sm' 
+        : 'text-gray-500 hover:text-indigo-600 hover:bg-gray-50'"
+      class="px-4 py-2 text-sm font-medium rounded-t-lg transition">
+      All
+    </button>
+
+    {{-- Tab per kategori --}}
+    @foreach($kategoriList as $kategori)
       <button
-        class="px-4 py-2 text-sm font-medium rounded-t-lg
-        {{ $loop->first ? 'bg-white border border-b-0 border-gray-200 text-indigo-600 shadow-sm' : 'text-gray-500 hover:text-indigo-600 hover:bg-gray-50' }}">
-        {{ $kategori }}
+        @click="activeTab = '{{ $kategori }}'"
+        :class="activeTab === '{{ $kategori }}' 
+          ? 'bg-white border border-b-0 border-gray-200 text-indigo-600 shadow-sm' 
+          : 'text-gray-500 hover:text-indigo-600 hover:bg-gray-50'"
+        class="px-4 py-2 text-sm font-medium rounded-t-lg transition">
+        {{ ucfirst($kategori) }}
       </button>
     @endforeach
   </div>
 
-  {{-- Grid card aktivitas dinamis dari Penanganan --}}
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-      @foreach(($penanganan ?? collect()) as $p)
-      <div class="bg-white border border-gray-100 rounded-2xl shadow-sm hover:shadow-md transition p-4 flex flex-col">
+  {{-- Cards --}}
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+    @foreach($penanganan as $p)
+      <div 
+        x-show="activeTab === 'All' || activeTab === '{{ $p->kelompok }}'"
+        x-transition:enter="transition ease-out duration-300"
+        x-transition:enter-start="opacity-0 translate-y-2 scale-95"
+        x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+        x-transition:leave="transition ease-in duration-200"
+        x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+        x-transition:leave-end="opacity-0 translate-y-2 scale-95"
+        x-cloak
+        class="bg-white border border-gray-100 rounded-2xl shadow-sm hover:shadow-md transition p-4 flex flex-col">
         <img src="{{ $p->cover_path ? asset('storage/'.$p->cover_path) : asset('dass.png') }}" class="rounded-lg mb-3 aspect-video object-cover">
         <h4 class="font-semibold text-gray-800 mb-1">{{ $p->nama_penanganan }}</h4>
-        <p class="text-xs text-gray-500 mb-1">Penanganan {{ ucfirst($p->kelompok) }} • {{ $p->steps()->published()->count() }} Tahapan</p>
-        <p class="text-sm text-gray-600 flex-grow leading-relaxed">{{ str($p->deskripsi_penanganan)->limit(120) }}</p>
+        <p class="text-xs text-gray-500 mb-1">
+          Penanganan {{ ucfirst($p->kelompok) }} • {{ $p->steps()->published()->count() }} Tahapan
+        </p>
+        <p class="text-sm text-gray-600 flex-grow leading-relaxed">
+          {{ str($p->deskripsi_penanganan)->limit(120) }}
+        </p>
         <a href="{{ route('penanganan.show', $p->slug) }}" class="mt-4 px-4 py-2 bg-gray-100 hover:bg-indigo-100 text-indigo-600 text-sm font-medium rounded-lg transition">
           Lihat Aktivitas
         </a>
       </div>
-      @endforeach
-      @if(($penanganan ?? collect())->isEmpty())
-        <div class="col-span-3 text-center text-gray-500 py-8">Belum ada penanganan tersedia.</div>
-      @endif
-    </div>
+    @endforeach
+  </div>
 </div>
 @endsection

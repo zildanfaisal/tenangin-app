@@ -40,7 +40,7 @@
         </div>
 
         <!-- Kolom Kanan: Informasi -->
-        <div class="w-full md:w-1/2 text-center md:text-left">
+        <div class="w-full md:w-1/2 flex flex-col justify-center items-center md:items-start">
             <h1 class="text-3xl font-bold mb-3 text-gray-800">{{ $penanganan->nama_penanganan }}</h1>
             <p class="text-sm text-gray-500 mb-2">Penanganan {{ $penanganan->kelompok ?? 'Umum' }} - {{ $totalSteps }} Tahapan</p>
 
@@ -67,7 +67,7 @@
                 <div class="w-full md:w-1/2 flex justify-center">
                     <template x-if="currentStep.video">
                         <div class="w-full flex flex-col items-center">
-                            <div class="w-64 h-64 md:w-96 md:h-96 flex items-center justify-center">
+                            <div class="w-96 h-96 md:w-96 md:h-96 flex items-center justify-center">
                                 <video 
                                     playsinline 
                                     class="w-full h-full"
@@ -130,7 +130,7 @@
     </template>
 
     <!-- Finish Screen -->
-    <div x-show="finished" class="flex flex-col md:flex-row items-center justify-center max-w-4xl mx-auto p-8 gap-10">
+    <div x-show="finished" class="flex flex-col md:flex-row items-center justify-center max-w-6xl mx-auto p-6 gap-10">
         <!-- Gambar maskot -->
         <div class="w-full md:w-1/2 flex justify-center">
             <img src="{{ asset('img/cover-finish-penanganan.png') }}" alt="Mascot" class="w-96 h-96 md:w-96 md:h-96 object-contain">
@@ -146,7 +146,6 @@
             </div>
         </div>
     </div>
-
 </div>
 @endsection
 
