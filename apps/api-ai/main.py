@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from routers.summarize_speech import router as speech_router
-from routers.anaysis_assesment import router as dass_router
+from routers.analysis_assesment import router as dass_router
 from routers.ws_stt import router as ws_router
 from core import settings
 

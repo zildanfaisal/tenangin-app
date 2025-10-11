@@ -15,7 +15,7 @@ LEVELS = {
 }
 
 class Dass21Request(BaseModel):
-    answers: List[int]  
+    answers: List[int]
 
     @field_validator("answers")
     @classmethod
