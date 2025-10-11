@@ -42,25 +42,6 @@
           </h2>
 
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-<<<<<<< HEAD
-            @foreach([
-              0 => 'Tidak sesuai dengan saya sama sekali',
-              1 => 'Sesuai dengan saya sampai taraf tertentu, atau kadang-kadang',
-              2 => 'Cukup sesuai dengan saya, atau sering kali',
-              3 => 'Sangat sesuai dengan saya, atau hampir sepanjang waktu'
-            ] as $val => $label)
-            <label class="flex items-center justify-center border border-gray-200 rounded-xl py-4 px-6 cursor-pointer bg-gray-50 hover:bg-blue-50 transition text-center">
-              <input type="radio"
-                     name="responses[{{ $item->id }}]"
-                     value="{{ $val }}"
-                     class="accent-blue-600 mr-3 hidden peer"
-                     @checked(isset($existing[$item->id]) && (int)$existing[$item->id] === $val)
-                     required>
-              <span class="text-sm md:text-base text-gray-700 peer-checked:text-blue-700 font-medium">
-                {{ $val }} - {{ $label }}
-              </span>
-            </label>
-=======
             @foreach([0 => 'Tidak Pernah', 1 => 'Kadang', 2 => 'Sering', 3 => 'Sangat Sering'] as $val => $label)
               <label class="flex items-center justify-center border border-gray-200 rounded-xl py-4 px-6 cursor-pointer bg-gray-50 hover:bg-blue-50 transition text-center">
                 <input type="radio"
@@ -73,7 +54,6 @@
                   {{ $val }} - {{ $label }}
                 </span>
               </label>
->>>>>>> FE
             @endforeach
           </div>
         </div>

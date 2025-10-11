@@ -7,6 +7,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Dass21AssessmentController; // added
 use App\Http\Controllers\Dass21ItemController;
 use App\Http\Controllers\PenangananController;
+use App\Http\Controllers\Admin\PenangananStepController;
 use App\Http\Controllers\CurhatController;
 use Illuminate\Support\Facades\Route;
 
@@ -102,13 +103,13 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
         Route::resource('penanganan', PenangananController::class)->except(['show']);
         // Nested steps management
         Route::prefix('penanganan/{penanganan}')->name('penanganan.steps.')->group(function () {
-            Route::get('steps', [\App\Http\Controllers\Admin\PenangananStepController::class,'index'])->name('index');
-            Route::get('steps/create', [\App\Http\Controllers\Admin\PenangananStepController::class,'create'])->name('create');
-            Route::post('steps', [\App\Http\Controllers\Admin\PenangananStepController::class,'store'])->name('store');
-            Route::get('steps/{step}/edit', [\App\Http\Controllers\Admin\PenangananStepController::class,'edit'])->name('edit');
-            Route::put('steps/{step}', [\App\Http\Controllers\Admin\PenangananStepController::class,'update'])->name('update');
-            Route::delete('steps/{step}', [\App\Http\Controllers\Admin\PenangananStepController::class,'destroy'])->name('destroy');
-            Route::post('steps/reorder', [\App\Http\Controllers\Admin\PenangananStepController::class,'reorder'])->name('reorder');
+            Route::get('steps', [PenangananStepController::class,'index'])->name('index');
+            Route::get('steps/create', [PenangananStepController::class,'create'])->name('create');
+            Route::post('steps', [PenangananStepController::class,'store'])->name('store');
+            Route::get('steps/{step}/edit', [PenangananStepController::class,'edit'])->name('edit');
+            Route::put('steps/{step}', [PenangananStepController::class,'update'])->name('update');
+            Route::delete('steps/{step}', [PenangananStepController::class,'destroy'])->name('destroy');
+            Route::post('steps/reorder', [PenangananStepController::class,'reorder'])->name('reorder');
         });
     });
 });
