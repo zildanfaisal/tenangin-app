@@ -133,30 +133,46 @@
   </div>
 
   {{-- 🔹 Rekomendasi Konsultan Dinamis --}}
-  <div class="max-w-4xl mx-auto mt-16 text-center">
-    <h3 class="text-lg md:text-xl font-bold text-gray-800 mb-2">Rekomendasi Konsultan</h3>
-    <p class="text-sm text-gray-600 mb-8">Jika merasa kondisimu belum membaik, cobalah untuk berkonsultasi dengan ahli.</p>
+  <div class="max-w-6xl mx-auto mt-16">
+    <h3 class="text-lg md:text-xl font-bold text-gray-800 text-center mb-2">Rekomendasi Konsultan</h3>
+    <p class="text-sm text-gray-600 text-center mb-8">
+      Jika merasa kondisimu belum membaik, cobalah untuk berkonsultasi dengan ahli.
+    </p>
 
-    <div class="grid md:grid-cols-2 gap-6 md:gap-8 max-w-3xl mx-auto">
-      @forelse($konsultans as $konsultan)
-      <div class="bg-white rounded-2xl shadow-md p-6 flex flex-col md:flex-row items-center gap-6">
-        <img src="{{ $konsultan->foto ? asset($konsultan->foto) : asset('consul1.png') }}" alt="{{ $konsultan->nama_konsultan }}" class="w-20 h-20 md:w-24 md:h-24 rounded-xl object-cover">
-        <div class="text-left flex-1">
-          <h5 class="text-base md:text-lg font-bold text-gray-800">{{ $konsultan->nama_konsultan }}</h5>
-          <p class="text-sm text-gray-600">{{ $konsultan->spesialisasi }}</p>
-          <span class="inline-block mt-2 px-3 py-1 bg-gray-100 text-gray-700 text-[11px] md:text-xs rounded-full">{{ $konsultan->pengalaman }} Tahun Pengalaman</span>
-          <div class="flex items-center gap-2 mt-2 text-xs md:text-sm text-gray-600">
-            Rp. {{ number_format($konsultan->harga,0,',','.') }} / 2 Sesi <span class="text-yellow-500">⭐</span> {{ number_format($konsultan->rating,1) }}
-          </div>
-        </div>
-        <a href="{{ route('konsultan.detail', $konsultan->id) }}" class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg text-xs md:text-sm font-semibold transition">
-          Hubungi Sekarang
-        </a>
+    @if($konsultans->isEmpty())
+      <div class="bg-yellow-50 border border-yellow-200 text-yellow-800 rounded-xl p-4 max-w-3xl mx-auto text-sm text-center">
+        Belum ada konsultan tersedia saat ini. Silakan kembali nanti.
       </div>
-      @empty
-      <div class="col-span-2 text-center text-gray-500 py-8">Belum ada konsultan tersedia.</div>
-      @endforelse
-    </div>
+    @else
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+        @foreach($konsultans as $konsultan)
+          <div class="bg-white rounded-2xl shadow-md hover:shadow-xl transition-all p-5 md:p-6 flex flex-col">
+            <img src="{{ $konsultan->foto ? asset($konsultan->foto) : asset('consul1.png') }}" 
+                alt="{{ $konsultan->nama_konsultan }}" 
+                class="rounded-2xl mb-4 object-cover h-44 md:h-48 w-full">
+            
+            <h5 class="font-bold text-base md:text-lg mb-1 text-gray-800">{{ $konsultan->nama_konsultan }}</h5>
+            <p class="text-xs md:text-sm text-gray-600 mb-2">{{ $konsultan->spesialisasi }}</p>
+            
+            <span class="inline-block mb-2 px-3 py-1 bg-gray-100 text-gray-700 text-[11px] md:text-xs rounded-full">
+              {{ $konsultan->pengalaman }} Tahun Pengalaman
+            </span>
+            
+            <div class="flex items-center justify-between text-xs md:text-sm text-gray-600 mb-4">
+              <span>Rp {{ number_format($konsultan->harga,0,',','.') }} / 2 Sesi</span>
+              <span class="flex items-center gap-1">
+                ⭐ {{ number_format($konsultan->rating,1) }}
+              </span>
+            </div>
+
+            <a href="{{ route('konsultan.detail', $konsultan->id) }}" 
+              class="mt-auto self-start bg-blue-700 hover:bg-blue-800 text-white text-xs md:text-sm px-4 py-2 rounded-full transition">
+              Hubungi Sekarang
+            </a>
+          </div>
+        @endforeach
+      </div>
+    @endif
 
     <div class="mt-10 flex justify-center gap-4">
       <a href="{{ route('konsultan.index') }}" class="bg-blue-700 hover:bg-blue-800 text-white px-5 md:px-6 py-2 rounded-lg font-medium text-sm shadow-md transition">
@@ -167,6 +183,7 @@
       </a>
     </div>
   </div>
+
 
 </div>
 @endsection
