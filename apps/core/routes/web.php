@@ -68,6 +68,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/session/{id}/curhat', [Dass21AssessmentController::class, 'curhat'])->name('curhat');
         Route::get('/session/{id}/curhat-done', [Dass21AssessmentController::class, 'curhatDone'])->name('curhat.done');
 
+        Route::post('/session/{id}/save', [Dass21AssessmentController::class, 'saveTranscript'])->name('curhat.save');
+
         Route::get('/session/{id}/result', [Dass21AssessmentController::class, 'result'])->name('result');
     });
 
