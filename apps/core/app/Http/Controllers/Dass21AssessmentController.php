@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Services\Dass21ScoringService;
 use App\Services\PenangananRecommendationService;
+use Illuminate\Support\Facades\Storage;
 
 class Dass21AssessmentController extends Controller
 {
@@ -166,6 +167,19 @@ class Dass21AssessmentController extends Controller
         }
 
         return view('dass21.curhat', compact('session'));
+    }
+
+    public function saveTranscript(Request $request, $id)
+    {
+        $transcript = $request->input('transcript');
+
+        Storage::disk('local')->put("curhat/session_{$id}.json", json_encode([
+            'session_id' => $id,
+            'transcript' => $transcript,
+            'timestamp' => now()->toDateTimeString()
+        ]));
+
+        return response()->json(['success' => true]);
     }
 
     public function curhatDone($id)
