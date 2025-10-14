@@ -8,6 +8,7 @@ use App\Http\Controllers\Dass21AssessmentController;
 use App\Http\Controllers\Dass21ItemController;
 use App\Http\Controllers\PenangananController;
 use App\Http\Controllers\Admin\PenangananStepController;
+use App\Http\Controllers\SuaraController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -72,6 +73,9 @@ Route::middleware('auth')->group(function () {
 
         Route::get('/session/{id}/result', [Dass21AssessmentController::class, 'result'])->name('result');
     });
+
+    Route::post('/suara', [SuaraController::class, 'store'])->name('suara.store');
+    Route::post('/suara/{suara}/transcribe', [SuaraController::class, 'transcribe'])->name('suara.transcribe');
 
     Route::get('/premium', [PremiumController::class, 'index'])->name('premium.index');
 
@@ -141,5 +145,8 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
         });
     });
 });
+
+Route::post('/analisis/hasil', [App\Http\Controllers\AnalisisController::class, 'storeFromPython'])->name('analisis.storeFromPython');
+Route::get('/analisis/by-suara/{suara_id}', [App\Http\Controllers\AnalisisController::class, 'getBySuaraId'])->name('analisis.getBySuaraId');
 
 require __DIR__.'/auth.php';

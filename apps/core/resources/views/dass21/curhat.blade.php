@@ -98,6 +98,7 @@ const statusText = document.getElementById('statusText');
 const progressBar = document.getElementById('progressBar');
 const transcript = document.getElementById('transcript');
 const timer = document.getElementById('timer');
+let suaraId = null;
 
 if ('webkitSpeechRecognition' in window) {
   recognition = new webkitSpeechRecognition();
@@ -114,16 +115,6 @@ if ('webkitSpeechRecognition' in window) {
       }
     }
     transcript.value = finalTranscript;
-
-    // Kirim ke server, server yang broadcast
-    fetch(`/dass21/session/{{ $session->id }}/save`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-CSRF-TOKEN': '{{ csrf_token() }}'
-      },
-      body: JSON.stringify({ transcript: transcript.value })
-    });
   };
 
   recognition.onend = () => stopRecording();
@@ -131,12 +122,28 @@ if ('webkitSpeechRecognition' in window) {
   alert('Browser kamu belum mendukung Speech Recognition!');
 }
 
-function startRecording() {
+async function startRecording() {
   recognizing = true;
   recognition.start();
   statusText.textContent = 'Merekam...';
   micBtn.style.backgroundColor = '#e74c3c'; // 🔴 merah solid saat aktif
   startTimer();
+
+  // Buat suara record di backend
+  const response = await fetch('/suara', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CSRF-TOKEN': '{{ csrf_token() }}'
+    },
+    body: JSON.stringify({
+      dass21_session_id: {{ $session->id }},
+      transkripsi: '',
+      // audio: ... (jika ada audio)
+    })
+  });
+  const data = await response.json();
+  suaraId = data.id;
 }
 
 function stopRecording() {
@@ -146,13 +153,18 @@ function stopRecording() {
   statusText.textContent = 'Rekaman selesai';
   micBtn.style.backgroundColor = '#2563eb'; // 🔵 biru kembali
 
-  fetch(`/dass21/session/{{ $session->id }}/save`, {
+  if (!suaraId) {
+    alert('Gagal menyimpan suara, silakan coba lagi.');
+    return;
+  }
+
+  fetch(`/suara/${suaraId}/transcribe`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       'X-CSRF-TOKEN': '{{ csrf_token() }}'
     },
-    body: JSON.stringify({ transcript:transcript.value })
+    body: JSON.stringify({ transkripsi: transcript.value })
   })
   .then(res => res.json())
   .then(data => {
