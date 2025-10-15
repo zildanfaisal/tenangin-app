@@ -1,10 +1,12 @@
+python-dotenv
 uvicorn
 fastapi
-python-dotenv
 openai
 pydantic
 pydantic-settings
-python-multipart
-orjson
 websockets
-langchain
+SQLAlchemy
+asyncmy
+httpx
+orjson
+loguru

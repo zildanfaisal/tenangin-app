@@ -1,63 +1,94 @@
-import asyncio, base64, time, io, wave, tempfile
-from fastapi import APIRouter, WebSocket, WebSocketDisconnect
-from services.asr_whisper import transcribe_bytes
-from core import logger
+from fastapi import APIRouter, WebSocket, WebSocketDisconnect, Query # type: ignore
+from sqlalchemy.ext.asyncio import AsyncSession # type: ignore
+from db import AsyncSessionLocal
+from models import Suara
+from services.asr import pipe_audio_and_text
 
-router = APIRouter(prefix="/ws", tags=["websocket"])
+router = APIRouter()
 
-"""
-Protokol sederhana:
-Client mengirim JSON text:
-{"event":"start","sample_rate":16000}
-{"event":"audio","audio_base64":"..."}  # PCM WAV chunk kecil (0.5-1.5s)
-{"event":"stop"}
+@router.websocket("/ws/stt")
+async def ws_stt(
+    websocket: WebSocket,
+    suara_id: int = Query(..., description="ID baris pada tabel 'suara'"),
+    user_id: int = Query(..., description="FK users"),
+    lang: str = Query("id", description="Kode bahasa Deepgram, default: id"),
+    save_audio: int = Query(1, description="1 = simpan audio ke file, 0 = tidak"),
+):
+    await websocket.accept()
 
-Server membalas:
-{"event":"partial","text":"..."}  # hasil sementara
-{"event":"final","text":"..."}    # hasil final saat stop
-{"event":"error","message":"..."}
-"""
+    # buka session DB untuk lifecycle WS ini
+    db: AsyncSession = AsyncSessionLocal()
+    suara = None  # <-- inisialisasi, supaya aman di except
 
-async def _wav_from_pcm16(raw: bytes, sr: int = 16000) -> bytes:
-    with io.BytesIO() as bio:
-        with wave.open(bio, "wb") as wf:
-            wf.setnchannels(1)
-            wf.setsampwidth(2)   # 16-bit
-            wf.setframerate(sr)
-            wf.writeframes(raw)
-        return bio.getvalue()
-
-@router.websocket("/stt")
-async def stt_stream(ws: WebSocket):
-    await ws.accept()
-    sample_rate = 16000
-    buffer = bytearray()
-    last_emit = time.time()
     try:
-        while True:
-            msg = await ws.receive_json()
-            evt = msg.get("event")
-            if evt == "start":
-                sample_rate = int(msg.get("sample_rate", 16000))
-                buffer.clear()
-                await ws.send_json({"event":"ready"})
-            elif evt == "audio":
-                chunk = base64.b64decode(msg["audio_base64"])
-                buffer.extend(chunk)
-                # setiap ~3 detik kirim partial
-                if time.time() - last_emit > 3.0 and len(buffer) > sample_rate*2:
-                    wav_bytes = await _wav_from_pcm16(bytes(buffer), sample_rate)
-                    partial = transcribe_bytes(wav_bytes)
-                    await ws.send_json({"event":"partial","text": partial["text"]})
-                    last_emit = time.time()
-            elif evt == "stop":
-                wav_bytes = await _wav_from_pcm16(bytes(buffer), sample_rate)
-                final = transcribe_bytes(wav_bytes)
-                await ws.send_json({"event":"final","text": final["text"], "segments": final.get("segments", [])})
-                buffer.clear()
-            else:
-                await ws.send_json({"event":"error","message":"Unknown event"})
+        # cek record suara
+        suara = await db.get(Suara, suara_id)
+        if not suara:
+            await websocket.send_text('{"error":"Suara record not found"}')
+            await websocket.close()
+            return
+        if suara.user_id != user_id:
+            await websocket.send_text('{"error":"User mismatch"}')
+            await websocket.close()
+            return
+
+        # set status awal
+        suara.status = "uploading"
+        await db.commit()
+
+        # jalankan relay + persist
+        await pipe_audio_and_text(
+            client_ws=websocket,
+            db=db,
+            suara=suara,
+            lang=lang,
+            save_audio=bool(save_audio),
+        )
+
+        # selesai stream → jika ada transkrip terkumpul, set status 'transcribing'
+        # Jika ada transkrip, tandai transcribing
+        updated = await db.get(Suara, suara_id)
+        if updated and (updated.transkripsi or "").strip():
+            updated.status = "transcribing"
+            await db.commit()
+
     except WebSocketDisconnect:
-        logger.info("WS client disconnected")
+        # biarkan disconnect clean
+        pass
     except Exception as e:
-        await ws.send_json({"event":"error","message":str(e)})
+        try:
+            if suara:
+                suara.status = "failed"
+                await db.commit()
+        except:
+            pass
+        # kirim error ringan ke client (tanpa detail sensitif)
+        try:
+            await websocket.send_text('{"error":"internal ws error"}')
+        except:
+            pass
+    finally:
+        try:
+            await websocket.close()
+        except:
+            pass
+        await db.close()
+
+
+
+
+
+# from fastapi import APIRouter, WebSocket, WebSocketDisconnect, Query # type: ignore
+# from ..services.asr import pipe_audio_and_text
+
+# router = APIRouter()
+
+# @router.websocket("/ws/stt")
+# async def ws_stt(websocket: WebSocket, session_id: int = Query(...), user_id: int = Query(...)):
+#     await websocket.accept()
+#     try:
+#         await pipe_audio_and_text(websocket)
+#     except WebSocketDisconnect:
+#         pass
+#     finally:
+#         await websocket.close()
