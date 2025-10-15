@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, Query  # type: ignore
+from fastapi import APIRouter, Depends, HTTPException, Request  # type: ignore
 from sqlalchemy.ext.asyncio import AsyncSession  # type: ignore
 from sqlalchemy import select  # type: ignore
 from db import get_session
@@ -12,18 +12,22 @@ from services.prompt_templates import (
 )
 from schemas import AnalysisOut
 
-router = APIRouter(prefix="/curhat", tags=["analysis"])
+router = APIRouter(tags=["analysis"])
 
-@router.post("/suara/{suara_id}/analyze", response_model=AnalysisOut)
-async def analyze(
-    suara_id: int,
-    user_id: int = Query(..., description="FK users"),
-    db: AsyncSession = Depends(get_session),
-):
+
+# Endpoint menerima payload JSON dari Laravel
+@router.post("/v1/analyze-text")
+async def analyze_text(request: Request, db: AsyncSession = Depends(get_session)):
+    data = await request.json()
+    suara_id = int(data.get('reference_id'))
+    transcript = data.get('transcript')
+
     # 1) Pastikan record 'suara' ada & sudah punya transkripsi
     suara = await db.get(Suara, suara_id)
     if not suara:
         raise HTTPException(404, "Suara record not found")
+    suara.transkripsi = transcript
+    await db.commit()
     if not suara.transkripsi or not suara.transkripsi.strip():
         raise HTTPException(400, "Transkripsi belum tersedia untuk dianalisis")
 
@@ -32,13 +36,13 @@ async def analyze(
     if not dass:
         raise HTTPException(404, "DASS-21 session tidak ditemukan untuk suara ini")
 
-    # 3) Ambil/cek ringkasan dari tabel 'analisis' untuk suara_id ini (dibuat pada step /summary)
+    # 3) Ambil/cek ringkasan dari tabel 'analisis' untuk suara_id ini
     res = await db.execute(select(Analisis).where(Analisis.suara_id == suara_id))
     analisis_row = res.scalars().first()
-    if not analisis_row or not (analisis_row.ringkasan or "").strip():
-        raise HTTPException(400, "Belum ada ringkasan. Jalankan endpoint /summary terlebih dahulu.")
-
-    summary = analisis_row.ringkasan
+    if analisis_row:
+        summary = analisis_row.ringkasan if analisis_row.ringkasan else transcript
+    else:
+        summary = transcript
 
     # 4) Siapkan prompt (gunakan *_kelas)
     prompt1 = EXPERT_ANALYSIS_PROMPT.format(
@@ -47,48 +51,40 @@ async def analyze(
     prompt2 = EMPATHY_QUOTE_PROMPT.format(
         dep=dass.depresi_kelas, anx=dass.anxiety_kelas, strs=dass.stres_kelas, summary=summary
     )
-    prompt3 = JSON_CLASSIFIER_PROMPT.format(
-        dep=dass.depresi_kelas, anx=dass.anxiety_kelas, strs=dass.stres_kelas, summary=summary
-    )
-
     # 5) Panggil LLM
     narrative = await chat_once(prompt1)
     quote = await chat_once(prompt2)
 
-    try:
-        j = await extract_json(prompt3)
-    except Exception as e:
-        raise HTTPException(400, f"Classifier returned non-JSON or invalid JSON: {e}")
+    if analisis_row:
+        # Update baris analisis
+        updated = await crud.update_analysis_results(
+            db,
+            suara_id=suara_id,
+            narrative=narrative,
+            quote=quote,
+            category=None,
+            level=None,
+        )
+        await db.commit()
+    else:
+        # Buat baris analisis baru
+        new_analisis = Analisis(
+            user_id=suara.user_id,
+            dass21_session_id=suara.dass21_session_id,
+            suara_id=suara_id,
+            ringkasan=summary,
+            hasil_emosi=narrative,
+            hasil_kondisi=quote,
+            status="completed",
+        )
+        db.add(new_analisis)
+        await db.commit()
 
-    category = (j.get("category") or "").lower()
-    level = (j.get("level") or "").lower()
-
-    allowed_categories = {"stress", "depresi", "anxiety"}
-    allowed_levels = {"rendah", "sedang", "tinggi", "ekstrem"}
-
-    if category not in allowed_categories or level not in allowed_levels:
-        raise HTTPException(400, "Classifier JSON must include valid 'category' and 'level'.")
-
-    # 6) Update baris 'analisis' via CRUD (lengkapi hasil & tandai completed)
-    updated = await crud.update_analysis_results(
-        db,
-        suara_id=suara_id,
-        narrative=narrative,
-        quote=quote,
-        category=category,
-        level=level,
-    )
-    if not updated:
-        raise HTTPException(400, "Baris 'analisis' tidak ditemukan untuk suara ini. Pastikan /summary sudah dijalankan.")
-    await db.commit()
-
-    return AnalysisOut(
-        hasil_emosi=narrative,
-        hasil_kondisi=quote,
-        kategori_emosi=category,
-        level_emosi=level,
-        raw_json=str(j),
-    )
+    return {
+        "hasil_emosi": narrative,
+        "hasil_kondisi": quote,
+        "summary": summary,
+    }
 
 
 

@@ -64,8 +64,6 @@ class Analisis(Base):
     model_version = Column(String(255))
     scores = Column(Text)
     notes = Column(Text)
-    kategori_emosi = Column(String(32))  # NEW: JSON category → string
-    level_emosi = Column(String(16))     # NEW: JSON level → string
     created_at = Column(DateTime)
     updated_at = Column(DateTime)
 

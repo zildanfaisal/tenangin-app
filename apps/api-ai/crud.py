@@ -62,7 +62,7 @@ async def upsert_summary(session: AsyncSession, user_id: int, suara_id: int, das
     return a
 
 # --- ANALISIS: update hasil akhir (narasi, kutipan, kategori, level) ---
-async def update_analysis_results(session: AsyncSession, suara_id: int, narrative: str, quote: str, category: str, level: str):
+async def update_analysis_results(session: AsyncSession, suara_id: int, narrative: str, quote: str, category=None, level=None):
     q = select(Analisis).where(Analisis.suara_id == suara_id)
     res = await session.execute(q)
     row = res.scalars().first()
@@ -70,8 +70,6 @@ async def update_analysis_results(session: AsyncSession, suara_id: int, narrativ
         return None
     row.hasil_emosi = narrative
     row.hasil_kondisi = quote
-    row.kategori_emosi = category
-    row.level_emosi = level
     row.status = "completed"
     return row
 
