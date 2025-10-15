@@ -11,7 +11,11 @@ use App\Http\Controllers\AiTokenController;
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 
+Route::post('/analisis/hasil', [AnalisisController::class, 'storeFromPython']);
+Route::get('/analisis/by-suara/{suara_id}', [AnalisisController::class, 'getBySuaraId']);
+
 // Protected routes
+Route::get('/suara/{suara}/status', [SuaraController::class, 'status']);
 Route::middleware('auth:sanctum')->group(function () {
     // Token for Python ASR WebSocket
     Route::get('/ai/token', AiTokenController::class);
@@ -23,7 +27,6 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Voice endpoints
     Route::post('/suara', [SuaraController::class, 'store']);
-    Route::get('/suara/{suara}/status', [SuaraController::class, 'status']);
     Route::post('/suara/{suara}/transcribe', [SuaraController::class, 'transcribe']);
 
     // Analysis retrieval

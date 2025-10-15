@@ -8,6 +8,7 @@ use App\Http\Controllers\Dass21AssessmentController;
 use App\Http\Controllers\Dass21ItemController;
 use App\Http\Controllers\PenangananController;
 use App\Http\Controllers\Admin\PenangananStepController;
+use App\Http\Controllers\SuaraController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -68,8 +69,13 @@ Route::middleware('auth')->group(function () {
         Route::get('/session/{id}/curhat', [Dass21AssessmentController::class, 'curhat'])->name('curhat');
         Route::get('/session/{id}/curhat-done', [Dass21AssessmentController::class, 'curhatDone'])->name('curhat.done');
 
+        Route::post('/session/{id}/save', [Dass21AssessmentController::class, 'saveTranscript'])->name('curhat.save');
+
         Route::get('/session/{id}/result', [Dass21AssessmentController::class, 'result'])->name('result');
     });
+
+    Route::post('/suara', [SuaraController::class, 'store'])->name('suara.store');
+    Route::post('/suara/{suara}/transcribe', [SuaraController::class, 'transcribe'])->name('suara.transcribe');
 
     Route::get('/premium', [PremiumController::class, 'index'])->name('premium.index');
 

@@ -18,6 +18,7 @@ class Analisis extends Model
         'hasil_kondisi',
         'hasil_emosi',
         'ringkasan',
+        'status',
     ];
 
     public function user()

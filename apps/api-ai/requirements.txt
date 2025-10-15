@@ -1,0 +1,12 @@
+python-dotenv
+uvicorn
+fastapi
+openai
+pydantic
+pydantic-settings
+websockets
+SQLAlchemy
+asyncmy
+httpx
+orjson
+loguru

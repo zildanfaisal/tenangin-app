@@ -13,15 +13,15 @@ class SuaraController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'audio' => 'required|file|mimetypes:audio/mpeg,audio/mp3,audio/wav,audio/x-wav,audio/webm,video/webm',
+            'audio' => 'nullable|file|mimetypes:audio/mpeg,audio/mp3,audio/wav,audio/x-wav,audio/webm,video/webm',
             'transkripsi' => 'nullable|string',
             'dass21_session_id' => 'nullable|exists:dass21_sessions,id',
             'language' => 'nullable|string|max:10',
             'duration_ms' => 'nullable|integer|min:0',
         ]);
 
-    // store privately on local disk (non-public)
-    $path = $request->file('audio')->store('suara','local');
+        // store privately on local disk (non-public)
+        $path = $request->file('audio') ? $request->file('audio')->store('suara','local') : null;
 
         $suara = Suara::create([
             'user_id' => Auth::id(),
@@ -45,11 +45,10 @@ class SuaraController extends Controller
 
     public function status(Suara $suara)
     {
-        if ($suara->user_id !== Auth::id()) {
-            abort(403);
-        }
         return response()->json([
             'id' => $suara->id,
+            'user_id' => $suara->user_id,
+            'dass21_session_id' => $suara->dass21_session_id,
             'status' => $suara->status,
             'transkripsi' => $suara->transkripsi,
         ]);

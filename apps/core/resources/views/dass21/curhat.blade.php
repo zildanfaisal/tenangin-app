@@ -98,6 +98,7 @@ const statusText = document.getElementById('statusText');
 const progressBar = document.getElementById('progressBar');
 const transcript = document.getElementById('transcript');
 const timer = document.getElementById('timer');
+let suaraId = null;
 
 if ('webkitSpeechRecognition' in window) {
   recognition = new webkitSpeechRecognition();
@@ -105,12 +106,15 @@ if ('webkitSpeechRecognition' in window) {
   recognition.interimResults = true;
   recognition.lang = 'id-ID';
 
+  let finalTranscript = '';
+
   recognition.onresult = (event) => {
-    let text = '';
     for (let i = event.resultIndex; i < event.results.length; ++i) {
-      text += event.results[i][0].transcript;
+      if (event.results[i].isFinal) {
+        finalTranscript += (finalTranscript && event.results[i][0].transcript.trim() ? ' ' : '') + event.results[i][0].transcript;
+      }
     }
-    transcript.value = text;
+    transcript.value = finalTranscript;
   };
 
   recognition.onend = () => stopRecording();
@@ -118,12 +122,28 @@ if ('webkitSpeechRecognition' in window) {
   alert('Browser kamu belum mendukung Speech Recognition!');
 }
 
-function startRecording() {
+async function startRecording() {
   recognizing = true;
   recognition.start();
   statusText.textContent = 'Merekam...';
   micBtn.style.backgroundColor = '#e74c3c'; // 🔴 merah solid saat aktif
   startTimer();
+
+  // Buat suara record di backend
+  const response = await fetch('/suara', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CSRF-TOKEN': '{{ csrf_token() }}'
+    },
+    body: JSON.stringify({
+      dass21_session_id: {{ $session->id }},
+      transkripsi: '',
+      // audio: ... (jika ada audio)
+    })
+  });
+  const data = await response.json();
+  suaraId = data.id;
 }
 
 function stopRecording() {
@@ -133,10 +153,24 @@ function stopRecording() {
   statusText.textContent = 'Rekaman selesai';
   micBtn.style.backgroundColor = '#2563eb'; // 🔵 biru kembali
 
-  // ✅ setelah 2 detik, pindah ke halaman 'curhat-done'
-  setTimeout(() => {
+  if (!suaraId) {
+    alert('Gagal menyimpan suara, silakan coba lagi.');
+    return;
+  }
+
+  fetch(`/suara/${suaraId}/transcribe`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CSRF-TOKEN': '{{ csrf_token() }}'
+    },
+    body: JSON.stringify({ transkripsi: transcript.value })
+  })
+  .then(res => res.json())
+  .then(data => {
+    console.log('saved: ', data);
     window.location.href = "{{ route('dass21.curhat.done', $session->id) }}";
-  }, 2000);
+  });
 }
 
 
@@ -152,9 +186,27 @@ function startTimer() {
   }, 1000);
 }
 
+async function requestMicPermission() {
+  if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+    try {
+      await navigator.mediaDevices.getUserMedia({ audio: true });
+      // Izin diberikan, bisa mulai merekam
+      startRecording();
+    } catch (err) {
+      alert('Akses mikrofon ditolak. Silakan izinkan mikrofon untuk merekam suara.');
+    }
+  } else {
+    alert('Browser kamu tidak mendukung akses mikrofon.');
+  }
+}
+
 micBtn.addEventListener('click', () => {
   if (!recognition) return;
-  recognizing ? stopRecording() : startRecording();
+  if (!recognizing) {
+    requestMicPermission();
+  } else {
+    stopRecording();
+  }
 });
 </script>
 @endsection
