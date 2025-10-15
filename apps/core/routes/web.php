@@ -146,7 +146,4 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     });
 });
 
-Route::post('/analisis/hasil', [App\Http\Controllers\AnalisisController::class, 'storeFromPython'])->name('analisis.storeFromPython');
-Route::get('/analisis/by-suara/{suara_id}', [App\Http\Controllers\AnalisisController::class, 'getBySuaraId'])->name('analisis.getBySuaraId');
-
 require __DIR__.'/auth.php';

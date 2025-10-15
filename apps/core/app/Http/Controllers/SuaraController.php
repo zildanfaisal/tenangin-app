@@ -45,11 +45,10 @@ class SuaraController extends Controller
 
     public function status(Suara $suara)
     {
-        if ($suara->user_id !== Auth::id()) {
-            abort(403);
-        }
         return response()->json([
             'id' => $suara->id,
+            'user_id' => $suara->user_id,
+            'dass21_session_id' => $suara->dass21_session_id,
             'status' => $suara->status,
             'transkripsi' => $suara->transkripsi,
         ]);
