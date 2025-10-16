@@ -10,11 +10,33 @@ RINGKASAN CURHAT:
 {summary}
 """
 
-EMPATHY_QUOTE_PROMPT = """Buat 1-2 kalimat singkat yang memvalidasi perasaan pengguna berdasarkan DASS-21 dan ringkasan curhat. Nada hangat, tidak menggurui (≤40 kata).
-DASS-21: Depression={dep}, Anxiety={anx}, Stress={strs}
+EMPATHY_QUOTE_PROMPT = """
+Buat satu frasa empatik yang **sangat singkat**, hanya 2–4 kata.
+Tulis dalam bahasa Indonesia, bernada lembut, positif, dan menenangkan.
+Jangan tulis kalimat panjang, tanda baca lebih dari satu, atau penjelasan tambahan.
+Output harus **hanya** berupa frasa tanpa konteks tambahan, contoh:
+
+Contoh yang benar:
+- "Kamu nggak sendiri"
+- "Aku mendengar kamu"
+- "Kamu kuat"
+- "Tenang, kamu aman"
+
+Contoh yang salah:
+- "Rasanya berat banget ya, kamu tidak sendiri." ❌ (terlalu panjang)
+- "Menurut DASS-21 kamu..." ❌ (analitis)
+
+DASS-21:
+Depression={dep}
+Anxiety={anx}
+Stress={strs}
+
 RINGKASAN:
 {summary}
+
+Tulis hasil **hanya berupa frasa 2–4 kata**, tanpa kutipan tambahan.
 """
+
 
 JSON_CLASSIFIER_PROMPT = """Klasifikasikan emosi utama dan tingkatannya berdasarkan DASS-21 dan ringkasan curhat.
 Balas HANYA JSON dengan schema:
