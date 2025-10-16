@@ -137,7 +137,7 @@ class DashboardController extends Controller
 
         $recentRekaman = Dass21Session::where('user_id', $user->id)
             ->whereNotNull('completed_at')
-            ->select('id', 'user_id', 'completed_at', 'hasil_kelas')
+            ->select('id', 'user_id', 'completed_at', 'hasil_kelas', 'depresi_kelas', 'stres_kelas', 'anxiety_kelas')
             ->latest('completed_at')
             ->take(8)
             ->get();
