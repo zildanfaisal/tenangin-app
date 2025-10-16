@@ -21,7 +21,8 @@ class UpdatePenangananRequest extends FormRequest
                 Rule::unique('penanganan','slug')->ignore($this->route('penanganan'))
             ],
             'deskripsi_penanganan' => 'required|string',
-            'kelompok' => 'required|in:depresi,stres,anxiety',
+            'kelompok' => ['required', 'array'],
+            'kelompok.*' => ['in:depresi,stres,anxiety'],
             'status' => 'required|in:draft,published',
             'cover' => 'nullable|image|max:5000',
             'ordering' => 'nullable|integer|min:0',

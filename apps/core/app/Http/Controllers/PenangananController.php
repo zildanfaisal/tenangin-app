@@ -30,6 +30,7 @@ class PenangananController extends Controller
     public function store(StorePenangananRequest $request)
     {
         $data = $request->validated();
+        $data['kelompok'] = $request->input('kelompok', []);
         if ($request->hasFile('cover')) {
             $data['cover_path'] = $request->file('cover')->store('penanganan','public');
         }
@@ -45,6 +46,7 @@ class PenangananController extends Controller
     public function update(UpdatePenangananRequest $request, Penanganan $penanganan)
     {
         $data = $request->validated();
+        $data['kelompok'] = $request->input('kelompok', []);
         if ($request->hasFile('cover')) {
             if ($penanganan->cover_path) Storage::disk('public')->delete($penanganan->cover_path);
             $data['cover_path'] = $request->file('cover')->store('penanganan','public');

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" x-data="{ sidebarOpen: true }" class="h-full">
+<html lang="en" x-data="dashboardLayout()" class="h-full">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -188,5 +188,17 @@
 
     @stack('scripts')
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script>
+    function dashboardLayout() {
+        return {
+            sidebarOpen: window.innerWidth >= 768,
+            init() {
+                window.addEventListener('resize', () => {
+                    this.sidebarOpen = window.innerWidth >= 768;
+                });
+            }
+        }
+    }
+    </script>
 </body>
 </html>

@@ -109,10 +109,10 @@ class Dass21AssessmentController extends Controller
         // Skala severity
         $rank = [
             'Normal' => 0,
-            'Mild' => 1,
-            'Moderate' => 2,
-            'Severe' => 3,
-            'Extremely Severe' => 4,
+            'Risiko Ringan' => 1,
+            'Risiko Sedang' => 2,
+            'Parah' => 3,
+            'Sangat Parah' => 4,
         ];
 
         $subscales = [
@@ -129,7 +129,11 @@ class Dass21AssessmentController extends Controller
         if (count($severeKeys) > 0) {
             // Jika ada Severe/Extremely Severe, tampilkan semua yang memenuhi
             $penanganan = Penanganan::published()
-                ->whereIn('kelompok', $severeKeys)
+                ->where(function($q) use ($severeKeys) {
+                    foreach ($severeKeys as $key) {
+                        $q->orWhereJsonContains('kelompok', $key);
+                    }
+                })
                 ->with('steps')
                 ->orderBy('ordering')
                 ->get();

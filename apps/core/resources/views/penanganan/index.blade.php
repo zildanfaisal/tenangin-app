@@ -37,7 +37,11 @@
             <td class="p-2">
                 <span class="px-2 py-1 rounded text-xs @if($it->status==='published') bg-green-100 text-green-700 @else bg-gray-200 text-gray-700 @endif">{{ ucfirst($it->status) }}</span>
             </td>
-            <td class="p-2"><span class="px-2 py-1 bg-indigo-50 text-indigo-700 rounded text-xs">{{ ucfirst($it->kelompok ?? '-') }}</span></td>
+            <td class="p-2">
+                <span class="px-2 py-1 bg-indigo-50 text-indigo-700 rounded text-xs">
+                    {{ is_array($it->kelompok) ? implode(', ', array_map('ucfirst', $it->kelompok)) : ucfirst($it->kelompok ?? '-') }}
+                </span>
+            </td>
             <td class="p-2">{{ $it->ordering }}</td>
             <td class="p-2 whitespace-nowrap">
                 <a href="{{ route('admin.penanganan.edit',$it) }}" class="text-indigo-600">Edit</a>

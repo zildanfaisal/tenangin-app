@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->foreignId('dass21_session_id')->constrained('dass21_sessions')->onDelete('cascade')->nullable();
-            $table->text('file_audio');
+            $table->text('file_audio')->nullable();
             $table->text('transkripsi')->nullable();
             $table->timestamps();
         });

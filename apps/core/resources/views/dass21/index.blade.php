@@ -86,7 +86,11 @@
 {{-- ================= KONTEN PENANGANAN AWAL ================= --}}
 <div x-data="{ activeTab: 'All' }" x-cloak>
   @php
-      $kategoriList = $penanganan->pluck('kelompok')->unique();
+    // Ambil semua kelompok unik dari array
+    $kategoriList = $penanganan->pluck('kelompok')
+      ->flatten()
+      ->unique()
+      ->values();
   @endphp
 
   {{-- Tabs --}}
@@ -117,8 +121,11 @@
   {{-- Cards --}}
   <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
     @foreach($penanganan as $p)
+      @php
+        $kelompokArr = is_array($p->kelompok) ? $p->kelompok : [$p->kelompok];
+      @endphp
       <div 
-        x-show="activeTab === 'All' || activeTab === '{{ $p->kelompok }}'"
+        x-show="activeTab === 'All' || {{ json_encode($kelompokArr) }}.includes(activeTab)"
         x-transition:enter="transition ease-out duration-300"
         x-transition:enter-start="opacity-0 translate-y-2 scale-95"
         x-transition:enter-end="opacity-100 translate-y-0 scale-100"
@@ -130,7 +137,7 @@
         <img src="{{ $p->cover_path ? asset('storage/'.$p->cover_path) : asset('dass.png') }}" class="rounded-lg mb-3 aspect-video object-cover">
         <h4 class="font-semibold text-gray-800 mb-1">{{ $p->nama_penanganan }}</h4>
         <p class="text-xs text-gray-500 mb-1">
-          Penanganan {{ ucfirst($p->kelompok) }} • {{ $p->steps()->published()->count() }} Tahapan
+          Penanganan {{ is_array($p->kelompok) ? implode(', ', array_map('ucfirst', $p->kelompok)) : ucfirst($p->kelompok) }} • {{ $p->steps()->published()->count() }} Tahapan
         </p>
         <p class="text-sm text-gray-600 flex-grow leading-relaxed">
           {{ str($p->deskripsi_penanganan)->limit(120) }}
