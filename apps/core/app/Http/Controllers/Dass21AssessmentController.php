@@ -106,7 +106,7 @@ class Dass21AssessmentController extends Controller
             return redirect()->route('dass21.form', $session->id);
         }
 
-        // Determine highest-risk kelompok(s)
+        // Skala severity
         $rank = [
             'Normal' => 0,
             'Mild' => 1,
@@ -114,11 +114,13 @@ class Dass21AssessmentController extends Controller
             'Severe' => 3,
             'Extremely Severe' => 4,
         ];
+
         $subscales = [
             'depresi' => $session->depresi_kelas,
             'anxiety' => $session->anxiety_kelas,
             'stres' => $session->stres_kelas,
         ];
+
         // Ambil semua kelompok dengan nilai Severe atau Extremely Severe (>= 3)
         $severeKeys = collect($subscales)
             ->filter(fn($kelas) => ($rank[$kelas] ?? 0) >= 3)
@@ -138,9 +140,18 @@ class Dass21AssessmentController extends Controller
                 ->orderBy('ordering')
                 ->get();
         }
+
         $konsultans = Konsultan::orderByDesc('rating')->limit(3)->get();
-        return view('dass21.result', compact('session', 'penanganan', 'konsultans'));
+
+        // 🧠 Ambil hasil analisis dari tabel analisis
+        $analisis = \App\Models\Analisis::where('dass21_session_id', $session->id)
+            ->where('user_id', Auth::id())
+            ->latest('id')
+            ->first();
+
+        return view('dass21.result', compact('session', 'penanganan', 'konsultans', 'analisis'));
     }
+
 
     // 🔹 Halaman Curhat Intro (tampilan biru seperti gambar)
     public function curhatIntro($id)
