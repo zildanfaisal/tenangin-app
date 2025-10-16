@@ -15,12 +15,12 @@
     $totalSeconds = (isset($steps) && $steps->count()) ? $steps->sum('durasi_detik') : 0;
     $totalSteps = (isset($steps) && $steps->count()) ? $steps->count() : 0;
 @endphp
-<div class="max-w-7xl mx-auto"
+<div class="max-w-7xl mx-auto px-4 sm:px-6"
       x-data='penangananPlayer({
           initial: 0,
           steps: @json($stepsPayload)
       })'>
-    <nav class="mb-6 text-xs text-gray-500 flex items-center gap-1">
+    <nav class="mb-6 text-xs text-gray-500 flex flex-wrap items-center gap-1">
         <a href="/dashboard" class="hover:text-indigo-600">Dashboard</a>
         <span>/</span>
         <a href="{{ route('dass21.index') }}" class="hover:text-indigo-600">DASS-21</a>
@@ -30,26 +30,28 @@
 
     <!-- Intro Screen -->
     <div x-show="!started" 
-        class="flex flex-col md:flex-row items-center md:items-start justify-center max-w-6xl mx-auto p-6 gap-10">
+        class="flex flex-col md:flex-row items-center md:items-start justify-center max-w-6xl mx-auto p-4 md:p-6 gap-6 md:gap-10">
 
         <!-- Kolom Kiri: Gambar -->
         <div class="w-full md:w-1/2 flex justify-center">
             <img src="{{ asset('img/cover-penanganan.png') }}" 
                 alt="Cover" 
-                class="w-96 h-96 md:w-96 md:h-96 object-contain">
+                class="w-full max-w-xs sm:max-w-sm md:w-96 md:h-96 h-auto object-contain">
         </div>
 
         <!-- Kolom Kanan: Informasi -->
-        <div class="w-full md:w-1/2 flex flex-col justify-center items-center md:items-start">
-            <h1 class="text-3xl font-bold mb-3 text-gray-800">{{ $penanganan->nama_penanganan }}</h1>
-            <p class="text-sm text-gray-500 mb-2">Penanganan {{ is_array($penanganan->kelompok) ? implode(', ', $penanganan->kelompok) : $penanganan->kelompok }} - {{ $totalSteps }} Tahapan</p>
+        <div class="w-full md:w-1/2 flex flex-col justify-center items-center md:items-start text-center md:text-left">
+            <h1 class="text-2xl sm:text-3xl font-bold mb-3 text-gray-800">{{ $penanganan->nama_penanganan }}</h1>
+            <p class="text-sm text-gray-500 mb-2">
+                Penanganan {{ is_array($penanganan->kelompok) ? implode(', ', $penanganan->kelompok) : $penanganan->kelompok }} - {{ $totalSteps }} Tahapan
+            </p>
 
-            <p class="text-gray-700 leading-relaxed mb-5">
+            <p class="text-gray-700 leading-relaxed mb-5 text-justify">
                 {{ $penanganan->deskripsi_penanganan }}
             </p>
 
             <button @click="start()" 
-                    class="px-6 py-3 bg-indigo-600 text-white font-semibold rounded-md shadow hover:bg-indigo-700 transition">
+                    class="w-full sm:w-auto px-6 py-3 bg-indigo-600 text-white font-semibold rounded-md shadow hover:bg-indigo-700 transition">
                 Ayo Mulai
             </button>
 
@@ -59,18 +61,19 @@
         </div>
     </div>
 
-    <!-- Multi-step Mode (Simple, No Timer) -->
+    <!-- Multi-step Mode -->
     <template x-if="started && multiStep && !finished">
-        <div class="mt-10 flex flex-col items-center justify-center">
-            <div class="flex flex-col md:flex-row items-center justify-center gap-10">
+        <div class="mt-10 flex flex-col items-center justify-center px-4">
+            <div class="flex flex-col md:flex-row items-center justify-center gap-6 md:gap-10 w-full max-w-6xl">
+
                 <!-- Kolom Kiri: Gambar/Video -->
                 <div class="w-full md:w-1/2 flex justify-center">
                     <template x-if="currentStep.video">
                         <div class="w-full flex flex-col items-center">
-                            <div class="w-96 h-96 md:w-96 md:h-96 flex items-center justify-center">
+                            <div class="w-full max-w-xs sm:max-w-sm md:w-96 h-auto flex items-center justify-center">
                                 <video 
                                     playsinline 
-                                    class="w-full h-full"
+                                    class="w-full h-auto rounded-lg"
                                     :key="currentStep.id"
                                     x-ref="vid"
                                     autoplay
@@ -87,13 +90,13 @@
 
                 <!-- Kolom Kanan: Info Tahapan -->
                 <div class="w-full md:w-1/2 text-center md:text-left flex flex-col justify-center">
-                    <h1 class="text-2xl font-bold mb-2 text-gray-800" 
+                    <h1 class="text-xl sm:text-2xl font-bold mb-2 text-gray-800" 
                         x-text="currentStep.judul ? currentStep.judul : penangananName"></h1>
 
-                    <!-- Progress bar hanya muncul di step mode -->
                     <p class="text-sm text-gray-500 mb-2">
                         <span x-text="`${currentIndex+1}/${steps.length} Tahapan`"></span>
                     </p>
+
                     <template x-if="started && multiStep">
                         <div class="w-full bg-gray-200 rounded-full h-2.5 mb-2">
                             <div class="bg-blue-500 h-2.5 rounded-full transition-all duration-300"
@@ -101,10 +104,11 @@
                         </div>
                     </template>
 
-                    <ul class="text-gray-700 leading-relaxed mb-5 list-decimal list-inside" x-html="currentStep.deskripsi.split(/(?<=\.)\s+/).map((item, i) => `<li>${item.trim()}</li>`).join('')"></ul>
+                    <ul class="text-gray-700 leading-relaxed mb-5 list-decimal list-inside text-sm sm:text-base text-justify" 
+                        x-html="currentStep.deskripsi.split(/(?<=\.)\s+/).map((item, i) => `<li>${item.trim()}</li>`).join('')"></ul>
 
-                    <!-- Tombol dibuat 2 kolom -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 w-full">
+                    <!-- Tombol -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full">
                         <button 
                             @click="nextStep()" 
                             :disabled="false"
@@ -130,19 +134,23 @@
     </template>
 
     <!-- Finish Screen -->
-    <div x-show="finished" class="flex flex-col md:flex-row items-center justify-center max-w-6xl mx-auto p-6 gap-10">
+    <div x-show="finished" class="flex flex-col md:flex-row items-center justify-center max-w-6xl mx-auto p-4 md:p-6 gap-6 md:gap-10">
         <!-- Gambar maskot -->
         <div class="w-full md:w-1/2 flex justify-center">
-            <img src="{{ asset('img/cover-finish-penanganan.png') }}" alt="Mascot" class="w-96 h-96 md:w-96 md:h-96 object-contain">
+            <img src="{{ asset('img/cover-finish-penanganan.png') }}" 
+                alt="Mascot" 
+                class="w-full max-w-xs sm:max-w-sm md:w-96 md:h-96 h-auto object-contain">
         </div>
         <!-- Konten kanan -->
-        <div class="w-full md:w-1/2 flex flex-col justify-center items-center md:items-start">
-            <h2 class="text-3xl font-bold text-gray-800 mb-3">Hebat!</h2>
-            <p class="text-gray-700 mb-4">Kamu sudah berhasil menyelesaikan <span class="font-semibold">{{ $penanganan->nama_penanganan }}</span>.<br>
-            Setiap napas tenang yang kamu ambil adalah langkah kecil menuju keseimbangan dan ketenangan batin. Terus pertahankan rutinitas ini untuk mendukung kesejahteraan mentalmu.</p>
-            <div class="flex gap-4">
-                <a href="{{ route('dass21.index') }}" class="px-6 py-3 bg-blue-600 text-white font-semibold rounded-md shadow hover:bg-blue-700 transition">Rekomendasi Lainnya</a>
-                <a href="/dashboard" class="px-6 py-3 bg-gray-100 text-gray-700 font-semibold rounded-md shadow hover:bg-gray-200 transition">Menu Utama</a>
+        <div class="w-full md:w-1/2 flex flex-col justify-center items-center md:items-start text-center md:text-left">
+            <h2 class="text-2xl sm:text-3xl font-bold text-gray-800 mb-3">Hebat!</h2>
+            <p class="text-gray-700 mb-4 text-sm sm:text-base text-justify">
+                Kamu sudah berhasil menyelesaikan <span class="font-semibold">{{ $penanganan->nama_penanganan }}</span>.<br>
+                Setiap napas tenang yang kamu ambil adalah langkah kecil menuju keseimbangan dan ketenangan batin. Terus pertahankan rutinitas ini untuk mendukung kesejahteraan mentalmu.
+            </p>
+            <div class="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+                <a href="{{ route('dass21.index') }}" class="w-full sm:w-auto text-center px-6 py-3 bg-blue-600 text-white font-semibold rounded-md shadow hover:bg-blue-700 transition">Rekomendasi Lainnya</a>
+                <a href="/dashboard" class="w-full sm:w-auto text-center px-6 py-3 bg-gray-100 text-gray-700 font-semibold rounded-md shadow hover:bg-gray-200 transition">Menu Utama</a>
             </div>
         </div>
     </div>
