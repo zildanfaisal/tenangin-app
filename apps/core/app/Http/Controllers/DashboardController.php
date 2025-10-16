@@ -5,7 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Dass21Session;
 use App\Models\Penanganan;
-use App\Models\RekamanPenanganan;
+use App\Models\Analisis;
+use App\Models\Suara;
 use Illuminate\Support\Carbon;
 
 class DashboardController extends Controller
@@ -19,9 +20,29 @@ class DashboardController extends Controller
         }
 
         $assesmentCount = $query->count();
-        $lastSession = (clone $query)->latest('completed_at')->first();
-        $lastEmotion = $lastSession?->hasil_kelas ?? '-';
 
+        // 🔹 ambil analisis & suara terbaru
+        $latestAnalisis = Analisis::where('user_id', $user->id)
+            ->latest('id')
+            ->first();
+
+        $lastSuara = Suara::where('user_id', $user->id)
+            ->latest('created_at')
+            ->first();
+
+        $tanggalAnalisis = $lastSuara?->created_at;
+
+        // 🔹 hitung kondisi emosi terbanyak (dari hasil_kelas)
+        $mostFrequentEmotion = $query->pluck('hasil_kelas')
+            ->filter()
+            ->countBy()
+            ->sortDesc()
+            ->keys()
+            ->first();
+
+        $lastEmotion = $mostFrequentEmotion ?? '-';
+
+        // 🔹 riwayat asesmen 5 terakhir
         $riwayat = (clone $query)
             ->select('id', 'completed_at', 'hasil_kelas', 'depresi_kelas', 'stres_kelas', 'anxiety_kelas')
             ->latest('completed_at')
@@ -114,25 +135,23 @@ class DashboardController extends Controller
             ],
         ];
 
-        $penanganan = Penanganan::published()
-            ->orderBy('ordering')
-            ->orderByDesc('id')
-            ->get();
-
-        $recentRekaman = RekamanPenanganan::with('konsultan')
-            ->latest('id')
-            ->limit(5)
+        $recentRekaman = Dass21Session::where('user_id', $user->id)
+            ->whereNotNull('completed_at')
+            ->select('id', 'user_id', 'completed_at', 'hasil_kelas')
+            ->latest('completed_at')
+            ->take(8)
             ->get();
 
         return view('dashboard', compact(
             'user',
             'assesmentCount',
             'lastEmotion',
+            'tanggalAnalisis',
             'chart1',
             'chart2',
             'riwayat',
-            'penanganan',
-            'recentRekaman'
+            'recentRekaman',
+            'latestAnalisis'
         ));
     }
 }

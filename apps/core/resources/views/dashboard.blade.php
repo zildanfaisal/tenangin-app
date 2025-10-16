@@ -24,8 +24,9 @@
             <p class="text-2xl font-semibold mt-2">{{ $assesmentCount ?? 0 }}</p>
         </div>
         <div class="bg-white shadow rounded-xl p-4 text-center">
-            <h3 class="text-gray-500 text-sm">Emosi Terakhir</h3>
+           <h3 class="text-gray-500 text-sm">Kondisi Emosi Terbanyak</h3>
             <p class="text-2xl font-semibold mt-2 text-blue-600">{{ $lastEmotion ?? '-' }}</p>
+
         </div>
         <div class="bg-white shadow rounded-xl p-4 text-center">
             <h3 class="text-gray-500 text-sm">Kategori Dominan</h3>
@@ -52,44 +53,16 @@
 
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div class="bg-white shadow rounded-lg p-6">
-            <div class="flex justify-between items-center mb-3">
-                <h3 class="font-semibold text-gray-800">Riwayat Asesmen</h3>
-                <a href="{{ route('dass21.index') }}" class="text-sm text-blue-600 hover:underline">Selengkapnya</a>
-            </div>
-            <div class="overflow-x-auto">
-                <table class="w-full text-sm text-left border">
-                    <thead class="bg-gray-100 text-gray-700">
-                        <tr>
-                            <th class="px-4 py-2 border">No</th>
-                            <th class="px-4 py-2 border">Tanggal</th>
-                            <th class="px-4 py-2 border">Pukul</th>
-                            <th class="px-4 py-2 border">Hasil Emosi</th>
-                            <th class="px-4 py-2 border">Hasil Analisis</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse($riwayat as $i => $s)
-                            <tr class="hover:bg-gray-50">
-                                <td class="px-4 py-2 border">{{ $i + 1 }}</td>
-                                <td class="px-4 py-2 border">{{ $s->completed_at? $s->completed_at->format('d F Y') : '-' }}</td>
-                                <td class="px-4 py-2 border">{{ $s->completed_at? $s->completed_at->format('H:i') : '-' }}</td>
-                                <td class="px-4 py-2 border text-red-500">
-                                    D:{{ $s->depresi_kelas ?? '-' }} /
-                                    A:{{ $s->anxiety_kelas ?? '-' }} /
-                                    S:{{ $s->stres_kelas ?? '-' }}
-                                </td>
-                                <td class="px-4 py-2 border">
-                                    <a href="{{ route('dass21.result', $s->id) }}" class="text-blue-600 hover:underline">Lihat Analisis</a>
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="5" class="px-4 py-3 text-center text-gray-500">Belum ada asesmen yang diselesaikan.</td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
+            <h3 class="font-semibold mb-3 text-gray-800">Hasil Analisis Terbaru</h3>
+            @if($latestAnalisis)
+                <p class="text-gray-700 text-sm mb-2">
+                    Tanggal: {{ $tanggalAnalisis?->translatedFormat('d F Y H:i') ?? '-' }}
+                </p>
+                    <span class="font-semibold text-blue-600">{{ $latestAnalisis->hasil_emosi }}</span>
+
+            @else
+                <p class="text-gray-500 text-sm">Belum ada hasil analisis.</p>
+            @endif
         </div>
 
         <div class="bg-white shadow rounded-lg p-6">
@@ -99,7 +72,7 @@
                     <thead class="bg-gray-100 text-gray-700">
                         <tr>
                             <th class="px-4 py-2 border">No</th>
-                            <th class="px-4 py-2 border">Nama Konsultan</th>
+                            <th class="px-4 py-2 border">Nama Pengguna</th>
                             <th class="px-4 py-2 border">Tanggal</th>
                             <th class="px-4 py-2 border">Hasil Emosi</th>
                         </tr>
@@ -108,13 +81,13 @@
                         @forelse($recentRekaman as $idx => $rek)
                             <tr class="hover:bg-gray-50">
                                 <td class="px-4 py-2 border">{{ $idx + 1 }}</td>
-                                <td class="px-4 py-2 border">{{ $rek->konsultan->nama_konsultan ?? '-' }}</td>
-                                <td class="px-4 py-2 border">{{ $rek->created_at?->translatedFormat('d M Y') }}</td>
-                                <td class="px-4 py-2 border text-blue-600 font-semibold">{{ $rek->hasil_emosi ?? '-' }}</td>
+                                <td class="px-4 py-2 border">{{ $rek->user->name ?? '-' }}</td>
+                                <td class="px-4 py-2 border">{{ $rek->completed_at?->translatedFormat('d M Y H:i') ?? '-' }}</td>
+                                <td class="px-4 py-2 border text-blue-600 font-semibold">{{ $rek->hasil_kelas ?? '-' }}</td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="4" class="px-4 py-3 text-center text-gray-500">Belum ada rekaman konsultasi.</td>
+                                <td colspan="4" class="px-4 py-3 text-center text-gray-500">Belum ada data konsultasi.</td>
                             </tr>
                         @endforelse
                     </tbody>
