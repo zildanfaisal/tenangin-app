@@ -89,7 +89,14 @@ class Dass21SessionSeeder extends Seeder
                     'anxiety' => $session->anxiety_kelas,
                     'stres'   => $session->stres_kelas,
                 ]);
-                $session->overall_risk = $risk;
+                $riskMapId = [
+                    'High Risk' => 'Risiko Tinggi',
+                    'Moderate-High' => 'Risiko Cukup Tinggi',
+                    'Moderate' => 'Risiko Sedang',
+                    'Mild' => 'Risiko Ringan',
+                    'Low' => 'Risiko Rendah',
+                ];
+                $session->overall_risk = $riskMapId[$risk] ?? $risk;
                 $session->overall_risk_note = $note;
                 $session->completed_at = now()->subDays(3 - $j);
                 $session->save();

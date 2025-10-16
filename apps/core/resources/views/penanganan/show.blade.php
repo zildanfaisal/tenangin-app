@@ -42,7 +42,7 @@
         <!-- Kolom Kanan: Informasi -->
         <div class="w-full md:w-1/2 flex flex-col justify-center items-center md:items-start">
             <h1 class="text-3xl font-bold mb-3 text-gray-800">{{ $penanganan->nama_penanganan }}</h1>
-            <p class="text-sm text-gray-500 mb-2">Penanganan {{ $penanganan->kelompok ?? 'Umum' }} - {{ $totalSteps }} Tahapan</p>
+            <p class="text-sm text-gray-500 mb-2">Penanganan {{ is_array($penanganan->kelompok) ? implode(', ', $penanganan->kelompok) : $penanganan->kelompok }} - {{ $totalSteps }} Tahapan</p>
 
             <p class="text-gray-700 leading-relaxed mb-5">
                 {{ $penanganan->deskripsi_penanganan }}

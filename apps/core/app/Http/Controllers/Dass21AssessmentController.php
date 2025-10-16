@@ -109,10 +109,10 @@ class Dass21AssessmentController extends Controller
         // Skala severity
         $rank = [
             'Normal' => 0,
-            'Mild' => 1,
-            'Moderate' => 2,
-            'Severe' => 3,
-            'Extremely Severe' => 4,
+            'Risiko Ringan' => 1,
+            'Risiko Sedang' => 2,
+            'Parah' => 3,
+            'Sangat Parah' => 4,
         ];
 
         $subscales = [
