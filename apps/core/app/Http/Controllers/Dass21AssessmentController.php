@@ -129,7 +129,11 @@ class Dass21AssessmentController extends Controller
         if (count($severeKeys) > 0) {
             // Jika ada Severe/Extremely Severe, tampilkan semua yang memenuhi
             $penanganan = Penanganan::published()
-                ->whereIn('kelompok', $severeKeys)
+                ->where(function($q) use ($severeKeys) {
+                    foreach ($severeKeys as $key) {
+                        $q->orWhereJsonContains('kelompok', $key);
+                    }
+                })
                 ->with('steps')
                 ->orderBy('ordering')
                 ->get();

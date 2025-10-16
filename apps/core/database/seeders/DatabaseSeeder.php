@@ -22,6 +22,7 @@ class DatabaseSeeder extends Seeder
             KonsultanSeeder::class,
             PenangananSeeder::class,
             KonsultanSeeder::class,
+            Dass21SessionSeeder::class,
         ]);
     }
 }

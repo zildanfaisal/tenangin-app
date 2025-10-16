@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::table('penanganan', function (Blueprint $table) {
             if (!Schema::hasColumn('penanganan','kelompok')) {
-                $table->enum('kelompok', ['depresi','stres','anxiety'])->default('anxiety')->after('deskripsi_penanganan');
+                $table->json('kelompok')->nullable()->after('deskripsi_penanganan');
             }
         });
     }

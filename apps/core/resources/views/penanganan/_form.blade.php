@@ -17,12 +17,20 @@
         @error('status')<p class="text-red-600 text-xs">{{ $message }}</p>@enderror
     </div>
     <div>
-        <label class="block text-sm font-medium">Kelompok</label>
-        <select name="kelompok" class="w-full border rounded px-2 py-1">
-            @foreach(['depresi','stres','anxiety'] as $k)
-                <option value="{{ $k }}" @selected(old('kelompok',$penanganan->kelompok ?? 'anxiety')===$k)>{{ ucfirst($k) }}</option>
+        <label class="block text-sm font-medium mb-2">Kelompok</label>
+        @php
+            $daftarKelompok = ['depresi', 'anxiety', 'stres'];
+            $selectedKelompok = old('kelompok', $penanganan->kelompok ?? []);
+        @endphp
+        <div class="flex gap-4">
+            @foreach($daftarKelompok as $kelompok)
+                <label class="inline-flex items-center">
+                    <input type="checkbox" name="kelompok[]" value="{{ $kelompok }}" 
+                        {{ in_array($kelompok, $selectedKelompok) ? 'checked' : '' }}>
+                    <span class="ml-2 capitalize">{{ $kelompok }}</span>
+                </label>
             @endforeach
-        </select>
+        </div>
         @error('kelompok')<p class="text-red-600 text-xs">{{ $message }}</p>@enderror
     </div>
     <div>

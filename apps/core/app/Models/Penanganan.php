@@ -21,6 +21,10 @@ class Penanganan extends Model
         'ordering',
     ];
 
+    protected $casts = [
+        'kelompok' => 'array',
+    ];
+
     protected static function booted()
     {
         static::creating(function($model){

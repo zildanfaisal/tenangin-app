@@ -132,7 +132,9 @@
             <img src="{{ $item->cover_path ? asset('storage/'.$item->cover_path) : asset('activity1.png') }}" alt="{{ $item->nama_penanganan }}" class="rounded-2xl mb-4 object-cover h-44 md:h-48 w-full">
             <h4 class="font-bold text-base md:text-lg mb-1">{{ $item->nama_penanganan }}</h4>
             <p class="text-xs md:text-sm text-gray-500 mb-2">
-              <span class="capitalize">{{ $item->kelompok ?? '-' }}</span>
+              <span class="capitalize">
+                {{ is_array($item->kelompok) ? implode(', ', array_map('ucfirst', $item->kelompok)) : ucfirst($item->kelompok) }}
+              </span>
               — {{ $item->steps_published_count ?? $item->steps()->published()->count() }} Tahapan
               @php $dur = ($item->durasi_published_sum ?? $item->steps()->published()->sum('durasi_detik')) ?: 0; @endphp
               — Durasi ± {{ ceil($dur/60) }} menit
