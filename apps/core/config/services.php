@@ -35,4 +35,19 @@ return [
         ],
     ],
 
+    // Python AI microservice
+    'py_ai' => [
+        'url' => env('PY_AI_URL', 'http://localhost:5000'),
+        'ws_url' => env('PY_AI_WS_URL'),
+        'token' => env('PY_AI_TOKEN'),
+        'shared' => env('PY_AI_SHARED', env('PY_AI_TOKEN')), // shared secret for temp tokens
+        'timeout' => env('PY_AI_TIMEOUT', 30),
+    ],
+
+    'cekmutasi' => [
+        'key'     => env('CEKMUTASI_KEY'),
+        'account' => env('CEKMUTASI_ACCOUNT'),
+    ],
+
+
 ];

@@ -13,7 +13,7 @@ class Suara extends Model
 
     protected $fillable = [
         'user_id',
-        'dass21_user_id',
+        'dass21_session_id',
         'file_audio',
         'transkripsi',
     ];
@@ -23,8 +23,8 @@ class Suara extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function dass21User()
+    public function dass21Session()
     {
-        return $this->belongsTo(Dass21User::class, 'dass21_user_id');
+        return $this->belongsTo(Dass21Session::class, 'dass21_session_id');
     }
 }

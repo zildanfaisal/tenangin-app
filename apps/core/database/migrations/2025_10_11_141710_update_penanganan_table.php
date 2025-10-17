@@ -11,12 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('dass21_assesmen', function (Blueprint $table) {
-            $table->id();
-            $table->text('pertanyaan');
-            $table->string('jawaban');
-            $table->enum('kategori', ['depresi', 'anxiety', 'stres']);
-            $table->timestamps();
+        Schema::table('penanganan', function (Blueprint $table) {
+            $table->dropColumn(['tahapan_penanganan', 'tutorial_penanganan', 'video_penanganan', 'durasi_detik', 'tingkat_kesulitan']);
         });
     }
 
@@ -25,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('dass21_assesmen');
+        Schema::table('penanganan', function (Blueprint $table) {
+            //
+        });
     }
 };

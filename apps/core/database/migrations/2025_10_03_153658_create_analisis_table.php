@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('analisis', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-            $table->foreignId('dass21_user_id')->constrained('dass21_user')->onDelete('cascade');
+            $table->foreignId('dass21_session_id')->constrained('dass21_sessions')->onDelete('cascade');
             $table->foreignId('suara_id')->constrained('suara')->onDelete('cascade');
             $table->text('hasil_kondisi');
             $table->text('hasil_emosi');
