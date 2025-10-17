@@ -19,6 +19,10 @@ class DatabaseSeeder extends Seeder
             RolePermissionSeeder::class,
             UserSeeder::class,
             Dass21ItemSeeder::class,
+            KonsultanSeeder::class,
+            PenangananSeeder::class,
+            KonsultanSeeder::class,
+            Dass21SessionSeeder::class,
         ]);
     }
 }

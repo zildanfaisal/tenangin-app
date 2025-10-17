@@ -13,6 +13,22 @@ class Dass21ScoringService
         'Severe' => 3,
         'Extremely Severe' => 4,
     ];
+    protected array $kelasMap = [
+        'Normal' => 'Normal',
+        'Mild' => 'Ringan',
+        'Moderate' => 'Sedang',
+        'Severe' => 'Parah',
+        'Extremely Severe' => 'Sangat Parah',
+    ];
+
+    protected array $riskMapId = [
+        'High Risk' => 'Risiko Tinggi',
+        'Moderate-High' => 'Risiko Cukup Tinggi',
+        'Moderate' => 'Risiko Sedang',
+        'Mild' => 'Risiko Ringan',
+        'Low' => 'Risiko Rendah',
+    ];
+
     public function classify(string $type, int $score): string
     {
         $map = [
@@ -27,7 +43,7 @@ class Dass21ScoringService
             ],
         ];
         foreach ($map[$type] as [$min,$max,$label]) {
-            if ($score >= $min && $score <= $max) return $label;
+            if ($score >= $min && $score <= $max) return $this->kelasMap[$label] ?? $label;
         }
         return 'Unknown';
     }
@@ -57,7 +73,7 @@ class Dass21ScoringService
             'anxiety' => $session->anxiety_kelas,
             'stres'   => $session->stres_kelas,
         ]);
-        $session->overall_risk = $risk;
+        $session->overall_risk = $this->riskMapId[$risk] ?? $risk;
         $session->overall_risk_note = $note;
         $session->completed_at = now();
         $session->save();

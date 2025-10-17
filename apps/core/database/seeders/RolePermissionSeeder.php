@@ -28,6 +28,7 @@ class RolePermissionSeeder extends Seeder
             'manajemen-user',
             'manajemen-penanganan',
             'manajemen-konsultan',
+            'manajemen-curhat',
         ];
 
         foreach ($permissions as $permission) {

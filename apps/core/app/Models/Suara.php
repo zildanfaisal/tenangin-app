@@ -13,7 +13,7 @@ class Suara extends Model
 
     protected $fillable = [
         'user_id',
-        'dass21_user_id',
+        'dass21_session_id',
         'file_audio',
         'transkripsi',
     ];
