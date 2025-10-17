@@ -74,8 +74,8 @@
       </p>
     </div>
 
-    {{-- Kanan: Maskot --}}
-    <div class="mt-8 md:mt-0 md:ml-10 flex justify-center md:block">
+    {{-- Kanan: Maskot (hanya tampil di md ke atas) --}}
+    <div class="mt-8 md:mt-0 md:ml-10 justify-center hidden md:block">
       <img src="{{ asset('nai.png') }}" alt="Nai Mascot" class="w-52 sm:w-64 md:w-80 lg:w-96 mx-auto">
     </div>
   </div>

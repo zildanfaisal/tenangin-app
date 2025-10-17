@@ -21,7 +21,24 @@
                 <label class="flex items-center gap-2">
                     <input type="radio" name="jenis_kelamin" value="{{ $value }}"
                            {{ request('jenis_kelamin') == $value ? 'checked' : '' }}
-                           class="text-blue-500 focus:ring-blue-400" onchange="this.form.submit()">
+                           class="text-blue-500 focus:ring-blue-400"
+                           onchange="this.form.submit()">
+                    <span>{{ $label }}</span>
+                </label>
+            @endforeach
+        </div>
+    </div>
+
+    {{-- Kategori --}}
+    <div class="mb-5">
+        <p class="text-sm font-medium text-gray-700 mb-2">Kategori</p>
+        <div class="space-y-1 text-sm">
+            @foreach(['' => 'Semua', 'konselor' => 'Konselor', 'konsultan' => 'Konsultan'] as $value => $label)
+                <label class="flex items-center gap-2">
+                    <input type="radio" name="kategori" value="{{ $value }}"
+                           {{ request('kategori') == $value ? 'checked' : '' }}
+                           class="text-blue-500 focus:ring-blue-400"
+                           onchange="this.form.submit()">
                     <span>{{ $label }}</span>
                 </label>
             @endforeach

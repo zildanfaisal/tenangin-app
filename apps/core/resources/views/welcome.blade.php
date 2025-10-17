@@ -4,12 +4,32 @@
 
 @section('content')
 
+{{-- ================= NAVBAR ================= --}}
+<nav class="bg-white shadow-sm sticky top-0 z-50">
+    <div class="container mx-auto px-4 sm:px-6 md:px-12 flex items-center justify-between h-16">
+        <a href="/" class="flex items-center gap-2">
+            <img src="{{ asset('logo.png') }}" alt="Logo Tenangin" class="h-8 w-8 rounded-full">
+            <span class="font-bold text-brand-blue text-lg">Tenangin</span>
+        </a>
+        <div class="hidden md:flex gap-6 items-center">
+            <a href="#fitur" class="text-gray-700 hover:text-brand-blue font-medium">Fitur</a>
+            <a href="#usecase" class="text-gray-700 hover:text-brand-blue font-medium">Use Case</a>
+            <a href="#berita" class="text-gray-700 hover:text-brand-blue font-medium">Berita</a>
+            <a href="#tentang-kami" class="text-gray-700 hover:text-brand-blue font-medium">Tentang Kami</a>
+        </div>
+        <div class="flex gap-2 items-center">
+            <a href="{{ route('login') }}" class="bg-blue-600 text-white px-4 py-2 rounded-lg font-semibold text-sm hover:bg-blue-700 transition">Login</a>
+            <a href="{{ route('register') }}" class="bg-white border border-blue-600 text-blue-600 px-4 py-2 rounded-lg font-semibold text-sm hover:bg-blue-50 transition">Register</a>
+        </div>
+    </div>
+</nav>
+
 {{-- ================= HERO SECTION ================= --}}
 <section class="bg-gradient-to-b from-brand-dark to-brand-blue text-white">
-    <div class="container mx-auto px-6 md:px-12 py-16 md:py-24">
-        <div class="grid md:grid-cols-2 gap-16 items-center">
+    <div class="container mx-auto px-4 sm:px-6 md:px-12 py-10 md:py-24">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-16 items-center">
             {{-- Left Text --}}
-            <div class="text-center md:text-left">
+            <div class="text-center md:text-left mb-8 md:mb-0">
                 <h1 class="text-5xl md:text-6xl lg:text-7xl font-extrabold leading-tight hero-fade-in" style="animation-delay: 0.5s;">Tenangin</h1>
                 <p class="mt-6 text-lg md:text-xl text-gray-300 max-w-xl mx-auto md:mx-0 hero-fade-in" style="animation-delay: 0.8s;">
                     Platform terapi kesehatan mental berbasis AI untuk deteksi kecemasan, burnout, dan PTSD dengan pendampingan personal.
@@ -22,10 +42,10 @@
             </div>
 
             {{-- Right Image --}}
-            <div class="flex justify-center items-center order-first md:order-last hero-fade-in" style="animation-delay: 0.2s;">
+            <div class="flex justify-center items-center order-first md:order-last hero-fade-in mb-8 md:mb-0" style="animation-delay: 0.2s;">
                 <img src="{{ asset('Avatar1.png') }}"
                      alt="Ilustrasi Tenangin"
-                     class="w-full max-w-md h-80 md:h-full object-cover rounded-2xl mt-1">
+                     class="w-full max-w-xs sm:max-w-md h-56 sm:h-80 md:h-full object-cover rounded-2xl mt-1">
             </div>
         </div>
     </div>
@@ -38,10 +58,10 @@
             <h2 class="text-4xl md:text-5xl font-bold text-brand-blue">Fitur Tenangin</h2>
         </div>
 
-        <div class="grid md:grid-cols-2 gap-16 items-center scroll-animate">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-16 items-center scroll-animate">
             {{-- Image --}}
-            <div class="flex justify-center items-center">
-                <img src="{{ asset('Avatar2.png') }}" alt="Maskot Tenangin" class="w-full max-w-lg h-[28rem] rounded-2xl object-cover">
+            <div class="flex justify-center items-center mb-8 md:mb-0">
+                <img src="{{ asset('Avatar2.png') }}" alt="Maskot Tenangin" class="w-full max-w-xs sm:max-w-lg h-56 sm:h-[28rem] rounded-2xl object-cover">
             </div>
 
             {{-- Features List --}}
@@ -79,9 +99,9 @@
             </p>
         </div>
 
-        <div class="grid md:grid-cols-2 gap-16 items-center scroll-animate">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-16 items-center scroll-animate">
             {{-- Left Content --}}
-            <div class="flex flex-col space-y-8">
+            <div class="flex flex-col space-y-8 mb-8 md:mb-0">
                 <div class="bg-white rounded-xl shadow-lg p-6 border-l-4 border-indigo-500">
                     <h3 class="text-xl font-bold text-brand-blue mb-2">AI Personal Assistant</h3>
                     <p class="text-gray-600 text-base leading-relaxed">
@@ -109,8 +129,8 @@
             </div>
 
             {{-- Right Image --}}
-            <div class="flex justify-center items-center">
-                <img src="{{ asset('Avatar3.png') }}" alt="Maskot Tenangin" class="w-full max-w-lg h-[28rem] rounded-2xl object-cover">
+            <div class="flex justify-center items-center mb-8 md:mb-0">
+                <img src="{{ asset('Avatar3.png') }}" alt="Maskot Tenangin" class="w-full max-w-xs sm:max-w-lg h-56 sm:h-[28rem] rounded-2xl object-cover">
             </div>
         </div>
     </div>
@@ -127,7 +147,7 @@
             </p>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-6xl mx-auto scroll-animate">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-6xl mx-auto scroll-animate">
 
             {{-- Free Plan --}}
             <div class="bg-white rounded-2xl shadow-lg p-8 border border-gray-200 flex flex-col hover:shadow-2xl transition duration-300">
@@ -251,7 +271,7 @@
             </p>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 scroll-animate">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 scroll-animate">
             @foreach([
                 ['title'=>'Burnout di Tempat Kerja','desc'=>'Deteksi dini dan manajemen stres kerja dengan panduan relaksasi yang tepat untuk karyawan dan profesional.','color'=>'from-orange-400 to-red-500','tags'=>['Workplace','Stress Management','Professional']],
                 ['title'=>'Kecemasan Mahasiswa','desc'=>'Dukungan mental untuk mahasiswa menghadapi tekanan akademik, ujian, dan transisi kehidupan kampus.','color'=>'from-blue-400 to-indigo-500','tags'=>['Academic','Anxiety','Student Life']],
@@ -289,7 +309,7 @@
             </p>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto scroll-animate">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 max-w-5xl mx-auto scroll-animate">
             <a href="#" class="block bg-white rounded-2xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-2xl hover:-translate-y-1">
                 <div class="h-48 bg-blue-600"></div>
                 <div class="p-6">
@@ -329,7 +349,7 @@
             <h2 class="text-4xl md:text-5xl font-bold text-brand-blue">Tentang Kami</h2>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-5xl mx-auto scroll-animate">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8 max-w-5xl mx-auto scroll-animate">
             {{-- Visi --}}
             <div class="bg-white rounded-2xl shadow-xl p-8">
                 <div class="flex items-center space-x-4">
@@ -372,7 +392,7 @@
             <h2 class="text-4xl md:text-5xl font-bold text-brand-blue">Our Team</h2>
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12 max-w-4xl mx-auto scroll-animate">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-12 max-w-4xl mx-auto scroll-animate">
             <div class="text-center">
                 <img class="w-40 h-40 rounded-full object-cover mx-auto shadow-md" src="{{ asset('isaac.png') }}" alt="Foto Isaac Shabri">
                 <h3 class="mt-6 text-xl font-bold text-gray-800">Isaac Shabri</h3>

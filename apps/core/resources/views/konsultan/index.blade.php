@@ -60,17 +60,6 @@
                    placeholder="Temukan Konsultan..."
                    class="flex-1 bg-transparent outline-none text-gray-700 ml-2 text-sm md:text-base">
         </div>
-
-        <div class="flex gap-2 justify-between sm:justify-end w-full sm:w-auto">
-            <button type="submit" name="kategori" value="konselor"
-                class="flex-1 sm:flex-none bg-white hover:bg-blue-50 border border-gray-200 text-blue-700 font-medium px-4 py-2 rounded-lg shadow-sm transition text-xs md:text-sm {{ request('kategori') == 'konselor' ? 'ring-2 ring-blue-500' : '' }}">
-                Konselor
-            </button>
-            <button type="submit" name="kategori" value="konsultan"
-                class="flex-1 sm:flex-none bg-blue-600 hover:bg-blue-700 text-white font-medium px-4 py-2 rounded-lg shadow-sm transition text-xs md:text-sm {{ request('kategori') == 'konsultan' ? 'ring-2 ring-blue-500' : '' }}">
-                Konsultan
-            </button>
-        </div>
     </form>
 
     {{-- 🔹 Filter (MOBILE) --}}

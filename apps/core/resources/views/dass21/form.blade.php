@@ -5,8 +5,12 @@
 <div class="min-h-screen bg-[#f5f7fb] flex flex-col">
 
   {{-- Banner --}}
-  <div class="relative w-full h-28 sm:h-32 md:h-36 overflow-hidden shadow-sm">
-    <img src="{{ asset('ban.png') }}" alt="Banner DASS-21" class="absolute inset-0 w-full h-full object-cover">
+  <div class="w-full overflow-hidden">
+    <img 
+      src="{{ asset('ban.png') }}" 
+      alt="Banner DASS-21" 
+      class="w-full h-auto block"
+    >
   </div>
 
   {{-- Konten utama --}}

@@ -13,12 +13,12 @@
 
     {{-- Judul --}}
     <h1 class="text-2xl sm:text-3xl md:text-4xl font-bold leading-tight">
-      Sesi Curhat Selesai...
+      Curhatanmu sudah diterima!
     </h1>
 
     {{-- Subjudul --}}
     <p class="text-sm sm:text-base opacity-80">
-      Silakan tunggu sebentar
+      Analisis sedang diproses. Terima kasih sudah berbagi.
     </p>
 
     {{-- 🌊 Spinner modern --}}
@@ -42,6 +42,6 @@
 <script>
   setTimeout(() => {
     window.location.href = "{{ route('dass21.result', $session->id) }}";
-  }, 5000);
+  }, 45000);
 </script>
 @endsection
