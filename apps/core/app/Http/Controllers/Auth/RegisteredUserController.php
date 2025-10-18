@@ -57,8 +57,8 @@ class RegisteredUserController extends Controller
         $user->assignRole('user');
 
         // Auto login
-        Auth::login($user);
+        // Auth::login($user);
 
-        return redirect()->route('dashboard');
+        return redirect()->route('login')->with('success', 'Akun berhasil dibuat! Silakan login.');
     }
 }

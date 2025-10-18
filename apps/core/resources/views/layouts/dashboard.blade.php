@@ -74,6 +74,21 @@
         <span x-show="!sidebarCollapsed">Konsultasi</span>
       </a>
 
+      <!-- CMS Penanganan -->
+      <a href="{{ route('admin.penanganan.index') }}"
+         class="flex items-center space-x-3 px-3 py-2 rounded-lg font-medium transition-all
+         {{ request()->routeIs('admin.penanganan.*')
+             ? 'bg-blue-100 text-blue-600 font-semibold'
+             : 'text-gray-700 hover:bg-blue-50 hover:text-blue-600 focus:bg-blue-100 focus:text-blue-600 active:bg-blue-100 active:text-blue-600' }}"
+         :class="sidebarCollapsed ? 'justify-center' : ''">
+        <i class="fa-solid fa-comments
+          {{ request()->routeIs('admin.penanganan.*')
+              ? 'text-blue-600'
+              : 'text-gray-400 transition-colors' }}">
+        </i>
+        <span x-show="!sidebarCollapsed">CMS Penanganan</span>
+      </a>
+
       <!-- User -->
       <a href="{{ route('user.index') }}"
          class="flex items-center space-x-3 px-3 py-2 rounded-lg font-medium transition-all

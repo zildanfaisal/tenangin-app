@@ -65,14 +65,14 @@ class KonsultanController extends Controller
         ]);
 
         if ($request->hasFile('foto')) {
-            if (!File::exists(public_path('uploads/konsultan'))) {
-                File::makeDirectory(public_path('uploads/konsultan'), 0755, true);
+            if (!File::exists(public_path('storage/konsultan'))) {
+                File::makeDirectory(public_path('storage/konsultan'), 0755, true);
             }
 
             $file = $request->file('foto');
             $filename = time() . '_' . $file->getClientOriginalName();
-            $file->move(public_path('uploads/konsultan'), $filename);
-            $validated['foto'] = 'uploads/konsultan/' . $filename;
+            $file->move(public_path('storage/konsultan'), $filename);
+            $validated['foto'] = 'storage/konsultan/' . $filename;
         }
 
         Konsultan::create($validated);
@@ -115,14 +115,14 @@ class KonsultanController extends Controller
                 File::delete(public_path($konsultan->foto));
             }
 
-            if (!File::exists(public_path('uploads/konsultan'))) {
-                File::makeDirectory(public_path('uploads/konsultan'), 0755, true);
+            if (!File::exists(public_path('storage/konsultan'))) {
+                File::makeDirectory(public_path('storage/konsultan'), 0755, true);
             }
 
             $file = $request->file('foto');
             $filename = time() . '_' . $file->getClientOriginalName();
-            $file->move(public_path('uploads/konsultan'), $filename);
-            $validated['foto'] = 'uploads/konsultan/' . $filename;
+            $file->move(public_path('storage/konsultan'), $filename);
+            $validated['foto'] = 'storage/konsultan/' . $filename;
         }
 
         $konsultan->update($validated);
