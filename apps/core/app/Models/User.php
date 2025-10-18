@@ -28,6 +28,7 @@ class User extends Authenticatable
         'jenis_kelamin',
         'kesibukan',
         'koin',
+        'profile_photo',
     ];
 
     /**

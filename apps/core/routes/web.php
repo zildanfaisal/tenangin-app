@@ -22,6 +22,7 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/user/edit', [ProfileController::class, 'edit'])->name('user.edit');
     Route::patch('/user/update', [ProfileController::class, 'update'])->name('user.update');
+    Route::delete('/user/photo', [ProfileController::class, 'deletePhoto'])->name('user.delete_photo');
     Route::delete('/user', [ProfileController::class, 'destroy'])->name('user.destroy');
 
     // Akses user ke daftar konsultan
