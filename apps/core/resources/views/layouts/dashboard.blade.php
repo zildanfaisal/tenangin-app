@@ -75,6 +75,7 @@
       </a>
 
       <!-- CMS Penanganan -->
+
       @can('manajemen-curhat')
       <a href="{{ route('admin.penanganan.index') }}"
          class="flex items-center space-x-3 px-3 py-2 rounded-lg font-medium transition-all
@@ -89,6 +90,7 @@
         </i>
         <span x-show="!sidebarCollapsed">CMS Penanganan</span>
       </a>
+
 
       <!-- CMS Penanganan -->
       <a href="{{ route('admin.dass21-items.index') }}"
@@ -105,7 +107,6 @@
         <span x-show="!sidebarCollapsed">CMS Dass 21</span>
       </a>
       @endcan
-
       <!-- User -->
       <a href="{{ route('user.index') }}"
          class="flex items-center space-x-3 px-3 py-2 rounded-lg font-medium transition-all
