@@ -90,38 +90,48 @@ class DashboardController extends Controller
         return $mostFrequent;
     }
 
-    private function getChart1Data($query)
-    {
-        $sessions = (clone $query)->get();
+private function getChart1Data($query)
+{
+    $sessions = (clone $query)->get();
 
-        if ($sessions->isEmpty()) {
-            return [
-                'labels' => ['Tidak Ada Data'],
-                'datasets' => [[
-                    'label' => 'Data Kosong',
-                    'data' => [0],
-                    'borderColor' => '#9ca3af',
-                    'backgroundColor' => '#d1d5db',
-                ]]
-            ];
-        }
+    // Generate 7 hari terakhir
+    $endDate = Carbon::now()->setTimezone('Asia/Jakarta');
+    $startDate = $endDate->copy()->subDays(6);
 
-        $grouped = $sessions->groupBy(function ($s) {
-            return Carbon::parse($s->completed_at)->format('d M Y');
-        });
+    $allDates = [];
+    for ($date = $startDate->copy(); $date <= $endDate; $date->addDay()) {
+        $allDates[] = $date->format('Y-m-d');
+    }
 
-        $labels = $grouped->keys()->values()->toArray(); // ✅ ubah ke array
-        $depresiCounts = [];
-        $stresCounts = [];
-        $anxietyCounts = [];
-        $bahagiaCounts = [];
+    // Group sessions by date
+    $grouped = $sessions->groupBy(function ($s) {
+        return Carbon::parse($s->completed_at)->setTimezone('Asia/Jakarta')->format('Y-m-d');
+    });
 
-        foreach ($grouped as $date => $items) {
+    $labels = [];
+    $depresiCounts = [];
+    $stresCounts = [];
+    $anxietyCounts = [];
+    $bahagiaCounts = [];
+
+    // Loop through all 7 days
+    foreach ($allDates as $date) {
+        $labels[] = Carbon::parse($date)->format('d M Y');
+
+        $items = $grouped->get($date, collect([]));
+
+        if ($items->isEmpty()) {
+            // Jika tidak ada data di tanggal ini, isi dengan 0
+            $depresiCounts[] = 0;
+            $stresCounts[] = 0;
+            $anxietyCounts[] = 0;
+            $bahagiaCounts[] = 0;
+        } else {
             $depresiCounts[] = $items->where('depresi_kelas', '!=', 'Normal')->count();
             $stresCounts[] = $items->where('stres_kelas', '!=', 'Normal')->count();
             $anxietyCounts[] = $items->where('anxiety_kelas', '!=', 'Normal')->count();
 
-            // ✅ Bahagia = hasil Normal ATAU semua kategori Normal
+            // Bahagia = hasil Normal ATAU semua kategori Normal
             $bahagiaCounts[] = $items->filter(function ($s) {
                 $isHasilNormal = ($s->hasil_kelas ?? '') === 'Normal';
                 $allNormal = (
@@ -132,55 +142,46 @@ class DashboardController extends Controller
                 return $isHasilNormal || $allNormal;
             })->count();
         }
-
-        // ✅ tambahkan dummy nol jika hanya 1 tanggal
-        if (count($labels) === 1) {
-            $firstDate = Carbon::parse($sessions->first()->completed_at)->subDay()->format('d M Y');
-            array_unshift($labels, $firstDate);
-            array_unshift($depresiCounts, 0);
-            array_unshift($stresCounts, 0);
-            array_unshift($anxietyCounts, 0);
-            array_unshift($bahagiaCounts, 0);
-        }
-
-        return [
-            'labels' => $labels,
-            'datasets' => [
-                [
-                    'label' => 'Depresi',
-                    'data' => $depresiCounts,
-                    'borderColor' => '#ef4444',
-                    'backgroundColor' => '#fecaca',
-                    'fill' => false,
-                    'tension' => 0.3,
-                ],
-                [
-                    'label' => 'Stres',
-                    'data' => $stresCounts,
-                    'borderColor' => '#f59e0b',
-                    'backgroundColor' => '#fde68a',
-                    'fill' => false,
-                    'tension' => 0.3,
-                ],
-                [
-                    'label' => 'Kecemasan',
-                    'data' => $anxietyCounts,
-                    'borderColor' => '#3b82f6',
-                    'backgroundColor' => '#bfdbfe',
-                    'fill' => false,
-                    'tension' => 0.3,
-                ],
-                [
-                    'label' => 'Bahagia',
-                    'data' => $bahagiaCounts,
-                    'borderColor' => '#22c55e',
-                    'backgroundColor' => '#bbf7d0',
-                    'fill' => false,
-                    'tension' => 0.3,
-                ],
-            ]
-        ];
     }
+
+    return [
+        'labels' => $labels,
+        'datasets' => [
+            [
+                'label' => 'Depresi',
+                'data' => $depresiCounts,
+                'borderColor' => '#ef4444',
+                'backgroundColor' => '#fecaca',
+                'fill' => false,
+                'tension' => 0.3,
+            ],
+            [
+                'label' => 'Stres',
+                'data' => $stresCounts,
+                'borderColor' => '#f59e0b',
+                'backgroundColor' => '#fde68a',
+                'fill' => false,
+                'tension' => 0.3,
+            ],
+            [
+                'label' => 'Kecemasan',
+                'data' => $anxietyCounts,
+                'borderColor' => '#3b82f6',
+                'backgroundColor' => '#bfdbfe',
+                'fill' => false,
+                'tension' => 0.3,
+            ],
+            [
+                'label' => 'Bahagia',
+                'data' => $bahagiaCounts,
+                'borderColor' => '#22c55e',
+                'backgroundColor' => '#bbf7d0',
+                'fill' => false,
+                'tension' => 0.3,
+            ],
+        ]
+    ];
+}
 
     private function getChart2Data($query)
     {
