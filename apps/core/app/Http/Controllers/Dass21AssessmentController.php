@@ -7,6 +7,7 @@ use App\Models\Dass21Item;
 use App\Models\Dass21Response;
 use App\Models\Penanganan;
 use App\Models\Konsultan;
+use App\Models\Suara;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Services\Dass21ScoringService;
@@ -17,10 +18,27 @@ class Dass21AssessmentController extends Controller
 {
     public function index()
     {
-        $sessions = Dass21Session::where('user_id', Auth::id())
+        $userId = Auth::id();
+
+        $sessions = Dass21Session::where('user_id', $userId)
             ->whereNotNull('completed_at')
             ->latest()
-            ->paginate(10);
+            ->get();
+
+        // Ambil suara terakhir dari setiap sesi
+        $suaraData = Suara::whereIn('dass21_session_id', $sessions->pluck('id'))
+            ->select('dass21_session_id', 'created_at')
+            ->latest('created_at')
+            ->get()
+            ->groupBy('dass21_session_id')
+            ->map(fn($rows) => $rows->first());
+
+        // Gabungkan data suara ke tiap session
+        $sessions = $sessions->map(function ($s) use ($suaraData) {
+            $suara = $suaraData[$s->id] ?? null;
+            $s->suara_created_at = $suara?->created_at;
+            return $s;
+        });
 
         $penanganan = Penanganan::published()
             ->orderBy('ordering')
@@ -51,14 +69,26 @@ class Dass21AssessmentController extends Controller
             return redirect()->route('dass21.result', $session->id);
         }
 
+        // Ambil semua item dan jawaban existing
         $items = Dass21Item::orderBy('urutan')->get();
-        $existing = $session->responses()->pluck('nilai', 'dass21_item_id')->toArray();
+        $existing = $session->responses()
+            ->pluck('nilai', 'dass21_item_id')
+            ->toArray();
 
+        // Tentukan item aktif
         $itemId = $request->query('item');
-        $currentItem = $itemId ? $items->where('id', $itemId)->first() : $items->first();
+        $currentItem = $itemId
+            ? $items->where('id', $itemId)->first()
+            : $items->first();
         $current = $items->search(fn($i) => $i->id === $currentItem->id) + 1;
 
-        return view('dass21.form', compact('session', 'items', 'existing', 'current', 'currentItem'));
+        return view('dass21.form', compact(
+            'session',
+            'items',
+            'existing',
+            'current',
+            'currentItem'
+        ));
     }
 
     public function next(Request $request, $id)
@@ -72,6 +102,7 @@ class Dass21AssessmentController extends Controller
             'responses.*' => 'required|in:0,1,2,3'
         ]);
 
+        // Simpan / update nilai jawaban
         foreach ($validated['responses'] as $itemId => $value) {
             Dass21Response::updateOrCreate(
                 ['dass21_session_id' => $session->id, 'dass21_item_id' => $itemId],
@@ -79,23 +110,81 @@ class Dass21AssessmentController extends Controller
             );
         }
 
+        // Cari item berikutnya yang belum dijawab
         $allItems = Dass21Item::orderBy('urutan')->get();
         $answered = $session->responses()->pluck('dass21_item_id')->toArray();
 
         $nextItem = $allItems->first(fn($item) => !in_array($item->id, $answered));
 
-        // Jika semua sudah dijawab → hitung skor dan alihkan ke Curhat Intro
+        // Kalau semua sudah terjawab → hitung skor
         if (!$nextItem) {
             $scoring = app(Dass21ScoringService::class);
             $scoring->finalize($session);
             return redirect()->route('dass21.curhatIntro', $session->id);
         }
 
+        // Redirect ke pertanyaan berikut
         return redirect()->route('dass21.form', [
             'id' => $session->id,
             'item' => $nextItem->id
         ]);
     }
+
+    // public function form($id, Request $request)
+    // {
+    //     $session = Dass21Session::where('id', $id)
+    //         ->where('user_id', Auth::id())
+    //         ->firstOrFail();
+
+    //     if ($session->completed_at) {
+    //         return redirect()->route('dass21.result', $session->id);
+    //     }
+
+    //     $items = Dass21Item::orderBy('urutan')->get();
+    //     $existing = $session->responses()->pluck('nilai', 'dass21_item_id')->toArray();
+
+    //     $itemId = $request->query('item');
+    //     $currentItem = $itemId ? $items->where('id', $itemId)->first() : $items->first();
+    //     $current = $items->search(fn($i) => $i->id === $currentItem->id) + 1;
+
+    //     return view('dass21.form', compact('session', 'items', 'existing', 'current', 'currentItem'));
+    // }
+
+    // public function next(Request $request, $id)
+    // {
+    //     $session = Dass21Session::where('id', $id)
+    //         ->where('user_id', Auth::id())
+    //         ->firstOrFail();
+
+    //     $validated = $request->validate([
+    //         'responses' => 'required|array',
+    //         'responses.*' => 'required|in:0,1,2,3'
+    //     ]);
+
+    //     foreach ($validated['responses'] as $itemId => $value) {
+    //         Dass21Response::updateOrCreate(
+    //             ['dass21_session_id' => $session->id, 'dass21_item_id' => $itemId],
+    //             ['nilai' => (int)$value]
+    //         );
+    //     }
+
+    //     $allItems = Dass21Item::orderBy('urutan')->get();
+    //     $answered = $session->responses()->pluck('dass21_item_id')->toArray();
+
+    //     $nextItem = $allItems->first(fn($item) => !in_array($item->id, $answered));
+
+    //     // Jika semua sudah dijawab → hitung skor dan alihkan ke Curhat Intro
+    //     if (!$nextItem) {
+    //         $scoring = app(Dass21ScoringService::class);
+    //         $scoring->finalize($session);
+    //         return redirect()->route('dass21.curhatIntro', $session->id);
+    //     }
+
+    //     return redirect()->route('dass21.form', [
+    //         'id' => $session->id,
+    //         'item' => $nextItem->id
+    //     ]);
+    // }
 
     public function result($id, PenangananRecommendationService $recommender)
     {

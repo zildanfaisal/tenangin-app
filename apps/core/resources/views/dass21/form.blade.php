@@ -4,13 +4,20 @@
 @section('content')
 <div class="min-h-screen bg-[#f5f7fb] flex flex-col">
 
-  {{-- Banner --}}
-  <div class="w-full overflow-hidden">
-    <img 
-      src="{{ asset('ban.png') }}" 
-      alt="Banner DASS-21" 
-      class="w-full h-auto block"
-    >
+  {{-- 🔹 Banner dalam container yang sejajar dengan card --}}
+  <div class="px-4 sm:px-6 mt-6">
+    <div class="relative w-full overflow-hidden rounded-2xl shadow-md">
+      <img
+        src="{{ asset('bb3.png') }}"
+        alt="Banner DASS-21"
+        class="w-full h-32 sm:h-40 md:h-48 object-cover"
+      >
+      <div class="absolute inset-0 flex items-center pl-6 sm:pl-10 bg-gradient-to-r from-black/40 via-black/10 to-transparent">
+        <h1 class="text-white font-bold text-xl sm:text-3xl md:text-4xl drop-shadow-lg">
+          Asesmen DASS-21
+        </h1>
+      </div>
+    </div>
   </div>
 
   {{-- Konten utama --}}
@@ -26,7 +33,7 @@
           }
         @endphp
 
-        {{-- Tombol sebelumnya --}}
+        {{-- Tombol Sebelumnya --}}
         @if($prevItem)
           <a href="{{ route('dass21.form', ['id' => $session->id, 'item' => $prevItem->id]) }}"
              class="flex items-center gap-1 text-xs sm:text-sm font-medium text-blue-600 hover:text-blue-700 transition">
@@ -80,7 +87,7 @@
                 <input type="radio"
                       name="responses[{{ $item->id }}]"
                       value="{{ $val }}"
-                      class="absolute inset-0 opacity-0 cursor-pointer"
+                      class="absolute inset-0 opacity-0 cursor-pointer answer-option"
                       @checked(isset($existing[$item->id]) && (int)$existing[$item->id] === $val)
                       required>
 
@@ -91,51 +98,46 @@
             @endforeach
           </div>
         </div>
-
-        {{-- Tombol navigasi --}}
-        <div class="flex justify-between items-center mt-6 sm:mt-8">
-
-          {{-- Tombol Back --}}
-          @if($prevItem)
-            <a href="{{ route('dass21.form', ['id' => $session->id, 'item' => $prevItem->id]) }}"
-               class="px-6 sm:px-8 py-2.5 sm:py-3 bg-gray-200 text-gray-800 text-sm sm:text-base font-semibold rounded-lg hover:bg-gray-300 transition">
-              Kembali
-            </a>
-          @else
-            <button type="button"
-                    disabled
-                    class="px-6 sm:px-8 py-2.5 sm:py-3 bg-gray-100 text-gray-400 text-sm sm:text-base font-semibold rounded-lg cursor-not-allowed">
-              Kembali
-            </button>
-          @endif
-
-          {{-- Tombol Next / Selesai --}}
-          @if(($current ?? 1) < 21)
-            <button type="submit"
-                    class="px-6 sm:px-8 py-2.5 sm:py-3 bg-blue-600 text-white text-sm sm:text-base font-semibold rounded-lg hover:bg-blue-700 transition">
-              Selanjutnya
-            </button>
-          @else
-            <button type="submit"
-                    class="px-6 sm:px-8 py-2.5 sm:py-3 bg-green-600 text-white text-sm sm:text-base font-semibold rounded-lg hover:bg-green-700 transition">
-              Selesai
-            </button>
-          @endif
-
-        </div>
       </form>
     </div>
   </div>
 </div>
 
-{{-- Validasi wajib pilih sebelum submit --}}
+{{-- Script: auto-submit --}}
 <script>
-document.getElementById('dassForm').addEventListener('submit', function (e) {
-  const selected = document.querySelector('input[type="radio"]:checked');
-  if (!selected) {
-    e.preventDefault();
-    alert('Silakan pilih salah satu jawaban sebelum melanjutkan.');
-  }
+document.addEventListener('DOMContentLoaded', () => {
+  const form = document.getElementById('dassForm');
+  const radios = document.querySelectorAll('.answer-option');
+
+  radios.forEach(option => {
+    option.addEventListener('change', async () => {
+      const formData = new FormData(form);
+
+      // Efek loading ringan
+      document.body.style.pointerEvents = 'none';
+      document.body.style.opacity = '0.6';
+
+      try {
+        const response = await fetch(form.action, {
+          method: 'POST',
+          headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+          body: formData
+        });
+
+        if (response.redirected) {
+          window.location.href = response.url;
+        } else {
+          location.reload();
+        }
+      } catch (err) {
+        alert('Terjadi kesalahan saat menyimpan jawaban.');
+        console.error(err);
+      } finally {
+        document.body.style.pointerEvents = '';
+        document.body.style.opacity = '';
+      }
+    });
+  });
 });
 </script>
 @endsection

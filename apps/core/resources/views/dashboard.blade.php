@@ -23,33 +23,44 @@
     </div>
 
     {{-- 🔹 Statistik --}}
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-        <div class="bg-white shadow rounded-xl p-4 text-center">
-            <h3 class="text-gray-500 text-xs sm:text-sm">Total Assessment</h3>
-            <p class="text-xl sm:text-2xl font-semibold mt-2">{{ $assesmentCount ?? 0 }}</p>
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">
+
+        {{-- 🔹 Total Assessment --}}
+        <div class="bg-white shadow-md rounded-2xl p-6 flex flex-col items-center justify-center text-center hover:shadow-lg transition">
+            <h3 class="text-gray-500 text-sm sm:text-base font-medium mb-2">Total Assessment</h3>
+            <p class="text-3xl sm:text-4xl font-semibold  text-gray-800">{{ $assesmentCount ?? 0 }}</p>
         </div>
-        <div class="bg-white shadow rounded-xl p-4 text-center">
-            <h3 class="text-gray-500 text-xs sm:text-sm">Kondisi Emosi Terbanyak</h3>
-            <p class="text-xl sm:text-2xl font-semibold mt-2 text-blue-600">
-                {{ $lastEmotion ?? '-' }}
+
+        {{-- 🔹 Kondisi Emosi Tertinggi --}}
+        <div class="bg-white shadow-md rounded-2xl p-6 flex flex-col items-center justify-center text-center hover:shadow-lg transition">
+            <h3 class="text-gray-500 text-sm sm:text-base font-medium mb-2">Kondisi Emosi Tertinggi</h3>
+            <p class="text-2xl font-semibold sm:text-3xl text-gray-800 mt-1">
+                {{ $highestRiskEmotion ?? '-' }}
             </p>
         </div>
-        <div class="bg-white shadow rounded-xl p-4 text-center">
-            <h3 class="text-gray-500 text-xs sm:text-sm">Kategori Dominan</h3>
-            <p class="text-xl sm:text-2xl font-semibold mt-2 text-indigo-600">
-                {{-- 🔸 Default "-" jika belum ada asesmen --}}
-                @if(($assesmentCount ?? 0) == 0)
-                    -
-                @else
+
+        {{-- 🔹 Kondisi Emosi Terakhir --}}
+        <div class="bg-gradient-to-br from-blue-50 to-cyan-50 shadow-md rounded-2xl p-6 border border-cyan-100 flex flex-col items-center justify-center text-center hover:shadow-lg transition">
+            <h3 class="text-gray-600 text-sm sm:text-base font-medium mb-2">Kondisi Emosi Terakhir</h3>
+            <div class="mt-1 space-y-1">
+                @if($lastEmotion && $lastEmotion !== '-')
                     @php
-                        $dominant = collect($chart2['data'] ?? [])->max();
-                        $idx = array_search($dominant, $chart2['data'] ?? []);
-                        echo $chart2['labels'][$idx] ?? '-';
+                        $parts = explode(',', $lastEmotion);
                     @endphp
+                    @foreach($parts as $p)
+                        <p class="text-sm sm:text-base text-gray-800 font-semibold leading-relaxed">
+                            {{ trim($p) }}
+                        </p>
+                    @endforeach
+                @else
+                    <p class="text-gray-500 text-sm italic">Belum ada data</p>
                 @endif
-            </p>
+            </div>
         </div>
+
     </div>
+
+
 
     {{-- 🔹 Chart Section --}}
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -103,7 +114,7 @@
                                 <td class="px-3 sm:px-4 py-2 border">{{ $idx + 1 }}</td>
                                 <td class="px-3 sm:px-4 py-2 border">{{ $rek->user->name ?? '-' }}</td>
                                 <td class="px-3 sm:px-4 py-2 border">
-                                    {{ $rek->completed_at?->translatedFormat('d M Y H:i') ?? '-' }}
+                                    {{ $rek->completed_at?->setTimezone('Asia/Jakarta')->translatedFormat('d M Y, H:i') ?? '-' }} WIB
                                 </td>
                                 <td class="px-3 sm:px-4 py-2 border font-semibold">
                                     Depresi: Risiko {{ $rek->depresi_kelas ?? '-' }}<br>
@@ -128,42 +139,94 @@
 {{-- 🔹 Chart.js --}}
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    const ctx1 = document.getElementById('chart1').getContext('2d');
-    const chart1Data = @json($chart1 ?? []);
-    new Chart(ctx1, {
-        type: 'line',
-        data: {
-            labels: chart1Data.labels ?? [],
-            datasets: (chart1Data.datasets ?? []).map(ds => ({
-                ...ds, tension: 0.4, fill: false, borderWidth: 2
-            }))
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: { legend: { position: 'top' } },
-            scales: { y: { beginAtZero: true, max: 5 } }
-        }
-    });
+    // 🔹 Debug: Lihat data yang dikirim dari controller
+    console.log('Chart1 Data:', @json($chart1));
+    console.log('Chart2 Data:', @json($chart2));
 
-    const ctx2 = document.getElementById('chart2').getContext('2d');
-    const chart2Data = @json($chart2 ?? []);
-    new Chart(ctx2, {
-        type: 'bar',
-        data: {
-            labels: chart2Data.labels ?? [],
+    // 🔹 Chart 1 - Tren Harian
+    const ctx1 = document.getElementById('chart1');
+    if (ctx1) {
+        const chart1Data = @json($chart1 ?? []);
+
+        // Pastikan data ada struktur yang benar
+        const validatedData = {
+            labels: chart1Data.labels || ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'],
+            datasets: (chart1Data.datasets || []).map(dataset => ({
+                label: dataset.label || '',
+                borderColor: dataset.borderColor || '#000000',
+                backgroundColor: dataset.backgroundColor || '#000000',
+                data: Array.isArray(dataset.data) ? dataset.data : Array(7).fill(0),
+                tension: 0.4,
+                fill: false,
+                borderWidth: 2
+            }))
+        };
+
+        new Chart(ctx1, {
+            type: 'line',
+            data: validatedData,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: {
+                            usePointStyle: true,
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 5,
+                        ticks: {
+                            stepSize: 1
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    // 🔹 Chart 2 - Perbandingan
+    const ctx2 = document.getElementById('chart2');
+    if (ctx2) {
+        const chart2Data = @json($chart2 ?? []);
+
+        const validatedData2 = {
+            labels: chart2Data.labels || ['Depresi', 'Stres', 'Kecemasan', 'Bahagia'],
             datasets: [{
                 label: 'Skor Rata-Rata',
-                data: chart2Data.data ?? [],
-                backgroundColor: ['#ef4444', '#f97316', '#0ea5e9', '#22c55e']
+                data: Array.isArray(chart2Data.data) ? chart2Data.data : [0, 0, 0, 0],
+                backgroundColor: ['#ef4444', '#f97316', '#0ea5e9', '#22c55e'],
+                borderColor: ['#dc2626', '#ea580c', '#0284c7', '#16a34a'],
+                borderWidth: 1
             }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: { legend: { display: false } },
-            scales: { y: { beginAtZero: true, max: 5 } }
-        }
-    });
+        };
+
+        new Chart(ctx2, {
+            type: 'bar',
+            data: validatedData2,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 5,
+                        ticks: {
+                            stepSize: 1
+                        }
+                    }
+                }
+            }
+        });
+    }
 </script>
 @endsection
