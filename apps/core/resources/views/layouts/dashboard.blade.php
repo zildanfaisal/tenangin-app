@@ -91,7 +91,7 @@
       </a>
 
       <!-- CMS Penanganan -->
-      <a href="{{ route('admin.dass21.index') }}"
+      <a href="{{ route('admin.dass21-items.index') }}"
          class="flex items-center space-x-3 px-3 py-2 rounded-lg font-medium transition-all
          {{ request()->routeIs('admin.dass21.*')
              ? 'bg-blue-100 text-blue-600 font-semibold'
