@@ -25,22 +25,19 @@
     {{-- 🔹 Statistik --}}
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">
 
-        {{-- 🔹 Total Assessment --}}
-        <div class="bg-white shadow-md rounded-2xl p-6 flex flex-col items-center justify-center text-center hover:shadow-lg transition">
+        <div class="bg-white shadow-md rounded-2xl p-6 text-center hover:shadow-lg transition">
             <h3 class="text-gray-500 text-sm sm:text-base font-medium mb-2">Total Assessment</h3>
-            <p class="text-3xl sm:text-4xl font-semibold  text-gray-800">{{ $assesmentCount ?? 0 }}</p>
+            <p class="text-3xl sm:text-4xl font-semibold text-gray-800">{{ $assesmentCount ?? 0 }}</p>
         </div>
 
-        {{-- 🔹 Kondisi Emosi Tertinggi --}}
-        <div class="bg-white shadow-md rounded-2xl p-6 flex flex-col items-center justify-center text-center hover:shadow-lg transition">
+        <div class="bg-white shadow-md rounded-2xl p-6 text-center hover:shadow-lg transition">
             <h3 class="text-gray-500 text-sm sm:text-base font-medium mb-2">Kondisi Emosi Tertinggi</h3>
             <p class="text-2xl font-semibold sm:text-3xl text-gray-800 mt-1">
                 {{ $highestRiskEmotion ?? '-' }}
             </p>
         </div>
 
-        {{-- 🔹 Kondisi Emosi Terakhir --}}
-        <div class="bg-gradient-to-br from-blue-50 to-cyan-50 shadow-md rounded-2xl p-6 border border-cyan-100 flex flex-col items-center justify-center text-center hover:shadow-lg transition">
+        <div class="bg-gradient-to-br from-blue-50 to-cyan-50 shadow-md rounded-2xl p-6 text-center border border-cyan-100 hover:shadow-lg transition">
             <h3 class="text-gray-600 text-sm sm:text-base font-medium mb-2">Kondisi Emosi Terakhir</h3>
             <div class="mt-1 space-y-1">
                 @if($lastEmotion && $lastEmotion !== '-')
@@ -57,66 +54,72 @@
                 @endif
             </div>
         </div>
-
     </div>
-
-
 
     {{-- 🔹 Chart Section --}}
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div class="bg-white shadow rounded-lg p-4">
             <h3 class="font-semibold mb-2 text-gray-800 text-sm sm:text-base">Tren Kondisi Emosi Harian</h3>
-            <div class="overflow-x-auto">
-                <canvas id="chart1" height="200" class="min-w-[300px]"></canvas>
+            <div class="relative h-64">
+                <canvas id="chart1"></canvas>
             </div>
         </div>
         <div class="bg-white shadow rounded-lg p-4">
             <h3 class="font-semibold mb-2 text-gray-800 text-sm sm:text-base">Perbandingan Jumlah Assessment</h3>
-            <div class="overflow-x-auto">
-                <canvas id="chart2" height="200" class="min-w-[300px]"></canvas>
+            <div class="relative h-64">
+                <canvas id="chart2"></canvas>
             </div>
         </div>
     </div>
 
     {{-- 🔹 Analisis & Konsultasi --}}
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {{-- Hasil Analisis --}}
         <div class="bg-white shadow rounded-lg p-6">
             <h3 class="font-semibold mb-3 text-gray-800 text-sm sm:text-base">Hasil Analisis Terbaru</h3>
+
             @if($latestAnalisis)
                 <p class="text-gray-700 text-xs sm:text-sm mb-2">
-                    Tanggal: {{ $tanggalAnalisis?->translatedFormat('d F Y H:i') ?? '-' }}
+                    Tanggal: {{ $tanggalAnalisis?->translatedFormat('d F Y H:i') ?? '-' }} WIB
                 </p>
-                <span class="font-semibold text-blue-600 text-xs sm:text-base text-justify">
-                    {{ $latestAnalisis->hasil_emosi }}
-                </span>
+
+                @php
+                    // Ambil hanya 3 kalimat pertama dari hasil_emosi
+                    $text = $latestAnalisis->hasil_emosi;
+                    $sentences = preg_split('/(?<=[.?!])\s+/', $text);
+                    $shortened = implode(' ', array_slice($sentences, 0, 8));
+                    if (count($sentences) > 3) $shortened .= '...';
+                @endphp
+
+                <p class="text-blue-600 text-sm sm:text-base font-medium leading-relaxed text-justify">
+                    {{ $shortened }}
+                </p>
             @else
-                <p class="text-gray-500 text-sm">Belum ada hasil analisis.</p>
+                <p class="text-gray-500 text-sm italic">Belum ada hasil analisis.</p>
             @endif
         </div>
 
-        {{-- Tabel Konsultasi --}}
+
         <div class="bg-white shadow rounded-lg p-6">
             <h3 class="font-semibold mb-3 text-gray-800 text-sm sm:text-base">Rekaman Penanganan Konsultasi</h3>
             <div class="overflow-x-auto">
                 <table class="w-full text-xs sm:text-sm text-left border min-w-[500px]">
                     <thead class="bg-blue-600 text-white">
                         <tr>
-                            <th class="px-3 sm:px-4 py-2 border">No</th>
-                            <th class="px-3 sm:px-4 py-2 border">Nama Pengguna</th>
-                            <th class="px-3 sm:px-4 py-2 border">Tanggal</th>
-                            <th class="px-3 sm:px-4 py-2 border">Hasil Emosi</th>
+                            <th class="px-3 py-2 border">No</th>
+                            <th class="px-3 py-2 border">Nama Pengguna</th>
+                            <th class="px-3 py-2 border">Tanggal</th>
+                            <th class="px-3 py-2 border">Hasil Emosi</th>
                         </tr>
                     </thead>
                     <tbody>
                         @forelse($recentRekaman as $idx => $rek)
                             <tr class="hover:bg-gray-50">
-                                <td class="px-3 sm:px-4 py-2 border">{{ $idx + 1 }}</td>
-                                <td class="px-3 sm:px-4 py-2 border">{{ $rek->user->name ?? '-' }}</td>
-                                <td class="px-3 sm:px-4 py-2 border">
+                                <td class="px-3 py-2 border">{{ $idx + 1 }}</td>
+                                <td class="px-3 py-2 border">{{ $rek->user->name ?? '-' }}</td>
+                                <td class="px-3 py-2 border">
                                     {{ $rek->completed_at?->setTimezone('Asia/Jakarta')->translatedFormat('d M Y, H:i') ?? '-' }} WIB
                                 </td>
-                                <td class="px-3 sm:px-4 py-2 border font-semibold">
+                                <td class="px-3 py-2 border font-semibold">
                                     Depresi: Risiko {{ $rek->depresi_kelas ?? '-' }}<br>
                                     Anxiety: Risiko {{ $rek->anxiety_kelas ?? '-' }}<br>
                                     Stres: Risiko {{ $rek->stres_kelas ?? '-' }}
@@ -124,9 +127,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="4" class="px-4 py-3 text-center text-gray-500">
-                                    Belum ada data konsultasi.
-                                </td>
+                                <td colspan="4" class="px-4 py-3 text-center text-gray-500">Belum ada data konsultasi.</td>
                             </tr>
                         @endforelse
                     </tbody>
@@ -139,94 +140,78 @@
 {{-- 🔹 Chart.js --}}
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    // 🔹 Debug: Lihat data yang dikirim dari controller
-    console.log('Chart1 Data:', @json($chart1));
-    console.log('Chart2 Data:', @json($chart2));
+document.addEventListener("DOMContentLoaded", () => {
+    const chart1Data = @json($chart1 ?? []);
+    const chart2Data = @json($chart2 ?? []);
 
-    // 🔹 Chart 1 - Tren Harian
-    const ctx1 = document.getElementById('chart1');
-    if (ctx1) {
-        const chart1Data = @json($chart1 ?? []);
-
-        // Pastikan data ada struktur yang benar
-        const validatedData = {
-            labels: chart1Data.labels || ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'],
-            datasets: (chart1Data.datasets || []).map(dataset => ({
-                label: dataset.label || '',
-                borderColor: dataset.borderColor || '#000000',
-                backgroundColor: dataset.backgroundColor || '#000000',
-                data: Array.isArray(dataset.data) ? dataset.data : Array(7).fill(0),
-                tension: 0.4,
-                fill: false,
-                borderWidth: 2
-            }))
-        };
-
-        new Chart(ctx1, {
-            type: 'line',
-            data: validatedData,
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        position: 'top',
-                        labels: {
-                            usePointStyle: true,
-                        }
-                    }
+    // Chart 1 - Line
+    new Chart(document.getElementById('chart1'), {
+        type: 'line',
+        data: chart1Data,
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            spanGaps: true,
+            showLine: true,
+            elements: {
+                line: {
+                    borderWidth: 2,
+                    tension: 0.3
                 },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        max: 5,
-                        ticks: {
-                            stepSize: 1
-                        }
+                point: {
+                    radius: 5,
+                    hitRadius: 10,
+                    hoverRadius: 6
+                }
+            },
+            plugins: {
+                legend: { position: 'top' },
+                tooltip: {
+                    callbacks: {
+                        label: ctx => `${ctx.dataset.label}: ${ctx.formattedValue} kali`
                     }
                 }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: { stepSize: 1 }
+                }
             }
-        });
-    }
+        }
+    });
 
-    // 🔹 Chart 2 - Perbandingan
-    const ctx2 = document.getElementById('chart2');
-    if (ctx2) {
-        const chart2Data = @json($chart2 ?? []);
-
-        const validatedData2 = {
-            labels: chart2Data.labels || ['Depresi', 'Stres', 'Kecemasan', 'Bahagia'],
+    // Chart 2 - Bar
+    new Chart(document.getElementById('chart2'), {
+        type: 'bar',
+        data: {
+            labels: chart2Data.labels,
             datasets: [{
-                label: 'Skor Rata-Rata',
-                data: Array.isArray(chart2Data.data) ? chart2Data.data : [0, 0, 0, 0],
-                backgroundColor: ['#ef4444', '#f97316', '#0ea5e9', '#22c55e'],
-                borderColor: ['#dc2626', '#ea580c', '#0284c7', '#16a34a'],
-                borderWidth: 1
+                label: 'Jumlah',
+                data: chart2Data.data,
+                backgroundColor: ['#ef4444', '#f59e0b', '#3b82f6', '#22c55e'],
+                borderWidth: 1,
             }]
-        };
-
-        new Chart(ctx2, {
-            type: 'bar',
-            data: validatedData2,
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        display: false
-                    }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        max: 5,
-                        ticks: {
-                            stepSize: 1
-                        }
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    callbacks: {
+                        label: ctx => `${ctx.label}: ${ctx.formattedValue} kali`
                     }
                 }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: { stepSize: 1 }
+                }
             }
-        });
-    }
+        }
+    });
+});
 </script>
 @endsection
