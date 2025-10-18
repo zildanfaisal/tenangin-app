@@ -4,26 +4,6 @@
 
 @section('content')
 
-{{-- ================= NAVBAR ================= --}}
-<nav class="bg-white shadow-sm sticky top-0 z-50">
-    <div class="container mx-auto px-4 sm:px-6 md:px-12 flex items-center justify-between h-16">
-        <a href="/" class="flex items-center gap-2">
-            <img src="{{ asset('logo.png') }}" alt="Logo Tenangin" class="h-8 w-8 rounded-full">
-            <span class="font-bold text-brand-blue text-lg">Tenangin</span>
-        </a>
-        <div class="hidden md:flex gap-6 items-center">
-            <a href="#fitur" class="text-gray-700 hover:text-brand-blue font-medium">Fitur</a>
-            <a href="#usecase" class="text-gray-700 hover:text-brand-blue font-medium">Use Case</a>
-            <a href="#berita" class="text-gray-700 hover:text-brand-blue font-medium">Berita</a>
-            <a href="#tentang-kami" class="text-gray-700 hover:text-brand-blue font-medium">Tentang Kami</a>
-        </div>
-        <div class="flex gap-2 items-center">
-            <a href="{{ route('login') }}" class="bg-blue-600 text-white px-4 py-2 rounded-lg font-semibold text-sm hover:bg-blue-700 transition">Login</a>
-            <a href="{{ route('register') }}" class="bg-white border border-blue-600 text-blue-600 px-4 py-2 rounded-lg font-semibold text-sm hover:bg-blue-50 transition">Register</a>
-        </div>
-    </div>
-</nav>
-
 {{-- ================= HERO SECTION ================= --}}
 <section class="bg-gradient-to-b from-brand-dark to-brand-blue text-white">
     <div class="container mx-auto px-4 sm:px-6 md:px-12 py-10 md:py-24">
