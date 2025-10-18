@@ -75,8 +75,8 @@
       </form>
     </div>
 
-    {{-- Kanan: Gambar --}}
-    <div class="w-full md:w-5/12 h-48 sm:h-64 md:h-auto bg-cover bg-center"
+    {{-- Kanan: Gambar (disembunyikan pada layar kecil / Android mode) --}}
+    <div class="hidden md:block w-full md:w-5/12 h-48 sm:h-64 md:h-auto bg-cover bg-center"
       style="background-image: url('{{ asset('bg1.png') }}'); background-size: contain; background-repeat: no-repeat; background-position: center;">
     </div>
   </div>

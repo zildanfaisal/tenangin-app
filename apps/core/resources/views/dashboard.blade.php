@@ -9,7 +9,9 @@
     <div class="relative rounded-2xl overflow-hidden shadow">
         <img src="{{ asset('hero.png') }}" alt="Hero" class="w-full h-40 sm:h-48 object-cover">
         <div class="absolute inset-0 flex flex-col justify-center px-4 sm:px-8 text-white bg-black/30">
-            <h2 class="text-lg sm:text-xl font-semibold">Selamat Datang, {{ $user->name ?? 'Pengguna' }}</h2>
+            <h2 class="text-lg sm:text-xl font-semibold">
+                Selamat Datang, {{ $user->name ?? 'Pengguna' }}
+            </h2>
             <p class="text-xs sm:text-sm mt-1 max-w-md">
                 Mulailah hari dengan semangat baru. Lihat hasil asesmen Anda dan pantau perkembangan kesehatan mental Anda.
             </p>
@@ -28,16 +30,23 @@
         </div>
         <div class="bg-white shadow rounded-xl p-4 text-center">
             <h3 class="text-gray-500 text-xs sm:text-sm">Kondisi Emosi Terbanyak</h3>
-            <p class="text-xl sm:text-2xl font-semibold mt-2 text-blue-600">{{ $lastEmotion ?? '-' }}</p>
+            <p class="text-xl sm:text-2xl font-semibold mt-2 text-blue-600">
+                {{ $lastEmotion ?? '-' }}
+            </p>
         </div>
         <div class="bg-white shadow rounded-xl p-4 text-center">
             <h3 class="text-gray-500 text-xs sm:text-sm">Kategori Dominan</h3>
             <p class="text-xl sm:text-2xl font-semibold mt-2 text-indigo-600">
-                @php
-                    $dominant = collect($chart2['data'] ?? [])->max();
-                    $idx = array_search($dominant, $chart2['data'] ?? []);
-                    echo $chart2['labels'][$idx] ?? '-';
-                @endphp
+                {{-- 🔸 Default "-" jika belum ada asesmen --}}
+                @if(($assesmentCount ?? 0) == 0)
+                    -
+                @else
+                    @php
+                        $dominant = collect($chart2['data'] ?? [])->max();
+                        $idx = array_search($dominant, $chart2['data'] ?? []);
+                        echo $chart2['labels'][$idx] ?? '-';
+                    @endphp
+                @endif
             </p>
         </div>
     </div>
@@ -67,7 +76,9 @@
                 <p class="text-gray-700 text-xs sm:text-sm mb-2">
                     Tanggal: {{ $tanggalAnalisis?->translatedFormat('d F Y H:i') ?? '-' }}
                 </p>
-                <span class="font-semibold text-blue-600 text-xs sm:text-base text-justify">{{ $latestAnalisis->hasil_emosi }}</span>
+                <span class="font-semibold text-blue-600 text-xs sm:text-base text-justify">
+                    {{ $latestAnalisis->hasil_emosi }}
+                </span>
             @else
                 <p class="text-gray-500 text-sm">Belum ada hasil analisis.</p>
             @endif
@@ -91,7 +102,9 @@
                             <tr class="hover:bg-gray-50">
                                 <td class="px-3 sm:px-4 py-2 border">{{ $idx + 1 }}</td>
                                 <td class="px-3 sm:px-4 py-2 border">{{ $rek->user->name ?? '-' }}</td>
-                                <td class="px-3 sm:px-4 py-2 border">{{ $rek->completed_at?->translatedFormat('d M Y H:i') ?? '-' }}</td>
+                                <td class="px-3 sm:px-4 py-2 border">
+                                    {{ $rek->completed_at?->translatedFormat('d M Y H:i') ?? '-' }}
+                                </td>
                                 <td class="px-3 sm:px-4 py-2 border font-semibold">
                                     Depresi: Risiko {{ $rek->depresi_kelas ?? '-' }}<br>
                                     Anxiety: Risiko {{ $rek->anxiety_kelas ?? '-' }}<br>
@@ -100,7 +113,9 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="4" class="px-4 py-3 text-center text-gray-500">Belum ada data konsultasi.</td>
+                                <td colspan="4" class="px-4 py-3 text-center text-gray-500">
+                                    Belum ada data konsultasi.
+                                </td>
                             </tr>
                         @endforelse
                     </tbody>
