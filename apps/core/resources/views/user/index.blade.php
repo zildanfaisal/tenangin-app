@@ -13,8 +13,8 @@
       <!-- Avatar -->
       <div class="flex-shrink-0">
         <img id="profile-preview"
-                src="{{ $user->profile_photo 
-                    ? asset('storage/'.$user->profile_photo) 
+                src="{{ $user->profile_photo
+                    ? asset('storage/'.$user->profile_photo)
                     : 'https://ui-avatars.com/api/?name='.urlencode($user->name) }}"
                 class="w-28 h-28 sm:w-32 sm:h-32 rounded-full border-4 border-blue-100 shadow-md object-cover">
       </div>
