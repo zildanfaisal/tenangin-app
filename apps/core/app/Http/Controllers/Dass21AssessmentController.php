@@ -21,10 +21,12 @@ class Dass21AssessmentController extends Controller
             ->whereNotNull('completed_at')
             ->latest()
             ->paginate(10);
+
         $penanganan = Penanganan::published()
             ->orderBy('ordering')
             ->orderByDesc('id')
             ->get();
+
         return view('dass21.index', compact('sessions', 'penanganan'));
     }
 
@@ -115,19 +117,44 @@ class Dass21AssessmentController extends Controller
             'Sangat Parah' => 4,
         ];
 
+        $labels = [
+            'Normal' => 'Risiko Rendah',
+            'Risiko Ringan' => 'Risiko Ringan',
+            'Risiko Sedang' => 'Risiko Sedang',
+            'Parah' => 'Risiko Tinggi',
+            'Sangat Parah' => 'Risiko Sangat Tinggi',
+        ];
+
         $subscales = [
             'depresi' => $session->depresi_kelas,
             'anxiety' => $session->anxiety_kelas,
             'stres' => $session->stres_kelas,
         ];
 
-        // Ambil semua kelompok dengan nilai Severe atau Extremely Severe (>= 3)
+        // Hitung risiko keseluruhan (ambil level tertinggi)
+        $maxLevel = max([
+            $rank[$session->depresi_kelas] ?? 0,
+            $rank[$session->anxiety_kelas] ?? 0,
+            $rank[$session->stres_kelas] ?? 0,
+        ]);
+
+        $overallKey = collect($rank)->flip()[$maxLevel] ?? 'Normal';
+        $overallLabel = $labels[$overallKey] ?? 'Risiko Rendah';
+
+        // Update ke database jika belum ada
+        if (empty($session->overall_risk) || $session->overall_risk !== $overallLabel) {
+            $session->overall_risk = $overallLabel;
+            $session->save();
+        }
+
+        // Ambil semua kelompok dengan nilai >= 3 (Parah / Sangat Parah)
         $severeKeys = collect($subscales)
             ->filter(fn($kelas) => ($rank[$kelas] ?? 0) >= 3)
-            ->keys()->all();
+            ->keys()
+            ->all();
 
+        // Penentuan rekomendasi penanganan
         if (count($severeKeys) > 0) {
-            // Jika ada Severe/Extremely Severe, tampilkan semua yang memenuhi
             $penanganan = Penanganan::published()
                 ->where(function($q) use ($severeKeys) {
                     foreach ($severeKeys as $key) {
@@ -138,7 +165,6 @@ class Dass21AssessmentController extends Controller
                 ->orderBy('ordering')
                 ->get();
         } else {
-            // Jika tidak ada Severe/Extremely Severe, tampilkan semua
             $penanganan = Penanganan::published()
                 ->with('steps')
                 ->orderBy('ordering')
@@ -147,7 +173,6 @@ class Dass21AssessmentController extends Controller
 
         $konsultans = Konsultan::orderByDesc('rating')->limit(3)->get();
 
-        // 🧠 Ambil hasil analisis dari tabel analisis
         $analisis = \App\Models\Analisis::where('dass21_session_id', $session->id)
             ->where('user_id', Auth::id())
             ->latest('id')
@@ -156,8 +181,6 @@ class Dass21AssessmentController extends Controller
         return view('dass21.result', compact('session', 'penanganan', 'konsultans', 'analisis'));
     }
 
-
-    // 🔹 Halaman Curhat Intro (tampilan biru seperti gambar)
     public function curhatIntro($id)
     {
         $session = Dass21Session::where('id', $id)
@@ -202,6 +225,4 @@ class Dass21AssessmentController extends Controller
         $session = Dass21Session::findOrFail($id);
         return view('dass21.curhat_done', compact('session'));
     }
-
-
 }
