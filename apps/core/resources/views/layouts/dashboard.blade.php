@@ -34,12 +34,12 @@
          class="flex items-center space-x-3 px-3 py-2 rounded-lg font-medium transition-all
          {{ request()->routeIs('dashboard')
              ? 'bg-blue-100 text-blue-600 font-semibold'
-             : 'text-gray-700 hover:bg-blue-50 hover:text-blue-600' }}"
+             : 'text-gray-700 hover:bg-blue-50 hover:text-blue-600 focus:bg-blue-100 focus:text-blue-600 active:bg-blue-100 active:text-blue-600' }}"
          :class="sidebarCollapsed ? 'justify-center' : ''">
         <i class="fa-solid fa-house
           {{ request()->routeIs('dashboard')
               ? 'text-blue-600'
-              : 'text-gray-400 group-hover:text-blue-600 transition-colors' }}">
+              : 'text-gray-400 transition-colors' }}">
         </i>
         <span x-show="!sidebarCollapsed">Dashboard</span>
       </a>
@@ -49,12 +49,12 @@
          class="flex items-center space-x-3 px-3 py-2 rounded-lg font-medium transition-all
          {{ request()->routeIs('dass21.*')
              ? 'bg-blue-100 text-blue-600 font-semibold'
-             : 'text-gray-700 hover:bg-blue-50 hover:text-blue-600' }}"
+             : 'text-gray-700 hover:bg-blue-50 hover:text-blue-600 focus:bg-blue-100 focus:text-blue-600 active:bg-blue-100 active:text-blue-600' }}"
          :class="sidebarCollapsed ? 'justify-center' : ''">
         <i class="fa-solid fa-heart-pulse
           {{ request()->routeIs('dass21.*')
               ? 'text-blue-600'
-              : 'text-gray-400 group-hover:text-blue-600 transition-colors' }}">
+              : 'text-gray-400 transition-colors' }}">
         </i>
         <span x-show="!sidebarCollapsed">Layanan</span>
       </a>
@@ -64,12 +64,12 @@
          class="flex items-center space-x-3 px-3 py-2 rounded-lg font-medium transition-all
          {{ request()->routeIs('konsultan.*')
              ? 'bg-blue-100 text-blue-600 font-semibold'
-             : 'text-gray-700 hover:bg-blue-50 hover:text-blue-600' }}"
+             : 'text-gray-700 hover:bg-blue-50 hover:text-blue-600 focus:bg-blue-100 focus:text-blue-600 active:bg-blue-100 active:text-blue-600' }}"
          :class="sidebarCollapsed ? 'justify-center' : ''">
         <i class="fa-solid fa-comments
           {{ request()->routeIs('konsultan.*')
               ? 'text-blue-600'
-              : 'text-gray-400 group-hover:text-blue-600 transition-colors' }}">
+              : 'text-gray-400 transition-colors' }}">
         </i>
         <span x-show="!sidebarCollapsed">Konsultasi</span>
       </a>
@@ -79,12 +79,12 @@
          class="flex items-center space-x-3 px-3 py-2 rounded-lg font-medium transition-all
          {{ request()->routeIs('user.*')
              ? 'bg-blue-100 text-blue-600 font-semibold'
-             : 'text-gray-700 hover:bg-blue-50 hover:text-blue-600' }}"
+             : 'text-gray-700 hover:bg-blue-50 hover:text-blue-600 focus:bg-blue-100 focus:text-blue-600 active:bg-blue-100 active:text-blue-600' }}"
          :class="sidebarCollapsed ? 'justify-center' : ''">
         <i class="fa-solid fa-user
           {{ request()->routeIs('user.*')
               ? 'text-blue-600'
-              : 'text-gray-400 group-hover:text-blue-600 transition-colors' }}">
+              : 'text-gray-400 transition-colors' }}">
         </i>
         <span x-show="!sidebarCollapsed">User</span>
       </a>
@@ -94,7 +94,7 @@
     <div class="p-4 mt-auto border-t border-gray-100 flex justify-center">
       <template x-if="!sidebarCollapsed">
         <a href="{{ route('premium.index') }}"
-           class="block bg-blue-100 hover:bg-blue-200 text-blue-700 border border-blue-300 rounded-xl p-4 text-sm transition-all w-full">
+           class="block bg-blue-100 hover:bg-blue-200 text-blue-700 border border-blue-300 rounded-xl p-4 text-sm transition-all w-full focus:bg-blue-200 active:bg-blue-200">
           <p class="font-bold text-blue-700">Tingkatkan Fitur</p>
           <p class="text-xs leading-tight mt-1">Nikmati akses penuh ke semua fitur pendampingan mental!</p>
           <div class="flex justify-end mt-1">
@@ -106,7 +106,7 @@
       <!-- Mode collapsed -->
       <template x-if="sidebarCollapsed">
         <a href="{{ route('premium.index') }}"
-           class="bg-blue-100 hover:bg-blue-200 border border-blue-300 text-blue-700 rounded-full w-12 h-12 flex items-center justify-center transition-all"
+           class="bg-blue-100 hover:bg-blue-200 border border-blue-300 text-blue-700 rounded-full w-12 h-12 flex items-center justify-center transition-all focus:bg-blue-200 active:bg-blue-200"
            title="Tingkatkan Fitur">
           <i class="fa-solid fa-star text-lg"></i>
         </a>
