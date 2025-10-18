@@ -23,33 +23,44 @@
     </div>
 
     {{-- 🔹 Statistik --}}
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-        <div class="bg-white shadow rounded-xl p-4 text-center">
-            <h3 class="text-gray-500 text-xs sm:text-sm">Total Assessment</h3>
-            <p class="text-xl sm:text-2xl font-semibold mt-2">{{ $assesmentCount ?? 0 }}</p>
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">
+
+        {{-- 🔹 Total Assessment --}}
+        <div class="bg-white shadow-md rounded-2xl p-6 flex flex-col items-center justify-center text-center hover:shadow-lg transition">
+            <h3 class="text-gray-500 text-sm sm:text-base font-medium mb-2">Total Assessment</h3>
+            <p class="text-3xl sm:text-4xl font-semibold  text-gray-800">{{ $assesmentCount ?? 0 }}</p>
         </div>
-        <div class="bg-white shadow rounded-xl p-4 text-center">
-            <h3 class="text-gray-500 text-xs sm:text-sm">Kondisi Emosi Terbanyak</h3>
-            <p class="text-xl sm:text-2xl font-semibold mt-2 text-blue-600">
-                {{ $lastEmotion ?? '-' }}
+
+        {{-- 🔹 Kondisi Emosi Tertinggi --}}
+        <div class="bg-white shadow-md rounded-2xl p-6 flex flex-col items-center justify-center text-center hover:shadow-lg transition">
+            <h3 class="text-gray-500 text-sm sm:text-base font-medium mb-2">Kondisi Emosi Tertinggi</h3>
+            <p class="text-2xl font-semibold sm:text-3xl text-gray-800 mt-1">
+                {{ $highestRiskEmotion ?? '-' }}
             </p>
         </div>
-        <div class="bg-white shadow rounded-xl p-4 text-center">
-            <h3 class="text-gray-500 text-xs sm:text-sm">Kategori Dominan</h3>
-            <p class="text-xl sm:text-2xl font-semibold mt-2 text-indigo-600">
-                {{-- 🔸 Default "-" jika belum ada asesmen --}}
-                @if(($assesmentCount ?? 0) == 0)
-                    -
-                @else
+
+        {{-- 🔹 Kondisi Emosi Terakhir --}}
+        <div class="bg-gradient-to-br from-blue-50 to-cyan-50 shadow-md rounded-2xl p-6 border border-cyan-100 flex flex-col items-center justify-center text-center hover:shadow-lg transition">
+            <h3 class="text-gray-600 text-sm sm:text-base font-medium mb-2">Kondisi Emosi Terakhir</h3>
+            <div class="mt-1 space-y-1">
+                @if($lastEmotion && $lastEmotion !== '-')
                     @php
-                        $dominant = collect($chart2['data'] ?? [])->max();
-                        $idx = array_search($dominant, $chart2['data'] ?? []);
-                        echo $chart2['labels'][$idx] ?? '-';
+                        $parts = explode(',', $lastEmotion);
                     @endphp
+                    @foreach($parts as $p)
+                        <p class="text-sm sm:text-base text-gray-800 font-semibold leading-relaxed">
+                            {{ trim($p) }}
+                        </p>
+                    @endforeach
+                @else
+                    <p class="text-gray-500 text-sm italic">Belum ada data</p>
                 @endif
-            </p>
+            </div>
         </div>
+
     </div>
+
+
 
     {{-- 🔹 Chart Section --}}
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -103,7 +114,7 @@
                                 <td class="px-3 sm:px-4 py-2 border">{{ $idx + 1 }}</td>
                                 <td class="px-3 sm:px-4 py-2 border">{{ $rek->user->name ?? '-' }}</td>
                                 <td class="px-3 sm:px-4 py-2 border">
-                                    {{ $rek->completed_at?->translatedFormat('d M Y H:i') ?? '-' }}
+                                    {{ $rek->completed_at?->setTimezone('Asia/Jakarta')->translatedFormat('d M Y, H:i') ?? '-' }} WIB
                                 </td>
                                 <td class="px-3 sm:px-4 py-2 border font-semibold">
                                     Depresi: Risiko {{ $rek->depresi_kelas ?? '-' }}<br>
