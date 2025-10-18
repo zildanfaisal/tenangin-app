@@ -19,7 +19,7 @@
   </div>
 
   {{-- 🔹 Hero Banner --}}
-  <div class="max-w-6xl mx-auto rounded-2xl md:rounded-3xl overflow-hidden shadow-lg bg-cover bg-center relative"
+ <div class="max-w-6xl mx-auto rounded-2xl md:rounded-3xl overflow-hidden shadow-lg bg-cover bg-center relative"
        style="background-image: url('{{ asset('bgbanner.png') }}'); min-height: 200px;">
     <div class="absolute inset-0 bg-gradient-to-r from-[#002b80]/80 to-[#0053d6]/60"></div>
 
@@ -30,7 +30,8 @@
             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 md:w-5 md:h-5" fill="currentColor" viewBox="0 0 24 24">
               <path d="M12 2a10 10 0 0 0-7.09 17.09A10 10 0 1 0 12 2Zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8Zm0-14a1 1 0 0 0-1 1v5a1 1 0 0 0 .29.7l3 3a1 1 0 0 0 1.42-1.42L13 10.59V7a1 1 0 0 0-1-1Z"/>
             </svg>
-            {{ now()->format('H:i') }} WIB, {{ now()->translatedFormat('d F Y') }}
+            {{ $session->completed_at ? $session->completed_at->timezone('Asia/Jakarta')->format('H:i') : '-' }} WIB,
+            {{ $session->completed_at ? $session->completed_at->timezone('Asia/Jakarta')->translatedFormat('d F Y') : '-' }}
           </div>
           <span>•</span>
           <span class="font-semibold">{{ Auth::user()->name ?? 'Pengguna' }}</span>
@@ -38,11 +39,7 @@
 
         <p class="text-sm md:text-base opacity-90">Kondisi Emosi Hari Ini</p>
         <h2 class="text-2xl md:text-4xl font-bold leading-snug mt-1 md:mt-2 break-words">
-            @if(!empty($analisis?->hasil_kondisi))
-                {{ $analisis->hasil_kondisi }}
-            @else
-                Hari yang membingungkan ya <span class="text-yellow-300">😔</span>…
-            @endif
+            {{ $analisis->hasil_kondisi ?? 'Hari yang membingungkan ya 😔…' }}
         </h2>
 
         <p class="mt-2 text-xs md:text-sm opacity-90 max-w-md">
@@ -52,7 +49,7 @@
 
       <div class="mt-8 md:mt-0 bg-white/20 px-6 py-4 md:px-8 md:py-6 rounded-2xl text-center backdrop-blur-md shadow-md w-full md:w-auto">
         <p class="text-xs md:text-sm opacity-90 mb-1">Hasil DASS-21</p>
-        <h3 class="text-xl md:text-3xl font-bold text-white">{{ $session->overall_risk ?? 'Risiko Rendah' }}</h3>
+        <h3 class="text-xl md:text-3xl font-bold text-white">{{ $session->overall_risk }}</h3>
         <p class="text-[11px] md:text-xs opacity-80 mt-1">Gabungan Depresi, Anxiety, dan Stress</p>
       </div>
     </div>
@@ -62,48 +59,42 @@
   <div class="max-w-6xl mx-auto mt-8 md:mt-14 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5 md:gap-8 px-4">
     <div class="bg-[#eaf3ff] hover:bg-[#dbe9ff] rounded-2xl py-6 px-5 text-center shadow-md hover:shadow-lg transition-all">
       <h4 class="text-lg font-semibold text-gray-800 mb-1">Depresi</h4>
-      <p class="text-base text-gray-700">Risiko <span class="font-bold text-blue-700">{{ $session->depresi_kelas ?? '-' }}</span></p>
+      <p class="text-base text-gray-700">Risiko <span class="font-bold text-blue-700">{{ $session->depresi_kelas }}</span></p>
     </div>
 
     <div class="bg-[#d8f9df] hover:bg-[#c7f1d0] rounded-2xl py-6 px-5 text-center shadow-md hover:shadow-lg transition-all">
       <h4 class="text-lg font-semibold text-gray-800 mb-1">Anxiety</h4>
-      <p class="text-base text-gray-700">Risiko <span class="font-bold text-green-700">{{ $session->anxiety_kelas ?? '-' }}</span></p>
+      <p class="text-base text-gray-700">Risiko <span class="font-bold text-green-700">{{ $session->anxiety_kelas }}</span></p>
     </div>
 
     <div class="bg-[#fff0db] hover:bg-[#ffe6c3] rounded-2xl py-6 px-5 text-center shadow-md hover:shadow-lg transition-all">
       <h4 class="text-lg font-semibold text-gray-800 mb-1">Stress</h4>
-      <p class="text-base text-gray-700">Risiko <span class="font-bold text-orange-700">{{ $session->stres_kelas ?? '-' }}</span></p>
+      <p class="text-base text-gray-700">Risiko <span class="font-bold text-orange-700">{{ $session->stres_kelas }}</span></p>
     </div>
   </div>
-
   {{-- 🔹 Garis Pemisah --}}
   <div class="max-w-6xl mx-auto my-10 md:my-14 px-4">
     <div class="border-b border-gray-500 opacity-20"></div>
   </div>
 
   {{-- 🔹 Penjelasan Hasil --}}
-  <div class="max-w-6xl mx-auto bg-white rounded-2xl shadow p-5 md:p-8 mb-10 mx-4">
-    <h3 class="text-lg md:text-xl font-bold text-gray-800 mb-4 text-center">Penjelasan Hasil Kondisi</h3>
-    @if(!empty($analisis?->hasil_emosi))
-        <div class="mt-3 text-gray-700 leading-relaxed text-sm md:text-base space-y-3">
-            @foreach(explode("\n", $analisis->hasil_emosi) as $paragraph)
-                @if(!empty(trim($paragraph)))
-                    <p>{{ trim($paragraph) }}</p>
-                @endif
-            @endforeach
-        </div>
-    @else
-        <p class="text-gray-700 leading-relaxed text-sm md:text-base">
-            {{ $session->overall_risk_note ?? 'Hasil kami menunjukkan bahwa keadaan emosi negatif kemungkinan besar tidak memengaruhi kesejahteraan Anda secara keseluruhan.' }}
-        </p>
-        <p class="mt-3 text-gray-700 text-sm md:text-base">
-            Namun, jika Anda mengalami kesulitan tidur, perubahan nafsu makan, atau kesulitan menyelesaikan tugas di tempat kerja atau rumah, sebaiknya carilah dukungan dari ahli kesehatan mental.
-        </p>
-        <p class="mt-3 text-gray-700 text-sm md:text-base">
-            Untuk meningkatkan ketahanan Anda secara keseluruhan, kami menyarankan Anda berkonsultasi dengan psikolog atau konselor melalui Program Perawatan Kesehatan Tenangan.
-        </p>
-    @endif
-  </div>
+    <div class="max-w-6xl mx-auto bg-white rounded-2xl shadow p-5 md:p-8 mt-12 mb-12 mx-4">
+        <h3 class="text-lg md:text-xl font-bold text-gray-800 mb-4 text-center">Penjelasan Hasil Kondisi</h3>
+        @if(!empty($analisis?->hasil_emosi))
+            <div class="mt-3 text-gray-700 leading-relaxed text-sm md:text-base space-y-3">
+                @foreach(explode("\n", $analisis->hasil_emosi) as $paragraph)
+                    @if(!empty(trim($paragraph)))
+                        <p>{{ trim($paragraph) }}</p>
+                    @endif
+                @endforeach
+            </div>
+        @else
+            <p class="text-gray-700 leading-relaxed text-sm md:text-base">
+                {{ $session->overall_risk_note ?? 'Hasil kami menunjukkan bahwa keadaan emosi negatif kemungkinan besar tidak memengaruhi kesejahteraan Anda secara keseluruhan.' }}
+            </p>
+        @endif
+    </div>
+
 
   {{-- 🔹 Rekomendasi Tindakan --}}
   <div class="max-w-6xl mx-auto px-4">
