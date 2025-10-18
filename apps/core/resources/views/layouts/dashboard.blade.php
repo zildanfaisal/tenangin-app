@@ -173,23 +173,48 @@
       </div>
 
       <!-- Profile -->
-      <div class="relative" x-data="{ open: false }">
-        <button @click="open = !open" class="flex items-center space-x-2 focus:outline-none">
-          <img class="h-8 w-8 rounded-full border"
-               src="https://ui-avatars.com/api/?name={{ Auth::user()->name }}" alt="Profile">
-          <span class="hidden md:inline text-gray-700">{{ Auth::user()->name }}</span>
-          <i class="fa-solid fa-caret-down text-gray-600"></i>
-        </button>
-        <div x-show="open" @click.away="open = false"
-             class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
-          <form method="POST" action="{{ route('logout') }}">
-            @csrf
-            <button type="submit" class="w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100">
-              <i class="fa-solid fa-right-from-bracket"></i> Logout
+        <div class="relative" x-data="{ open: false }">
+            {{-- 🔹 Tombol Profil --}}
+            <button @click="open = !open"
+                    class="flex items-center space-x-2 focus:outline-none hover:bg-gray-100 px-2 py-1 rounded-md transition">
+
+                {{-- Foto Profil Kecil --}}
+                <img src="{{ Auth::user()->profile_photo
+                    ? asset('storage/' . Auth::user()->profile_photo)
+                    : 'https://ui-avatars.com/api/?name=' . urlencode(Auth::user()->name) }}"
+                    alt="Foto Profil"
+                    class="w-8 h-8 rounded-full border border-gray-300 object-cover">
+
+                {{-- Nama User --}}
+                <span class="hidden md:inline text-gray-700 text-sm font-medium">
+                    {{ Auth::user()->name }}
+                </span>
+
+                {{-- Icon dropdown --}}
+                <i class="fa-solid fa-caret-down text-gray-600 text-sm"></i>
             </button>
-          </form>
+
+            {{-- 🔹 Dropdown Menu --}}
+            <div x-show="open"
+                @click.away="open = false"
+                x-transition
+                class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50 border border-gray-100">
+
+                <a href="{{ route('user.edit') }}"
+                class="block px-4 py-2 text-gray-700 hover:bg-gray-100 text-sm">
+                    <i class="fa-solid fa-user-pen mr-2 text-blue-500"></i> Edit Profil
+                </a>
+
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <button type="submit"
+                            class="w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100 text-sm">
+                        <i class="fa-solid fa-right-from-bracket mr-2 text-red-500"></i> Logout
+                    </button>
+                </form>
+            </div>
         </div>
-      </div>
+
     </header>
 
     <!-- Content -->
