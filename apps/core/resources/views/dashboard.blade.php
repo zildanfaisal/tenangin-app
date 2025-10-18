@@ -128,42 +128,94 @@
 {{-- 🔹 Chart.js --}}
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    const ctx1 = document.getElementById('chart1').getContext('2d');
-    const chart1Data = @json($chart1 ?? []);
-    new Chart(ctx1, {
-        type: 'line',
-        data: {
-            labels: chart1Data.labels ?? [],
-            datasets: (chart1Data.datasets ?? []).map(ds => ({
-                ...ds, tension: 0.4, fill: false, borderWidth: 2
-            }))
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: { legend: { position: 'top' } },
-            scales: { y: { beginAtZero: true, max: 5 } }
-        }
-    });
+    // 🔹 Debug: Lihat data yang dikirim dari controller
+    console.log('Chart1 Data:', @json($chart1));
+    console.log('Chart2 Data:', @json($chart2));
 
-    const ctx2 = document.getElementById('chart2').getContext('2d');
-    const chart2Data = @json($chart2 ?? []);
-    new Chart(ctx2, {
-        type: 'bar',
-        data: {
-            labels: chart2Data.labels ?? [],
+    // 🔹 Chart 1 - Tren Harian
+    const ctx1 = document.getElementById('chart1');
+    if (ctx1) {
+        const chart1Data = @json($chart1 ?? []);
+
+        // Pastikan data ada struktur yang benar
+        const validatedData = {
+            labels: chart1Data.labels || ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'],
+            datasets: (chart1Data.datasets || []).map(dataset => ({
+                label: dataset.label || '',
+                borderColor: dataset.borderColor || '#000000',
+                backgroundColor: dataset.backgroundColor || '#000000',
+                data: Array.isArray(dataset.data) ? dataset.data : Array(7).fill(0),
+                tension: 0.4,
+                fill: false,
+                borderWidth: 2
+            }))
+        };
+
+        new Chart(ctx1, {
+            type: 'line',
+            data: validatedData,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: {
+                            usePointStyle: true,
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 5,
+                        ticks: {
+                            stepSize: 1
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    // 🔹 Chart 2 - Perbandingan
+    const ctx2 = document.getElementById('chart2');
+    if (ctx2) {
+        const chart2Data = @json($chart2 ?? []);
+
+        const validatedData2 = {
+            labels: chart2Data.labels || ['Depresi', 'Stres', 'Kecemasan', 'Bahagia'],
             datasets: [{
                 label: 'Skor Rata-Rata',
-                data: chart2Data.data ?? [],
-                backgroundColor: ['#ef4444', '#f97316', '#0ea5e9', '#22c55e']
+                data: Array.isArray(chart2Data.data) ? chart2Data.data : [0, 0, 0, 0],
+                backgroundColor: ['#ef4444', '#f97316', '#0ea5e9', '#22c55e'],
+                borderColor: ['#dc2626', '#ea580c', '#0284c7', '#16a34a'],
+                borderWidth: 1
             }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: { legend: { display: false } },
-            scales: { y: { beginAtZero: true, max: 5 } }
-        }
-    });
+        };
+
+        new Chart(ctx2, {
+            type: 'bar',
+            data: validatedData2,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 5,
+                        ticks: {
+                            stepSize: 1
+                        }
+                    }
+                }
+            }
+        });
+    }
 </script>
 @endsection

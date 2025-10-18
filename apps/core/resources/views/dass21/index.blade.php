@@ -66,8 +66,17 @@
         @foreach($sessions as $i => $s)
         <tr class="border-t hover:bg-gray-50">
           <td class="p-3">{{ $i+1 }}</td>
-          <td class="p-3">{{ $s->completed_at? $s->completed_at->format('d F Y'):'(Draft)' }}</td>
-          <td class="p-3">{{ $s->completed_at? $s->completed_at->format('H:i'):'-' }}</td>
+          <td class="p-3">
+            {{ $s->suara_created_at ? \Carbon\Carbon::parse($s->suara_created_at)->translatedFormat('d F Y') : '-' }}
+            </td>
+            <td class="p-3">
+            {{ $s->suara_created_at
+                ? \Carbon\Carbon::parse($s->suara_created_at)
+                    ->setTimezone('Asia/Jakarta')
+                    ->format('H:i') . ' WIB'
+                : '-' }}
+            </td>
+
           <td class="p-3 font-semibold leading-relaxed">
             <div>Depresi: Risiko {{ $s->depresi_kelas ?? 'depresi' }}</div>
             <div>Anxiety: Risiko {{ $s->anxiety_kelas ?? 'anxiety' }}</div>

@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Auth;
 use App\Models\Dass21Session;
-use App\Models\Penanganan;
 use App\Models\Analisis;
 use App\Models\Suara;
 use Illuminate\Support\Carbon;
@@ -15,6 +14,7 @@ class DashboardController extends Controller
     {
         $user = Auth::user();
         $query = Dass21Session::whereNotNull('completed_at');
+
         if ($user->role !== 'admin') {
             $query->where('user_id', $user->id);
         }
@@ -49,91 +49,9 @@ class DashboardController extends Controller
             ->take(5)
             ->get();
 
-        $kategoriMap = [
-            'Normal' => 1,
-            'Mild' => 2,
-            'Moderate' => 3,
-            'Severe' => 4,
-            'Extremely Severe' => 5,
-        ];
-
-        $startDate = Carbon::now()->subDays(6)->startOfDay();
-        $endDate = Carbon::now()->endOfDay();
-
-        $rawData = (clone $query)
-            ->whereBetween('completed_at', [$startDate, $endDate])
-            ->select('completed_at', 'depresi_kelas', 'stres_kelas', 'anxiety_kelas')
-            ->orderBy('completed_at')
-            ->get();
-
-        $grouped = $rawData->groupBy(fn($row) => Carbon::parse($row->completed_at)->toDateString())
-            ->map(function ($day) use ($kategoriMap) {
-                $avgDepresi = $day->avg(fn($d) => $kategoriMap[$d->depresi_kelas] ?? 0);
-                $avgStres = $day->avg(fn($d) => $kategoriMap[$d->stres_kelas] ?? 0);
-                $avgAnxiety = $day->avg(fn($d) => $kategoriMap[$d->anxiety_kelas] ?? 0);
-                $bahagia = $day->filter(fn($r) =>
-                    $r->depresi_kelas === 'Normal' &&
-                    $r->stres_kelas === 'Normal' &&
-                    $r->anxiety_kelas === 'Normal'
-                )->count();
-                $bahagiaScore = $bahagia > 0 ? min(5, ($bahagia / $day->count()) * 5) : 0;
-                return [
-                    'depresi' => $avgDepresi,
-                    'stres' => $avgStres,
-                    'anxiety' => $avgAnxiety,
-                    'bahagia' => $bahagiaScore
-                ];
-            });
-
-        $labels = [];
-        $dep = [];
-        $str = [];
-        $anx = [];
-        $bah = [];
-
-        foreach (range(0, 6) as $i) {
-            $date = $startDate->copy()->addDays($i);
-            $labels[] = $date->translatedFormat('l');
-            $hari = $grouped[$date->toDateString()] ?? ['depresi' => 0, 'stres' => 0, 'anxiety' => 0, 'bahagia' => 0];
-            $dep[] = round($hari['depresi'], 2);
-            $str[] = round($hari['stres'], 2);
-            $anx[] = round($hari['anxiety'], 2);
-            $bah[] = round($hari['bahagia'], 2);
-        }
-
-        $chart1 = [
-            'labels' => $labels,
-            'datasets' => [
-                ['label' => 'Depresi', 'borderColor' => '#ef4444', 'backgroundColor' => '#ef4444', 'data' => $dep],
-                ['label' => 'Stres', 'borderColor' => '#f97316', 'backgroundColor' => '#f97316', 'data' => $str],
-                ['label' => 'Kecemasan', 'borderColor' => '#0ea5e9', 'backgroundColor' => '#0ea5e9', 'data' => $anx],
-                ['label' => 'Bahagia', 'borderColor' => '#22c55e', 'backgroundColor' => '#22c55e', 'data' => $bah],
-            ],
-        ];
-
-        $allData = (clone $query)
-            ->select('depresi_kelas', 'stres_kelas', 'anxiety_kelas')
-            ->get();
-
-        $avgDepresi = $allData->avg(fn($r) => $kategoriMap[$r->depresi_kelas] ?? 0);
-        $avgStres = $allData->avg(fn($r) => $kategoriMap[$r->stres_kelas] ?? 0);
-        $avgAnxiety = $allData->avg(fn($r) => $kategoriMap[$r->anxiety_kelas] ?? 0);
-        $normalCount = $allData->filter(fn($r) =>
-            $r->depresi_kelas === 'Normal' &&
-            $r->stres_kelas === 'Normal' &&
-            $r->anxiety_kelas === 'Normal'
-        )->count();
-        $avgBahagia = $normalCount > 0 ? min(5, ($normalCount / max(1, $assesmentCount)) * 5) : 0;
-
-        $chart2 = [
-            'labels' => ['Depresi', 'Stres', 'Kecemasan', 'Bahagia'],
-            'data' => [
-                round($avgDepresi, 2),
-                round($avgStres, 2),
-                round($avgAnxiety, 2),
-                round($avgBahagia, 2),
-            ],
-        ];
+        // 🔹 FIX: Panggil method yang sudah diperbaiki
+        $chart1 = $this->getChart1Data($query);
+        $chart2 = $this->getChart2Data($query, $assesmentCount);
 
         $recentRekaman = Dass21Session::where('user_id', $user->id)
             ->whereNotNull('completed_at')
@@ -153,5 +71,163 @@ class DashboardController extends Controller
             'recentRekaman',
             'latestAnalisis'
         ));
+    }
+
+    private function getChart1Data($query)
+    {
+        $kategoriMap = [
+            'Normal' => 1,
+            'Mild' => 2,
+            'Moderate' => 3,
+            'Severe' => 4,
+            'Extremely Severe' => 5,
+        ];
+
+        $startDate = Carbon::now()->subDays(6)->startOfDay();
+        $endDate = Carbon::now()->endOfDay();
+
+        // 🔹 FIX: Ambil semua data dalam range tanggal tanpa grouping yang terlalu ketat
+        $rawData = (clone $query)
+            ->whereBetween('completed_at', [$startDate, $endDate])
+            ->select('completed_at', 'depresi_kelas', 'stres_kelas', 'anxiety_kelas')
+            ->orderBy('completed_at')
+            ->get();
+
+        // 🔹 Inisialisasi array untuk 7 hari terakhir
+        $labels = [];
+        $depresiData = array_fill(0, 7, 0);
+        $stresData = array_fill(0, 7, 0);
+        $anxietyData = array_fill(0, 7, 0);
+        $bahagiaData = array_fill(0, 7, 0);
+
+        // 🔹 Generate labels untuk 7 hari terakhir
+        foreach (range(0, 6) as $i) {
+            $date = $startDate->copy()->addDays($i);
+            $labels[] = $date->translatedFormat('l');
+        }
+
+        // 🔹 FIX: Jika ada data, proses per hari
+        if ($rawData->count() > 0) {
+            $groupedByDay = [];
+
+            // Kelompokkan data berdasarkan hari
+            foreach ($rawData as $data) {
+                $dayIndex = Carbon::parse($data->completed_at)->diffInDays($startDate);
+                if ($dayIndex >= 0 && $dayIndex <= 6) {
+                    if (!isset($groupedByDay[$dayIndex])) {
+                        $groupedByDay[$dayIndex] = [];
+                    }
+                    $groupedByDay[$dayIndex][] = $data;
+                }
+            }
+
+            // 🔹 Hitung rata-rata per hari
+            foreach ($groupedByDay as $dayIndex => $dayData) {
+                $totalItems = count($dayData);
+
+                $totalDepresi = 0;
+                $totalStres = 0;
+                $totalAnxiety = 0;
+                $bahagiaCount = 0;
+
+                foreach ($dayData as $data) {
+                    $totalDepresi += $kategoriMap[$data->depresi_kelas] ?? 0;
+                    $totalStres += $kategoriMap[$data->stres_kelas] ?? 0;
+                    $totalAnxiety += $kategoriMap[$data->anxiety_kelas] ?? 0;
+
+                    // Hitung kondisi bahagia (semua normal)
+                    if (($data->depresi_kelas === 'Normal') &&
+                        ($data->stres_kelas === 'Normal') &&
+                        ($data->anxiety_kelas === 'Normal')) {
+                        $bahagiaCount++;
+                    }
+                }
+
+                $depresiData[$dayIndex] = $totalItems > 0 ? round($totalDepresi / $totalItems, 2) : 0;
+                $stresData[$dayIndex] = $totalItems > 0 ? round($totalStres / $totalItems, 2) : 0;
+                $anxietyData[$dayIndex] = $totalItems > 0 ? round($totalAnxiety / $totalItems, 2) : 0;
+                $bahagiaData[$dayIndex] = $totalItems > 0 ? round(($bahagiaCount / $totalItems) * 5, 2) : 0;
+            }
+        }
+
+        return [
+            'labels' => $labels,
+            'datasets' => [
+                [
+                    'label' => 'Depresi',
+                    'borderColor' => '#ef4444',
+                    'backgroundColor' => '#ef4444',
+                    'data' => $depresiData
+                ],
+                [
+                    'label' => 'Stres',
+                    'borderColor' => '#f97316',
+                    'backgroundColor' => '#f97316',
+                    'data' => $stresData
+                ],
+                [
+                    'label' => 'Kecemasan',
+                    'borderColor' => '#0ea5e9',
+                    'backgroundColor' => '#0ea5e9',
+                    'data' => $anxietyData
+                ],
+                [
+                    'label' => 'Bahagia',
+                    'borderColor' => '#22c55e',
+                    'backgroundColor' => '#22c55e',
+                    'data' => $bahagiaData
+                ],
+            ],
+        ];
+    }
+
+    private function getChart2Data($query, $assesmentCount)
+    {
+        $kategoriMap = [
+            'Normal' => 1,
+            'Mild' => 2,
+            'Moderate' => 3,
+            'Severe' => 4,
+            'Extremely Severe' => 5,
+        ];
+
+        $allData = (clone $query)
+            ->select('depresi_kelas', 'stres_kelas', 'anxiety_kelas')
+            ->get();
+
+        // 🔹 Default values
+        $avgDepresi = 0;
+        $avgStres = 0;
+        $avgAnxiety = 0;
+        $avgBahagia = 0;
+
+        if ($allData->count() > 0) {
+            $totalDepresi = 0;
+            $totalStres = 0;
+            $totalAnxiety = 0;
+            $normalCount = 0;
+
+            foreach ($allData as $data) {
+                $totalDepresi += $kategoriMap[$data->depresi_kelas] ?? 0;
+                $totalStres += $kategoriMap[$data->stres_kelas] ?? 0;
+                $totalAnxiety += $kategoriMap[$data->anxiety_kelas] ?? 0;
+
+                if (($data->depresi_kelas === 'Normal') &&
+                    ($data->stres_kelas === 'Normal') &&
+                    ($data->anxiety_kelas === 'Normal')) {
+                    $normalCount++;
+                }
+            }
+
+            $avgDepresi = round($totalDepresi / $allData->count(), 2);
+            $avgStres = round($totalStres / $allData->count(), 2);
+            $avgAnxiety = round($totalAnxiety / $allData->count(), 2);
+            $avgBahagia = $normalCount > 0 ? round(($normalCount / $allData->count()) * 5, 2) : 0;
+        }
+
+        return [
+            'labels' => ['Depresi', 'Stres', 'Kecemasan', 'Bahagia'],
+            'data' => [$avgDepresi, $avgStres, $avgAnxiety, $avgBahagia],
+        ];
     }
 }
