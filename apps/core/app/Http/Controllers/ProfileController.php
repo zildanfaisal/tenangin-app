@@ -7,6 +7,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
 class ProfileController extends Controller
@@ -39,22 +40,40 @@ class ProfileController extends Controller
     /**
      * Update the user's profile information.
      */
-    public function update(ProfileUpdateRequest $request): RedirectResponse
+    public function update(ProfileUpdateRequest $request)
+    {
+        $user = $request->user();
+        $data = $request->validated();
+
+        if ($request->hasFile('profile_photo')) {
+            // Hapus foto lama kalau ada
+            if ($user->profile_photo && file_exists(storage_path('app/public/'.$user->profile_photo))) {
+                unlink(storage_path('app/public/'.$user->profile_photo));
+            }
+
+            // Simpan foto baru
+            $data['profile_photo'] = $request->file('profile_photo')->store('profile', 'public');
+        }
+
+        $user->update($data);
+
+        return redirect()->route('user.index')->with('status', 'Profil berhasil diperbarui!');
+    }
+
+    public function deletePhoto(Request $request)
     {
         $user = $request->user();
 
-        $user->update([
-            'name' => $request->input('name'),
-            'email' => $request->input('email'),
-            'no_hp' => $request->input('no_hp'),
-            'usia' => $request->input('usia'),
-            'jenis_kelamin' => $request->input('jenis_kelamin'),
-            'kesibukan' => $request->input('kesibukan'),
-        ]);
+        // Hapus file dari storage (kalau ada)
+        if ($user->profile_photo && file_exists(storage_path('app/public/'.$user->profile_photo))) {
+                unlink(storage_path('app/public/'.$user->profile_photo));
+        }
 
-        return Redirect::route('user.index')->with('status', 'Profil berhasil diperbarui!');
+        // Kosongkan kolom di database
+        $user->update(['profile_photo' => null]);
+
+        return back()->with('success', 'Foto profil berhasil dihapus.');
     }
-
 
     /**
      * Delete the user's account.

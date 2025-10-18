@@ -12,9 +12,11 @@
 
       <!-- Avatar -->
       <div class="flex-shrink-0">
-        <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gradient-to-br from-blue-100 to-blue-200 flex items-center justify-center text-2xl sm:text-3xl font-bold text-gray-800 shadow-inner">
-          {{ strtoupper(substr($user->name, 0, 2)) }}
-        </div>
+        <img id="profile-preview"
+                src="{{ $user->profile_photo 
+                    ? asset('storage/'.$user->profile_photo) 
+                    : 'https://ui-avatars.com/api/?name='.urlencode($user->name) }}"
+                class="w-28 h-28 sm:w-32 sm:h-32 rounded-full border-4 border-blue-100 shadow-md object-cover">
       </div>
 
       <!-- Info Profil -->

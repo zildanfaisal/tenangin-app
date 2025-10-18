@@ -5,7 +5,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sign In - Tenangin</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <!-- SweetAlert2 CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+    @if(session('success'))
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            Swal.fire({
+                icon: 'success',
+                title: 'Berhasil Daftar!',
+                text: '{{ session('success') }}',
+                confirmButtonText: 'OK',
+                backdrop: true,
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                heightAuto: false, // penting untuk mencegah SweetAlert auto resize dengan body
+                customClass: {
+                    confirmButton: 'bg-blue-600 text-white px-4 py-2 rounded-md'
+                }
+            });
+        });
+    </script>
+    @endif
 </head>
 <body class="h-screen flex">
 
