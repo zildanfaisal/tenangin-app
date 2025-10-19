@@ -23,7 +23,7 @@ class Dass21AssessmentController extends Controller
         $sessions = Dass21Session::where('user_id', $userId)
             ->whereNotNull('completed_at')
             ->latest()
-            ->get();
+            ->paginate(5);
 
         // Ambil suara terakhir dari setiap sesi
         $suaraData = Suara::whereIn('dass21_session_id', $sessions->pluck('id'))
@@ -33,8 +33,8 @@ class Dass21AssessmentController extends Controller
             ->groupBy('dass21_session_id')
             ->map(fn($rows) => $rows->first());
 
-        // Gabungkan data suara ke tiap session
-        $sessions = $sessions->map(function ($s) use ($suaraData) {
+        // Gabungkan data suara ke tiap session (hanya untuk item di halaman ini)
+        $sessions->getCollection()->transform(function ($s) use ($suaraData) {
             $suara = $suaraData[$s->id] ?? null;
             $s->suara_created_at = $suara?->created_at;
             return $s;

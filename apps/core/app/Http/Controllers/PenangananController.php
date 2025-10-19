@@ -6,6 +6,7 @@ use App\Models\Penanganan;
 use Illuminate\Http\Request;
 use App\Http\Requests\StorePenangananRequest;
 use App\Http\Requests\UpdatePenangananRequest;
+use App\Models\Konsultan;
 use Illuminate\Support\Facades\Storage;
 
 class PenangananController extends Controller
@@ -69,9 +70,10 @@ class PenangananController extends Controller
     public function showPublic($slug)
     {
         $penanganan = Penanganan::published()->where('slug',$slug)->firstOrFail();
+        $konsultans = Konsultan::orderByDesc('rating')->limit(3)->get();
         $steps = $penanganan->steps()->published()->get();
         $totalSteps = $steps->count();
         $totalDuration = $steps->sum('durasi_detik');
-        return view('penanganan.show', compact('penanganan','steps','totalSteps','totalDuration'));
+        return view('penanganan.show', compact('penanganan','steps','totalSteps','totalDuration','konsultans'));
     }
 }

@@ -44,7 +44,7 @@
 </div>
 
 {{-- ================= RIWAYAT ASESMEN ================= --}}
-<div id="riwayat-asesmen" class="mb-10">
+<div id="riwayat-asesmen" class="mb-6">
   <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-3 gap-2">
     <h3 class="text-base sm:text-lg font-semibold text-gray-800">Riwayat Asesmen</h3>
     <a href="#" class="text-xs sm:text-sm text-indigo-600 hover:underline">Selengkapnya</a>
@@ -65,7 +65,7 @@
       <tbody>
         @foreach($sessions as $i => $s)
         <tr class="border-t hover:bg-gray-50">
-          <td class="p-3">{{ $i+1 }}</td>
+          <td class="p-3">{{ ($sessions->currentPage()-1)*$sessions->perPage() + $i+1 }}</td>
           <td class="p-3">
             {{ $s->suara_created_at ? \Carbon\Carbon::parse($s->suara_created_at)->translatedFormat('d F Y') : '-' }}
             </td>
@@ -95,6 +95,9 @@
   @else
   <p class="text-gray-600 text-sm sm:text-base">Belum ada riwayat asesmen.</p>
   @endif
+</div>
+<div class="mb-6 flex justify-end">
+  {{ $sessions->links() }}
 </div>
 
 {{-- ================= PENANGANAN AWAL ================= --}}
