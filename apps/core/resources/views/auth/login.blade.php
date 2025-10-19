@@ -5,36 +5,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sign In - Tenangin</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-    <!-- SweetAlert2 CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
-    @if(session('success'))
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            Swal.fire({
-                icon: 'success',
-                title: 'Berhasil Daftar!',
-                text: '{{ session('success') }}',
-                confirmButtonText: 'OK',
-                backdrop: true,
-                allowOutsideClick: false,
-                allowEscapeKey: false,
-                heightAuto: false, // penting untuk mencegah SweetAlert auto resize dengan body
-                customClass: {
-                    confirmButton: 'bg-blue-600 text-white px-4 py-2 rounded-md'
-                }
-            });
-        });
-    </script>
-    @endif
+    <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 </head>
-<body class="h-screen flex">
+
+<body class="h-screen flex bg-white"
+      x-data="{ showToast: {{ session('success') ? 'true' : 'false' }} }"
+      x-init="if (showToast) setTimeout(() => showToast = false, 4000)">
+
+    <!-- ✅ Tailwind Toast Notification (Right Bottom, Bigger) -->
+    <div x-show="showToast" x-transition
+         class="fixed bottom-5 right-5 bg-green-500 text-white px-6 py-4 rounded-xl shadow-2xl flex items-center space-x-3 text-base font-semibold z-50">
+        <i class="fa-solid fa-circle-check text-2xl"></i>
+        <span>{{ session('success') }}</span>
+    </div>
 
     <!-- Left Side: Form -->
     <div class="w-full md:w-1/2 flex items-center justify-center px-8 md:px-16 bg-white relative">
         <div class="max-w-md w-full space-y-6">
 
-            <!-- Back (Responsif + Icon) -->
+            <!-- Back -->
             <a href="/" class="flex items-center text-sm text-gray-500 hover:text-blue-600 md:absolute md:top-6 md:left-8">
                 <i class="fa-solid fa-angles-left mr-1"></i> Kembali
             </a>
@@ -108,7 +98,6 @@
             </p>
         </div>
     </div>
-
 
     <!-- Right Side: Background Image -->
     <div class="hidden md:flex w-1/2 bg-cover bg-center relative"

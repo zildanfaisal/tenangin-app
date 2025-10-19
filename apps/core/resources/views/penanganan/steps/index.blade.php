@@ -8,7 +8,7 @@
     <a href="{{ route('admin.penanganan.steps.create',$penanganan) }}" class="px-4 py-2 bg-indigo-600 text-white rounded text-sm">Tambah Step</a>
 </div>
 
-@if(session('success'))<div class="mb-3 text-green-700 text-sm">{{ session('success') }}</div>@endif
+{{-- @if(session('success'))<div class="mb-3 text-green-700 text-sm">{{ session('success') }}</div>@endif --}}
 
 <form method="POST" action="{{ route('admin.penanganan.steps.reorder',$penanganan) }}" class="mb-4 border rounded p-3 bg-gray-50">
     @csrf
