@@ -128,6 +128,11 @@
                             Kembali
                         </button>
                     </div>
+                    {{-- <button x-show="isLastStep"
+                        @click="restart()"
+                        class="w-full sm:w-auto text-center px-6 py-3 bg-indigo-600 text-white font-semibold rounded-md shadow hover:bg-indigo-700 transition mt-4">
+                        Ulangi {{ $penanganan->nama_penanganan }}
+                    </button> --}}
                 </div>
             </div>
         </div>
@@ -141,6 +146,7 @@
                 alt="Mascot" 
                 class="w-full max-w-xs sm:max-w-sm md:w-96 md:h-96 h-auto object-contain">
         </div>
+
         <!-- Konten kanan -->
         <div class="w-full md:w-1/2 flex flex-col justify-center items-center md:items-start text-center md:text-left">
             <h2 class="text-2xl sm:text-3xl font-bold text-gray-800 mb-3">Hebat!</h2>
@@ -148,10 +154,88 @@
                 Kamu sudah berhasil menyelesaikan <span class="font-semibold">{{ $penanganan->nama_penanganan }}</span>.<br>
                 Setiap napas tenang yang kamu ambil adalah langkah kecil menuju keseimbangan dan ketenangan batin. Terus pertahankan rutinitas ini untuk mendukung kesejahteraan mentalmu.
             </p>
+            <button x-show="isLastStep"
+                @click="restart()"
+                class="inline-flex items-center gap-1 text-indigo-600 hover:text-indigo-800 text-sm font-medium transition mb-4">
+                <svg xmlns="http://www.w3.org/2000/svg" 
+                    fill="none" 
+                    viewBox="0 0 24 24" 
+                    stroke-width="2" 
+                    stroke="currentColor" 
+                    class="w-4 h-4">
+                    <path stroke-linecap="round" stroke-linejoin="round" 
+                        d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9M20 20v-5h-.581m-15.357-2a8.003 8.003 0 0015.356 2" />
+                </svg>
+                Ulangi {{ $penanganan->nama_penanganan }}
+            </button>
+
+            <!-- 🔹 Row untuk 3 tombol (Rekomendasi, Menu Utama, Lihat Konsultan) -->
             <div class="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
-                <a href="{{ route('dass21.index') }}" class="w-full sm:w-auto text-center px-6 py-3 bg-blue-600 text-white font-semibold rounded-md shadow hover:bg-blue-700 transition">Rekomendasi Lainnya</a>
-                <a href="/dashboard" class="w-full sm:w-auto text-center px-6 py-3 bg-gray-100 text-gray-700 font-semibold rounded-md shadow hover:bg-gray-200 transition">Menu Utama</a>
+                <a href="{{ route('dass21.index') }}" 
+                    class="w-full sm:w-auto text-center px-6 py-3 bg-blue-600 text-white font-semibold rounded-md shadow hover:bg-blue-700 transition">
+                    Rekomendasi Lainnya
+                </a>
+
+                <a href="/dashboard" 
+                    class="w-full sm:w-auto text-center px-6 py-3 bg-gray-100 text-gray-700 font-semibold rounded-md shadow hover:bg-gray-200 transition">
+                    Menu Utama
+                </a>
+
+                <button
+                    @click="document.getElementById('rekomendasi-konsultan').scrollIntoView({ behavior: 'smooth' })"
+                    class="w-full sm:w-auto text-center px-6 py-3 bg-emerald-600 text-white font-semibold rounded-md shadow hover:bg-emerald-700 transition">
+                    Lihat Konsultan
+                </button>
             </div>
+        </div>
+    </div>
+
+
+    {{-- 🔹 Rekomendasi Konsultan --}}
+    <div x-show="finished" id="rekomendasi-konsultan" class="max-w-6xl mx-auto mt-16 px-4">
+        <h3 class="text-lg md:text-xl font-bold text-gray-800 text-center mb-2">Rekomendasi Konsultan</h3>
+        <p class="text-sm text-gray-600 text-center mb-8">
+        Jika merasa kondisimu belum membaik, cobalah untuk berkonsultasi dengan ahli.
+        </p>
+
+        @if($konsultans->isEmpty())
+        <div class="bg-yellow-50 border border-yellow-200 text-yellow-800 rounded-xl p-4 max-w-3xl mx-auto text-sm text-center">
+            Belum ada konsultan tersedia saat ini. Silakan kembali nanti.
+        </div>
+        @else
+        <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+            @foreach($konsultans as $konsultan)
+            <div class="bg-white rounded-2xl shadow-md hover:shadow-xl transition-all p-5 md:p-6 flex flex-col">
+                <img src="{{ $konsultan->foto ? asset($konsultan->foto) : asset('consul1.png') }}"
+                    alt="{{ $konsultan->nama_konsultan }}"
+                    class="rounded-2xl mb-4 object-cover h-44 md:h-48 w-full">
+                <h5 class="font-bold text-base md:text-lg mb-1 text-gray-800">{{ $konsultan->nama_konsultan }}</h5>
+                <p class="text-xs md:text-sm text-gray-600 mb-2">{{ $konsultan->spesialisasi }}</p>
+                <span class="inline-block mb-2 px-3 py-1 bg-gray-100 text-gray-700 text-[11px] md:text-xs rounded-full">
+                {{ $konsultan->pengalaman }} Tahun Pengalaman
+                </span>
+                <div class="flex items-center justify-between text-xs md:text-sm text-gray-600 mb-4">
+                <span>Rp {{ number_format($konsultan->harga,0,',','.') }} / 2 Sesi</span>
+                <span class="flex items-center gap-1">
+                    ⭐ {{ number_format($konsultan->rating,1) }}
+                </span>
+                </div>
+                <a href="{{ route('konsultan.detail', $konsultan->id) }}"
+                class="mt-auto self-start bg-blue-700 hover:bg-blue-800 text-white text-xs md:text-sm px-4 py-2 rounded-full transition">
+                Hubungi Sekarang
+                </a>
+            </div>
+            @endforeach
+        </div>
+        @endif
+
+        <div class="mt-10 flex flex-wrap justify-center gap-3 md:gap-4">
+        <a href="{{ route('konsultan.index') }}" class="bg-blue-700 hover:bg-blue-800 text-white px-5 md:px-6 py-2 rounded-lg font-medium text-sm shadow-md transition">
+            Cari Konsultan Lain
+        </a>
+        <a href="{{ route('dass21.index') }}" class="bg-gray-200 hover:bg-gray-300 text-gray-800 px-5 md:px-6 py-2 rounded-lg font-medium text-sm transition">
+            Kembali ke Menu Layanan
+        </a>
         </div>
     </div>
 </div>
@@ -180,6 +264,12 @@
             },
             prevStep(){ if(this.currentIndex > 0) { this.currentIndex--; this.playVideo(); } },
             finishAll(){ this.started = false; this.currentIndex = 0; this.finished = false; },
+            restart(){
+                this.currentIndex = 0;     // balik ke step pertama
+                this.finished = false;     // hilangkan layar finish
+                this.started = true;       // mulai lagi penanganan
+                this.playVideo();          // play ulang video step pertama
+            },
             playVideo(){
                 this.$nextTick(() => {
                     const v = this.$refs.vid; if(v) { v.currentTime = 0; v.load(); v.play(); }
