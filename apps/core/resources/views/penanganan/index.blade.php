@@ -10,9 +10,9 @@
     </form>
     <a href="{{ route('admin.penanganan.create') }}" class="px-4 py-2 bg-green-600 text-white rounded">Tambah</a>
 </div>
-
+{{-- 
 @if(session('success')) <div class="mb-3 p-2 bg-green-100 text-green-700 rounded">{{ session('success') }}</div> @endif
-@if(session('error')) <div class="mb-3 p-2 bg-red-100 text-red-700 rounded">{{ session('error') }}</div> @endif
+@if(session('error')) <div class="mb-3 p-2 bg-red-100 text-red-700 rounded">{{ session('error') }}</div> @endif --}}
 
 <div class="overflow-x-auto bg-white shadow rounded">
 <table class="w-full text-sm">

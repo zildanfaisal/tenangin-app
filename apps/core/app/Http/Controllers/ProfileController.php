@@ -42,23 +42,31 @@ class ProfileController extends Controller
      */
     public function update(ProfileUpdateRequest $request)
     {
-        $user = $request->user();
-        $data = $request->validated();
+        try {
+            $user = $request->user();
+            $data = $request->validated();
 
-        if ($request->hasFile('profile_photo')) {
-            // Hapus foto lama kalau ada
-            if ($user->profile_photo && file_exists(storage_path('app/public/'.$user->profile_photo))) {
-                unlink(storage_path('app/public/'.$user->profile_photo));
+            if ($request->hasFile('profile_photo')) {
+                // ✅ Validasi tambahan manual (kalau mau jaga-jaga)
+                if ($request->file('profile_photo')->getSize() > 2 * 1024 * 1024) {
+                    return back()->with('error', 'Ukuran foto tidak boleh melebihi 2 MB.');
+                }
+
+                if ($user->profile_photo && file_exists(storage_path('app/public/'.$user->profile_photo))) {
+                    unlink(storage_path('app/public/'.$user->profile_photo));
+                }
+
+                $data['profile_photo'] = $request->file('profile_photo')->store('profile', 'public');
             }
 
-            // Simpan foto baru
-            $data['profile_photo'] = $request->file('profile_photo')->store('profile', 'public');
+            $user->update($data);
+
+            return redirect()->route('user.index')->with('success', 'Profil berhasil diperbarui!');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Terjadi kesalahan saat memperbarui profil.');
         }
-
-        $user->update($data);
-
-        return redirect()->route('user.index')->with('status', 'Profil berhasil diperbarui!');
     }
+
 
     public function deletePhoto(Request $request)
     {

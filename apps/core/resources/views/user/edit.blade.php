@@ -10,8 +10,8 @@
         <div class="relative">
             {{-- Foto profil --}}
             <img id="profile-preview"
-                src="{{ $user->profile_photo 
-                    ? asset('storage/'.$user->profile_photo) 
+                src="{{ $user->profile_photo
+                    ? asset('storage/'.$user->profile_photo)
                     : 'https://ui-avatars.com/api/?name='.urlencode($user->name) }}"
                 class="w-28 h-28 sm:w-32 sm:h-32 rounded-full border-4 border-blue-100 shadow-md object-cover">
 
@@ -46,7 +46,7 @@
         <!-- Nama -->
         <div>
             <label for="name" class="block text-sm font-medium text-gray-700">Nama</label>
-            <input type="text" name="name" id="name" value="{{ old('name', $user->name) }}" 
+            <input type="text" name="name" id="name" value="{{ old('name', $user->name) }}"
                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
             @error('name')
                 <span class="text-red-600 text-xs">{{ $message }}</span>
@@ -56,7 +56,7 @@
         <!-- Email -->
         <div>
             <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
-            <input type="email" name="email" id="email" value="{{ old('email', $user->email) }}" 
+            <input type="email" name="email" id="email" value="{{ old('email', $user->email) }}"
                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
             @error('email')
                 <span class="text-red-600 text-xs">{{ $message }}</span>
@@ -66,7 +66,7 @@
         <!-- No HP -->
         <div>
             <label for="no_hp" class="block text-sm font-medium text-gray-700">No HP</label>
-            <input type="text" name="no_hp" id="no_hp" value="{{ old('no_hp', $user->no_hp) }}" 
+            <input type="text" name="no_hp" id="no_hp" value="{{ old('no_hp', $user->no_hp) }}"
                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
             @error('no_hp')
                 <span class="text-red-600 text-xs">{{ $message }}</span>
@@ -76,7 +76,7 @@
         <!-- Usia -->
         <div>
             <label for="usia" class="block text-sm font-medium text-gray-700">Usia</label>
-            <input type="number" name="usia" id="usia" value="{{ old('usia', $user->usia) }}" 
+            <input type="number" name="usia" id="usia" value="{{ old('usia', $user->usia) }}"
                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
             @error('usia')
                 <span class="text-red-600 text-xs">{{ $message }}</span>
@@ -115,7 +115,7 @@
 
         <!-- Submit -->
         <div class="flex justify-end pt-4">
-            <button type="submit" 
+            <button type="submit"
                 class="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition">
                 Simpan Perubahan
             </button>
@@ -159,13 +159,13 @@ document.getElementById('delete-photo-btn')?.addEventListener('click', function(
 });
 
 // SweetAlert2 sukses hapus foto
-@if(session('success'))
-    Swal.fire({
-        icon: 'success',
-        title: 'Berhasil!',
-        text: '{{ session('success') }}',
-        confirmButtonColor: '#3085d6',
-    });
-@endif
+// @if(session('success'))
+//     Swal.fire({
+//         icon: 'success',
+//         title: 'Berhasil!',
+//         text: '{{ session('success') }}',
+//         confirmButtonColor: '#3085d6',
+//     });
+// @endif
 </script>
 @endsection

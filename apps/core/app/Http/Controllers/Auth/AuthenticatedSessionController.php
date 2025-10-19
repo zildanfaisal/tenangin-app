@@ -24,11 +24,16 @@ class AuthenticatedSessionController extends Controller
      */
     public function store(LoginRequest $request): RedirectResponse
     {
+        // 🔹 Validasi & autentikasi bawaan Fortify
         $request->authenticate();
 
+        // 🔹 Regenerasi session agar aman
         $request->session()->regenerate();
 
-        return redirect()->intended(route('dashboard', absolute: false));
+        // 🔹 Redirect ke dashboard + kirim pesan sukses
+        return redirect()
+            ->intended(route('dashboard', absolute: false))
+            ->with('success', 'Selamat datang kembali, ' . Auth::user()->name . '!');
     }
 
     /**
@@ -39,9 +44,9 @@ class AuthenticatedSessionController extends Controller
         Auth::guard('web')->logout();
 
         $request->session()->invalidate();
-
         $request->session()->regenerateToken();
 
-        return redirect('/');
+        return redirect('/')
+            ->with('success', 'Anda telah berhasil logout.');
     }
 }
