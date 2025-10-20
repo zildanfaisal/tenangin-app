@@ -150,7 +150,7 @@
           <div class="bg-white rounded-2xl shadow-md hover:shadow-xl transition-all p-5 md:p-6 flex flex-col">
             <img src="{{ $konsultan->foto ? asset($konsultan->foto) : asset('consul1.png') }}"
                 alt="{{ $konsultan->nama_konsultan }}"
-                class="rounded-2xl mb-4 object-cover h-44 md:h-48 w-full">
+                class="rounded-2xl mb-4 object-contain h-44 md:h-48 w-full">
             <h5 class="font-bold text-base md:text-lg mb-1 text-gray-800">{{ $konsultan->nama_konsultan }}</h5>
             <p class="text-xs md:text-sm text-gray-600 mb-2">{{ $konsultan->spesialisasi }}</p>
             <span class="inline-block mb-2 px-3 py-1 bg-gray-100 text-gray-700 text-[11px] md:text-xs rounded-full">

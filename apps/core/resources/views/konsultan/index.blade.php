@@ -84,8 +84,8 @@
                  data-rating="{{ $konsultan->rating }}">
                 {{-- Foto --}}
                 <img src="{{ $konsultan->foto ? asset($konsultan->foto) : asset('default-user.png') }}"
-                     alt="{{ $konsultan->nama_konsultan }}"
-                     class="w-24 h-24 md:w-28 md:h-28 rounded-xl object-cover shadow-sm">
+                    alt="{{ $konsultan->nama_konsultan }}"
+                    class="w-24 h-24 md:w-28 md:h-28 rounded-xl object-contain bg-white shadow-sm">
 
                 {{-- Info --}}
                 <div class="flex-1 w-full">
