@@ -184,7 +184,7 @@
                 <button
                     @click="document.getElementById('rekomendasi-konsultan').scrollIntoView({ behavior: 'smooth' })"
                     class="w-full sm:w-auto text-center px-6 py-3 bg-emerald-600 text-white font-semibold rounded-md shadow hover:bg-emerald-700 transition">
-                    Lihat Konsultan
+                    Yuk Coba Konsultasi!
                 </button>
             </div>
         </div>
