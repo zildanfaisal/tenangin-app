@@ -21,10 +21,10 @@ class ProfileController extends Controller
 
         // Contoh daftar hadiah (bisa nanti diambil dari tabel hadiah kalau sudah dibuat)
         $rewards = [
-            ['name' => 'Tenangin Goodiebag', 'points' => 750, 'image' => 'goodiebag.png'],
-            ['name' => 'Tenangin Tumbler', 'points' => 1000, 'image' => 'tumbler.png'],
-            ['name' => 'Smart Band', 'points' => 1250, 'image' => 'smartband.png'],
-            ['name' => 'Payung', 'points' => 1000, 'image' => 'payung.png'],
+            ['name' => 'Tenangin Goodiebag', 'points' => 750, 'image' => 'tenangin-goodiebag.png'],
+            ['name' => 'Tenangin Tumbler', 'points' => 1000, 'image' => 'tenangin-tumbler.png'],
+            ['name' => 'Tenangin Power Bank', 'points' => 2000, 'image' => 'tenangin-powerbank.png'],
+            ['name' => 'Tenangin Hoodie', 'points' => 3500, 'image' => 'tenangin-hoodie.png'],
         ];
 
         return view('user.index', compact('user', 'rewards'));

@@ -64,7 +64,7 @@
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
       @foreach($rewards as $reward)
       <div class="bg-white shadow-sm hover:shadow-lg border border-gray-100 rounded-2xl p-5 flex flex-col items-center justify-between transition-all duration-300 text-center">
-        <img src="{{ asset($reward['image']) }}" alt="{{ $reward['name'] }}" class="h-24 sm:h-28 object-contain mb-4">
+        <img src="{{ asset('rewards/' . $reward['image']) }}" alt="{{ $reward['name'] }}" class="h-24 sm:h-28 object-contain mb-4">
         <h4 class="font-semibold text-gray-800 mb-1">{{ $reward['name'] }}</h4>
         <p class="text-sm text-gray-600 mb-4">{{ $reward['points'] }} Poin</p>
         <button class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-5 py-2 rounded-md shadow-sm transition w-full sm:w-auto">
