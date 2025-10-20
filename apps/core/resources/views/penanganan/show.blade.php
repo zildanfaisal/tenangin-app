@@ -170,22 +170,24 @@
             </button>
 
             <!-- 🔹 Row untuk 3 tombol (Rekomendasi, Menu Utama, Lihat Konsultan) -->
-            <div class="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
-                <a href="{{ route('dass21.index') }}" 
-                    class="w-full sm:w-auto text-center px-6 py-3 bg-blue-600 text-white font-semibold rounded-md shadow hover:bg-blue-700 transition">
-                    Rekomendasi Lainnya
-                </a>
+            <div class="flex flex-col items-center gap-2">
+                <div class="flex flex-col sm:flex-row gap-2 w-full sm:w-[500px]">
+                    <a href="{{ route('dass21.index') }}" 
+                        class="w-full sm:w-1/2 text-center px-6 py-3 bg-blue-600 text-white font-semibold rounded-md shadow hover:bg-blue-700 transition">
+                        Rekomendasi Lainnya
+                    </a>
+
+                    <button
+                        @click="document.getElementById('rekomendasi-konsultan').scrollIntoView({ behavior: 'smooth' })"
+                        class="w-full sm:w-1/2 text-center px-6 py-3 bg-emerald-600 text-white font-semibold rounded-md shadow hover:bg-emerald-700 transition">
+                        Yuk Coba Konsultasi!
+                    </button>
+                </div>
 
                 <a href="/dashboard" 
-                    class="w-full sm:w-auto text-center px-6 py-3 bg-gray-100 text-gray-700 font-semibold rounded-md shadow hover:bg-gray-200 transition">
+                    class="w-full sm:w-[500px] text-center px-6 py-3 bg-gray-100 text-gray-700 font-semibold rounded-md shadow hover:bg-gray-200 transition">
                     Menu Utama
                 </a>
-
-                <button
-                    @click="document.getElementById('rekomendasi-konsultan').scrollIntoView({ behavior: 'smooth' })"
-                    class="w-full sm:w-auto text-center px-6 py-3 bg-emerald-600 text-white font-semibold rounded-md shadow hover:bg-emerald-700 transition">
-                    Yuk Coba Konsultasi!
-                </button>
             </div>
         </div>
     </div>
