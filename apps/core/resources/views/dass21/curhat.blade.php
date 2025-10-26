@@ -83,8 +83,8 @@
 
 {{-- 🎧 Script mic --}}
 <script>
-let recognizing = false;
-let recognition;
+// let recognizing = false;
+// let recognition;
 let timerInterval;
 let timeElapsed = 0;
 const maxDuration = 300;
@@ -95,35 +95,70 @@ const transcript = document.getElementById('transcript');
 const timer = document.getElementById('timer');
 let suaraId = null;
 
-if ('webkitSpeechRecognition' in window) {
-  recognition = new webkitSpeechRecognition();
+// if ('webkitSpeechRecognition' in window) {
+//   recognition = new webkitSpeechRecognition();
+//   recognition.continuous = true;
+//   recognition.interimResults = true;
+//   recognition.lang = 'id-ID';
+
+//   let finalTranscript = '';
+
+//   recognition.onresult = (event) => {
+//     for (let i = event.resultIndex; i < event.results.length; ++i) {
+//       if (event.results[i].isFinal) {
+//         finalTranscript += (finalTranscript && event.results[i][0].transcript.trim() ? ' ' : '') + event.results[i][0].transcript;
+//       }
+//     }
+//     transcript.value = finalTranscript;
+//   };
+
+//   recognition.onend = () => stopRecording();
+// } 
+const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+let recognition, recognizing = false;
+let finalTranscript = '';
+
+if (SpeechRecognition) {
+  recognition = new SpeechRecognition();
   recognition.continuous = true;
   recognition.interimResults = true;
   recognition.lang = 'id-ID';
 
-  let finalTranscript = '';
-
   recognition.onresult = (event) => {
+    let interim = '';
     for (let i = event.resultIndex; i < event.results.length; ++i) {
-      if (event.results[i].isFinal) {
-        finalTranscript += (finalTranscript && event.results[i][0].transcript.trim() ? ' ' : '') + event.results[i][0].transcript;
-      }
+      const txt = event.results[i][0].transcript;
+      if (event.results[i].isFinal) finalTranscript += txt + ' ';
+      else interim += txt;
     }
-    transcript.value = finalTranscript;
+    transcript.value = finalTranscript + interim;
   };
 
-  recognition.onend = () => stopRecording();
+  recognition.onend = () => {
+    if (recognizing) {
+      setTimeout(() => {
+        recognition.start(); // restart jika user masih bicara
+      }, 300);
+    }
+  };
 } else {
   alert('Browser kamu belum mendukung Speech Recognition!');
 }
 
 async function startRecording() {
+  if (recognizing) return;
+
   recognizing = true;
-  recognition.start();
   statusText.textContent = 'Merekam...';
   micBtn.style.backgroundColor = '#e74c3c';
   startTimer();
 
+  try {
+    recognition.start();
+  } catch (err) {
+    console.warn('Recognition sudah berjalan.', err);
+  }
+  
   const response = await fetch('/suara', {
     method: 'POST',
     headers: {
@@ -139,31 +174,46 @@ async function startRecording() {
   suaraId = data.id;
 }
 
-function stopRecording() {
+async function stopRecording() {
+  if (!recognizing) return;
+
   recognizing = false;
-  recognition.stop();
+  try {
+    recognition.stop();
+  } catch (err) {
+    console.warn('Recognition sudah berhenti.', err);
+  }
+
   clearInterval(timerInterval);
   statusText.textContent = 'Rekaman selesai';
   micBtn.style.backgroundColor = '#2563eb';
+
+  if (!suaraId) {
+    console.warn('Menunggu suara id sebelum menyimpan...');
+    await new Promise(resolve => setTimeout(resolve, 500));
+  }
 
   if (!suaraId) {
     alert('Gagal menyimpan suara, silakan coba lagi.');
     return;
   }
 
-  fetch(`/suara/${suaraId}/transcribe`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'X-CSRF-TOKEN': '{{ csrf_token() }}'
-    },
-    body: JSON.stringify({ transkripsi: transcript.value })
-  })
-  .then(res => res.json())
-  .then(data => {
+  try {
+    const res = await fetch(`/suara/${suaraId}/transcribe`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+      },
+      body: JSON.stringify({ transkripsi: transcript.value })
+    });
+    const data = await res.json();
     console.log('saved: ', data);
     window.location.href = "{{ route('dass21.curhat.done', $session->id) }}";
-  });
+  } catch (err) {
+    console.error('Error menyimpan transkripsi:', err);
+    alert('Gagal menyimpan transkripsi, silakan coba lagi.');
+  }
 }
 
 function startTimer() {
