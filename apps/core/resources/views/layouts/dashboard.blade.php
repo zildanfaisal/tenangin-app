@@ -206,7 +206,7 @@
         </div>
         <p class="text-[12px] text-gray-300 text-center md:text-right">
           © 2025 Tenangin. All Rights Reserved.<br>
-          Made with 💙 by <span class="font-semibold text-white">Mie Ayam Team</span>
+          Made with Love 💙
         </p>
       </div>
     </footer>
