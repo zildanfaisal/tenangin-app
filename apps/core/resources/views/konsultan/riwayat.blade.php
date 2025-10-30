@@ -70,8 +70,10 @@
         {{-- Riwayat List --}}
         <div class="md:col-span-3 space-y-4 md:space-y-6">
 
+            <p class="text-center">Belum ada riwayat konsultasi</p>
+
             {{-- 🔸 Card 1 --}}
-            <div class="bg-white rounded-2xl shadow-md hover:shadow-lg transition p-4 md:p-6 flex flex-col sm:flex-row gap-4 sm:gap-5">
+            {{-- <div class="bg-white rounded-2xl shadow-md hover:shadow-lg transition p-4 md:p-6 flex flex-col sm:flex-row gap-4 sm:gap-5">
                 <img src="{{ asset('images/konsultan/anggia.jpg') }}" alt="Anggia Kirana Candra"
                      class="w-24 h-24 md:w-28 md:h-28 rounded-xl object-cover shadow-sm">
 
@@ -87,26 +89,26 @@
                         <p class="text-xs md:text-sm text-gray-500 mt-2 sm:mt-0 sm:text-right">
                             Rabu, 21 Oktober 2025<br>Pukul 15.00 WIB
                         </p>
-                    </div>
+                    </div> --}}
 
                     {{-- Rating --}}
-                    <div class="flex items-center mb-3 text-yellow-400 text-sm md:text-base">
+                    {{-- <div class="flex items-center mb-3 text-yellow-400 text-sm md:text-base">
                         @for ($i = 1; $i <= 5; $i++)
                             <i class="fa-solid fa-star"></i>
                         @endfor
-                    </div>
+                    </div> --}}
 
                     {{-- Input Ulasan --}}
-                    <div class="flex items-center gap-2 mb-4">
+                    {{-- <div class="flex items-center gap-2 mb-4">
                         <input type="text" placeholder="Ulasanmu"
                                class="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-xs md:text-sm focus:ring-blue-400 focus:border-blue-400">
                         <button class="bg-blue-600 hover:bg-blue-700 text-white p-2 rounded-full shadow-sm transition">
                             <i class="fa-solid fa-paper-plane text-sm md:text-base"></i>
                         </button>
-                    </div>
+                    </div> --}}
 
                     {{-- Action Buttons --}}
-                    <div class="flex flex-wrap sm:flex-nowrap gap-2">
+                    {{-- <div class="flex flex-wrap sm:flex-nowrap gap-2">
                         <button class="flex-1 sm:flex-none px-4 py-2 border border-gray-300 rounded-lg text-xs md:text-sm text-gray-600 hover:bg-gray-100 transition">
                             Lihat Invoice
                         </button>
@@ -115,54 +117,7 @@
                         </button>
                     </div>
                 </div>
-            </div>
-
-            {{-- 🔸 Card 2 --}}
-            <div class="bg-white rounded-2xl shadow-md hover:shadow-lg transition p-4 md:p-6 flex flex-col sm:flex-row gap-4 sm:gap-5">
-                <img src="{{ asset('images/konsultan/anggia.jpg') }}" alt="Anggia Kirana Candra"
-                     class="w-24 h-24 md:w-28 md:h-28 rounded-xl object-cover shadow-sm">
-
-                <div class="flex-1">
-                    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-start mb-2">
-                        <div>
-                            <h3 class="text-base md:text-lg font-semibold text-gray-900">Anggia Kirana Candra</h3>
-                            <p class="text-xs md:text-sm text-gray-600">Terapis di Universitas Negeri Surabaya</p>
-                            <span class="inline-block bg-gray-100 text-gray-800 text-xs px-2 py-1 rounded-full mt-2">
-                                10 Tahun Pengalaman
-                            </span>
-                        </div>
-                        <p class="text-xs md:text-sm text-gray-500 mt-2 sm:mt-0 sm:text-right">
-                            Rabu, 21 Oktober 2025<br>Pukul 15.00 WIB
-                        </p>
-                    </div>
-
-                    {{-- Rating --}}
-                    <div class="flex items-center mb-3 text-yellow-400 text-sm md:text-base">
-                        @for ($i = 1; $i <= 5; $i++)
-                            <i class="fa-solid fa-star {{ $i > 4 ? 'text-gray-300' : '' }}"></i>
-                        @endfor
-                    </div>
-
-                    {{-- Input Ulasan --}}
-                    <div class="flex items-center gap-2 mb-4">
-                        <input type="text" placeholder="Ulasanmu"
-                               class="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-xs md:text-sm focus:ring-blue-400 focus:border-blue-400">
-                        <button class="bg-blue-600 hover:bg-blue-700 text-white p-2 rounded-full shadow-sm transition">
-                            <i class="fa-solid fa-paper-plane text-sm md:text-base"></i>
-                        </button>
-                    </div>
-
-                    {{-- Action Buttons --}}
-                    <div class="flex flex-wrap sm:flex-nowrap gap-2">
-                        <button class="flex-1 sm:flex-none px-4 py-2 border border-gray-300 rounded-lg text-xs md:text-sm text-gray-600 hover:bg-gray-100 transition">
-                            Lihat Invoice
-                        </button>
-                        <button class="flex-1 sm:flex-none px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs md:text-sm shadow-sm transition">
-                            Lihat Rekaman
-                        </button>
-                    </div>
-                </div>
-            </div>
+            </div> --}}
 
         </div>
     </div>

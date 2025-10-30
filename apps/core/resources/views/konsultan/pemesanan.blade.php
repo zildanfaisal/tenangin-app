@@ -49,15 +49,16 @@
                class="flex-1 bg-transparent outline-none text-gray-700 ml-2 text-sm md:text-base">
     </div>
 
+    <p class="text-center">Belum ada pemesanan konsultasi</p>
     {{-- 🔹 Card Pemesanan --}}
-    <div class="space-y-4 md:space-y-6">
+    {{-- <div class="space-y-4 md:space-y-6">
         @foreach ($pemesanan as $p)
-        <div class="bg-white rounded-2xl shadow-md hover:shadow-lg transition p-4 md:p-6 flex flex-col sm:flex-row gap-4 sm:gap-5 {{ $p['aktif'] ? '' : 'opacity-80 grayscale' }}">
+        <div class="bg-white rounded-2xl shadow-md hover:shadow-lg transition p-4 md:p-6 flex flex-col sm:flex-row gap-4 sm:gap-5 {{ $p['aktif'] ? '' : 'opacity-80 grayscale' }}"> --}}
             {{-- Foto --}}
-            <img src="{{ asset($p['foto']) }}" alt="{{ $p['nama'] }}" class="w-24 h-24 md:w-28 md:h-28 rounded-xl object-cover shadow-sm">
+            {{-- <img src="{{ asset($p['foto']) }}" alt="{{ $p['nama'] }}" class="w-24 h-24 md:w-28 md:h-28 rounded-xl object-cover shadow-sm"> --}}
 
             {{-- Info --}}
-            <div class="flex-1">
+            {{-- <div class="flex-1">
                 <div class="flex justify-between items-start flex-wrap">
                     <div>
                         <h3 class="text-base md:text-lg font-semibold text-gray-900">{{ $p['nama'] }}</h3>
@@ -72,16 +73,16 @@
                             <span class="text-gray-700 text-xs md:text-sm font-medium ml-1">{{ number_format($p['rating'], 1) }}</span>
                         </div>
                         <p class="text-xs md:text-sm text-gray-500 mt-2">{{ $p['tanggal'] }}, Pukul {{ $p['waktu'] }}</p>
-                    </div>
+                    </div> --}}
 
                     {{-- Status --}}
-                    <p class="text-xs md:text-sm font-medium mt-2 sm:mt-0 {{ $p['aktif'] ? 'text-blue-600' : 'text-gray-500' }}">
+                    {{-- <p class="text-xs md:text-sm font-medium mt-2 sm:mt-0 {{ $p['aktif'] ? 'text-blue-600' : 'text-gray-500' }}">
                         {{ $p['status'] }}
                     </p>
-                </div>
+                </div> --}}
 
                 {{-- Tombol Aksi --}}
-                <div class="mt-4 flex flex-col sm:flex-row justify-end gap-2">
+                {{-- <div class="mt-4 flex flex-col sm:flex-row justify-end gap-2">
                     <button class="px-4 py-2 rounded-md border text-xs md:text-sm font-medium
                         {{ $p['aktif'] ? 'border-blue-500 text-blue-600 hover:bg-blue-50' : 'border-gray-300 text-gray-400' }}">
                         Lihat Invoice
@@ -95,7 +96,7 @@
             </div>
         </div>
         @endforeach
-    </div>
+    </div> --}}
 </div>
 
 {{-- Script pencarian sederhana --}}
