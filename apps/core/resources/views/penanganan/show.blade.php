@@ -104,7 +104,7 @@
                         </div>
                     </template>
 
-                    <ul class="text-gray-700 leading-relaxed mb-5 list-decimal list-inside text-sm sm:text-base text-justify" 
+                    <ul class="text-gray-700 leading-relaxed mb-5 list-none list-inside text-sm sm:text-base text-justify" 
                         x-html="currentStep.deskripsi.split(/(?<=\.)\s+/).map((item, i) => `<li>${item.trim()}</li>`).join('')"></ul>
 
                     <!-- Tombol -->
